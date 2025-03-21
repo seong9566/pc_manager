@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ip_manager/features/auth/login/presentation/login_screen.dart';
-import 'package:ip_manager/features/base/base_view.dart';
+import 'package:ip_manager/features/auth/login/presentation/login_view.dart';
+import 'package:ip_manager/features/base/presentation/base_view.dart';
+import 'package:ip_manager/features/store_add/presentation/store_add_view.dart';
 import 'package:ip_manager/features/tmp/tmp_view.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -13,12 +14,20 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(path: '/', builder: (context, state) => const LoginScreen()),
     GoRoute(
-      path: '/home',
-      name: 'home',
+      path: '/base',
+      name: 'base',
       pageBuilder: (context, state) {
         return NoTransitionPage(child: BaseView());
       },
     ),
+
+    // GoRoute(
+    //   path: '/storeAdd',
+    //   name: 'storeAdd',
+    //   pageBuilder: (context, state) {
+    //     return NoTransitionPage(child: StoreAddView());
+    //   },
+    // ),
     GoRoute(
       path: '/tmp',
       name: 'tmp',

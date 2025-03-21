@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SideMenu extends StatefulWidget {
+class SideMenu extends ConsumerStatefulWidget {
   final Function(int index) onTap;
   final int selectedIndex;
 
   const SideMenu({super.key, required this.onTap, required this.selectedIndex});
 
   @override
-  State<SideMenu> createState() => _SideMenuState();
+  ConsumerState<SideMenu> createState() => _SideMenuState();
 }
 
-class _SideMenuState extends State<SideMenu> {
+class _SideMenuState extends ConsumerState<SideMenu> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -43,7 +44,6 @@ class _SideMenuState extends State<SideMenu> {
 
   Widget _drawerItem(int index, String title, IconData icon) {
     bool isSelected = widget.selectedIndex == index;
-
     return GestureDetector(
       onTap: () => widget.onTap(index),
       child: AnimatedContainer(

@@ -17,11 +17,7 @@ class ApiInterceptors extends InterceptorsWrapper {
     // 토큰이 없으면 Prefs에서 가져오기
     _accessToken ??= await Prefs().getToken;
     options.headers.addAll({"Authorization": "Bearer $_accessToken"});
-
-    debugPrint("[Dio] Request: ${options.method} ${options.path}");
     debugPrint("Headers: ${options.headers}");
-    debugPrint("Data: ${options.data}");
-
     return handler.next(options);
   }
 

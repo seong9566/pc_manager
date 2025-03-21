@@ -1,32 +1,36 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:ip_manager/features/auth/login/domain/login_use_case_impl.dart';
-import 'package:ip_manager/model/login_model.dart';
 import 'package:riverpod/riverpod.dart';
 
-final loginViewModelProvider =
-    AsyncNotifierProvider<LoginViewModel, LoginModel?>(() => LoginViewModel());
+final loginViewModelProvider = AsyncNotifierProvider<LoginViewModel, bool>(
+  () => LoginViewModel(),
+);
 
-class LoginViewModel extends AsyncNotifier<LoginModel?> {
+class LoginViewModel extends AsyncNotifier<bool> {
   late final LoginUseCase _loginUseCase;
 
   /// 초기 상태
   @override
-  FutureOr<LoginModel?> build() {
+  FutureOr<bool> build() {
     _loginUseCase = ref.read(loginUseCaseProvider);
-    return null;
+    return false;
   }
 
   Future<void> login(String loginId, String loginPw) async {
     state = const AsyncValue.loading();
-
     try {
       final user = await _loginUseCase.login(loginId, loginPw);
-      debugPrint("[Flutter] >> user : $user");
-      state = AsyncValue.data(user);
+      if (user.code != 200) {
+        throw Exception('${user.code} : 일시적인 오류 발생 다시 시도 해주세요.');
+      }
+      if (user.data == null) {
+        throw Exception('${user.message}');
+      }
+      state = AsyncValue.data(true);
     } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+      final errorMessage = e.toString().split(': ').last;
+      state = AsyncValue.error(errorMessage, stackTrace);
     }
   }
 }

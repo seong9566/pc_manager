@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/features/auth/login/presentation/login_viewmodel.dart';
-import 'package:ip_manager/widgets/custom_text_field.dart';
+import 'package:ip_manager/features/auth/login/presentation/widget/login_text_field.dart';
 import 'package:ip_manager/widgets/default_button.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -17,9 +17,45 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController _id = TextEditingController();
   final TextEditingController _pw = TextEditingController();
 
+  void _login() async {
+    await ref
+        .read(loginViewModelProvider.notifier)
+        .login(_id.text.trim(), _pw.text.trim());
+
+    final state = ref.read(loginViewModelProvider);
+    state.when(
+      data: (isOk) {
+        if (isOk) {
+          context.replaceNamed('base');
+        }
+      },
+      error: (error, _) {
+        _loginFailedDialog('$error');
+      },
+      loading: () {},
+    );
+  }
+
+  void _loginFailedDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("로그인 실패"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("확인"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(loginViewModelProvider);
     final vm = ref.read(loginViewModelProvider.notifier);
     return Scaffold(
       body: Center(
@@ -45,15 +81,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               _title(),
               _subTitle(),
               SizedBox(height: 20),
-              CustomTextField(hintText: '아이디', controller: _id),
+              LoginTextField(hintText: '아이디', controller: _id),
               SizedBox(height: 20),
-              CustomTextField(hintText: '비밀번호', controller: _pw),
+              LoginTextField(hintText: '비밀번호', controller: _pw),
               SizedBox(height: 20),
               DefaultButton(
                 text: '로그인',
                 callback: () {
-                  vm.login(_id.text, _pw.text);
-                  // context.goNamed('home');
+                  _login();
                 },
               ),
               SizedBox(height: 20),
