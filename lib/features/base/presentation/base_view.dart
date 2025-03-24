@@ -19,6 +19,8 @@ class BaseView extends ConsumerStatefulWidget {
 class _BaseViewState extends ConsumerState<BaseView> {
   List<Widget> pages = [];
 
+  bool mobileSideMenu = false;
+
   @override
   void initState() {
     pages = [
@@ -49,7 +51,8 @@ class _BaseViewState extends ConsumerState<BaseView> {
         }
       },
       child: Scaffold(
-        drawer: SideMenu(selectedIndex: selectedIndex, onTap: _onItemTapped),
+        appBar: !Responsive.isDesktop(context) ? _appBar(selectedIndex) : null,
+        // drawer: SideMenu(selectedIndex: selectedIndex, onTap: _onItemTapped),
         body: Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: double.infinity),
@@ -77,6 +80,69 @@ class _BaseViewState extends ConsumerState<BaseView> {
           ),
         ),
       ),
+    );
+  }
+
+  AppBar _appBar(int selectedIndex) {
+    return AppBar(
+      backgroundColor: Colors.white,
+      leadingWidth: MediaQuery.sizeOf(context).width * 0.7,
+      leading: Align(
+        alignment: Alignment.centerLeft,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: Text(
+            'Pc Manager-Analyzer',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+              color: Color(0xff6E79A5),
+            ),
+          ),
+        ),
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: GestureDetector(
+            onTap: () {
+              showGeneralDialog(
+                context: context,
+                barrierDismissible: true,
+                barrierLabel: "SideMenu",
+                pageBuilder: (_, __, ___) {
+                  return Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      height: double.infinity,
+                      color: Colors.white,
+                      child: SideMenu(
+                        selectedIndex: selectedIndex,
+                        onTap: (index) {
+                          Navigator.pop(context); // 닫기
+                          _onItemTapped(index); // 이동
+                        },
+                      ),
+                    ),
+                  );
+                },
+                transitionBuilder: (_, anim, __, child) {
+                  return SlideTransition(
+                    position: Tween<Offset>(
+                      begin: Offset(1, 0), // 오른쪽에서 시작
+                      end: Offset(0, 0),
+                    ).animate(anim),
+                    child: child,
+                  );
+                },
+                transitionDuration: Duration(milliseconds: 150),
+              );
+            },
+            child: Icon(Icons.menu, color: Colors.black),
+          ),
+        ),
+      ],
     );
   }
 }

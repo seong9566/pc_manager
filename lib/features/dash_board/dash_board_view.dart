@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/features/dash_board/widget/dash_board_body.dart';
 import 'package:ip_manager/features/dash_board/widget/dash_board_header.dart';
 
@@ -20,7 +21,7 @@ class _DashBoardViewState extends State<DashBoardView> {
         /// Header
         DashBoardHeader(),
         SizedBox(height: 40),
-        DashBoardBody(),
+        if (Responsive.isDesktop(context)) DashBoardBody(),
       ],
     );
   }

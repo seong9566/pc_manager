@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ip_manager/core/config/screen_size.dart';
 
 class SideMenu extends ConsumerStatefulWidget {
   final Function(int index) onTap;
@@ -25,7 +26,7 @@ class _SideMenuState extends ConsumerState<SideMenu> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _title(),
+                    if (Responsive.isDesktop(context)) _title(),
                     SizedBox(height: 80),
                     _drawerItem(0, '대시 보드', Icons.dashboard),
                     SizedBox(height: 20),
