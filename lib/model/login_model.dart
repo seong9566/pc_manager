@@ -15,6 +15,22 @@ class LoginModel {
   }
 }
 
+class SignModel {
+  final String? message;
+  final bool? success;
+  final int? code;
+
+  SignModel({this.message, this.success, this.code});
+
+  factory SignModel.fromJson(Map<String, dynamic> json) {
+    return SignModel(
+      message: json['message'],
+      success: json['data'], // true/false
+      code: json['code'],
+    );
+  }
+}
+
 class Data {
   String? accessToken;
 
