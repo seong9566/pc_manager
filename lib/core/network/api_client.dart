@@ -7,19 +7,16 @@ import 'package:riverpod/riverpod.dart';
 
 /// **API 클라이언트 Provider**
 final apiClientProvider = Provider<ApiClient>((ref) {
-  return ApiClient();
+  final interceptor = ref.read(apiInterceptorProvider);
+  return ApiClient(interceptor);
 });
 
 enum DioMethod { post, put, get, delete }
 
 class ApiClient implements RemoteDataSource {
-  static final ApiClient _instance = ApiClient._internal();
-
-  factory ApiClient() => _instance;
   late final Dio _dio;
-  final ApiInterceptors _interceptors = ApiInterceptors();
 
-  ApiClient._internal() {
+  ApiClient(ApiInterceptors interceptor) {
     _dio = Dio(
       BaseOptions(
         baseUrl: ApiEndPoints().baseUrl,
@@ -28,11 +25,7 @@ class ApiClient implements RemoteDataSource {
         headers: {"Content-Type": "application/json"},
       ),
     );
-    _dio.interceptors.add(_interceptors);
-  }
-
-  void setAuthorizationToken(String token) {
-    _interceptors.setAuthorizationToken(token);
+    _dio.interceptors.add(interceptor);
   }
 
   @override

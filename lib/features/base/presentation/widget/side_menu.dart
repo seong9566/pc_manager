@@ -22,7 +22,10 @@ class _SideMenuState extends ConsumerState<SideMenu> {
           children: [
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.only(top: 20, left: 24, right: 80),
+                padding:
+                    Responsive.isDesktop(context)
+                        ? EdgeInsets.only(top: 20, left: 24, right: 80)
+                        : EdgeInsets.only(top: 10, left: 10, right: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

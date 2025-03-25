@@ -1,10 +1,16 @@
+import 'package:flutter/material.dart';
+import 'package:ip_manager/core/database/prefs.dart';
+import 'package:ip_manager/core/network/api_interceptors.dart';
 import 'package:ip_manager/model/login_model.dart';
 import 'package:riverpod/riverpod.dart';
 
 import 'login_service.dart';
 
-final signRepositoryProvider = Provider<AuthRepository>((ref) {
-  return AuthRepository(ref.read(loginServiceProvider));
+final authRepositoryProvider = Provider<AuthRepository>((ref) {
+  return AuthRepository(
+    ref.read(loginServiceProvider),
+    ref.read(apiInterceptorProvider),
+  );
 });
 
 /**
@@ -13,14 +19,19 @@ final signRepositoryProvider = Provider<AuthRepository>((ref) {
  */
 class AuthRepository {
   final AuthService authService;
+  final ApiInterceptors apiInterceptors;
 
-  AuthRepository(this.authService);
+  AuthRepository(this.authService, this.apiInterceptors);
 
   /// ** Login **
   Future<LoginModel> login(String loginId, String loginPw) async {
     final responseData = await authService.login(loginId, loginPw);
-
-    return LoginModel.fromJson(responseData.data);
+    final loginData = LoginModel.fromJson(responseData.data);
+    if (loginData.data != null) {
+      await Prefs().setToken(loginData.data!.accessToken!);
+      apiInterceptors.setAuthorizationToken(loginData.data!.accessToken!);
+    }
+    return loginData;
   }
 
   /// ** Sign **

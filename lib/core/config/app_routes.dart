@@ -28,12 +28,12 @@ final appRouter = GoRouter(
     //     return NoTransitionPage(child: StoreAddView());
     //   },
     // ),
-    GoRoute(
-      path: '/tmp',
-      name: 'tmp',
-      pageBuilder: (context, state) {
-        return NoTransitionPage(child: TmpView());
-      },
-    ),
+    // GoRoute(
+    //   path: '/tmp',
+    //   name: 'tmp',
+    //   pageBuilder: (context, state) {
+    //     return NoTransitionPage(child: TmpView());
+    //   },
+    // ),
   ],
 );

@@ -1,6 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/database/prefs.dart';
+
+final apiInterceptorProvider = Provider<ApiInterceptors>((ref) {
+  return ApiInterceptors();
+});
 
 /// **API 요청/응답 Interceptor**
 class ApiInterceptors extends InterceptorsWrapper {
@@ -17,7 +22,6 @@ class ApiInterceptors extends InterceptorsWrapper {
     // 토큰이 없으면 Prefs에서 가져오기
     _accessToken ??= await Prefs().getToken;
     options.headers.addAll({"Authorization": "Bearer $_accessToken"});
-    debugPrint("Headers: ${options.headers}");
     return handler.next(options);
   }
 

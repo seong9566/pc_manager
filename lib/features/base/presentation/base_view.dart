@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/features/analytics/analytics_view.dart';
 import 'package:ip_manager/features/base/presentation/widget/side_menu.dart';
-import 'package:ip_manager/features/dash_board/dash_board_view.dart';
+import 'package:ip_manager/features/dash_board/presentation/dash_board_view.dart';
 import 'package:ip_manager/features/store_add/presentation/store_add_view.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
 
@@ -69,7 +69,7 @@ class _BaseViewState extends ConsumerState<BaseView> {
                     ),
                   ),
                 Expanded(
-                  flex: 8, // 전체 공간의 7
+                  flex: 8,
                   child: IndexedStack(
                     index: selectedIndex,
                     children: [...pages],
@@ -114,7 +114,7 @@ class _BaseViewState extends ConsumerState<BaseView> {
                   return Align(
                     alignment: Alignment.centerRight,
                     child: Container(
-                      width: MediaQuery.of(context).size.width * 0.5,
+                      width: MediaQuery.of(context).size.width * 0.6,
                       height: double.infinity,
                       color: Colors.white,
                       child: SideMenu(

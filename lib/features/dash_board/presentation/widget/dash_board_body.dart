@@ -11,46 +11,45 @@ class DashBoardBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: IntrinsicWidth(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// 📌 분석중인 매장 테이블
-              _buildTableContainer(
-                title: '분석중인 매장들',
-                headers: ['이름', '주소', 'IP', '포트'],
-                columnWidths: [nameWidth, addressWidth, ipWidth, portWidth],
-                data: List.generate(
-                  20,
-                  (index) => [
-                    '옐로우 피씨방',
-                    '서울시 관악구 조원동',
-                    '255.255.255.255',
-                    '8080',
-                  ],
-                ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// 📌 분석중인 매장 테이블
+          Expanded(
+            child: _buildTableContainer(
+              title: '분석중인 매장들',
+              headers: ['이름', '주소', 'IP', '포트'],
+              columnWidths: [nameWidth, addressWidth, ipWidth, portWidth],
+              data: List.generate(
+                20,
+                (index) => [
+                  '옐로우 피씨방',
+                  '서울시 관악구 조원동',
+                  '255.255.255.255',
+                  '8080',
+                ],
               ),
-
-              /// 📌 최근 분석 결과 테이블
-              _buildTableContainer(
-                title: '최근 분석결과',
-                headers: ['매장 이름', '가동률'],
-                columnWidths: [nameWidth * 1.5, nameWidth],
-                data: List.generate(
-                  20,
-                  (index) => ['그린 피씨방', '운영중인 PC / 총 PC (47%)'],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+
+          /// 📌 최근 분석 결과 테이블
+          Expanded(
+            child: _buildTableContainer(
+              title: '최근 분석결과',
+              headers: ['매장 이름', '가동률'],
+              columnWidths: [nameWidth * 1.5, nameWidth],
+              data: List.generate(
+                20,
+                (index) => ['그린 피씨방', '운영중인 PC / 총 PC (47%)'],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  /// 📌 테이블 컨테이너 위젯
+  /// 테이블 컨테이너 위젯
   Widget _buildTableContainer({
     required String title,
     required List<String> headers,
@@ -58,7 +57,6 @@ class DashBoardBody extends StatelessWidget {
     required List<List<String>> data,
   }) {
     return Container(
-      width: columnWidths.reduce((a, b) => a + b) + 48,
       // 테이블 전체 크기
       margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
       padding: EdgeInsets.all(24),

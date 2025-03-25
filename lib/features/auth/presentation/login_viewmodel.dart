@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:riverpod/riverpod.dart';
 
-import '../domain/login_use_case_impl.dart';
+import '../domain/login_use_case.dart';
 
 final loginViewModelProvider = AsyncNotifierProvider<LoginViewModel, bool>(
   () => LoginViewModel(),
