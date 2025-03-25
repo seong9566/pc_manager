@@ -1,15 +1,17 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
 import 'package:ip_manager/widgets/search_text_field.dart';
 
-class ManagementHeader extends StatefulWidget {
+class ManagementHeader extends ConsumerStatefulWidget {
   const ManagementHeader({super.key});
 
   @override
-  State<ManagementHeader> createState() => _ManagementHeaderState();
+  ConsumerState<ManagementHeader> createState() => _ManagementHeaderState();
 }
 
-class _ManagementHeaderState extends State<ManagementHeader> {
+class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
   final TextEditingController _controller = TextEditingController();
 
   @override

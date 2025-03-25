@@ -27,7 +27,7 @@ class ApiInterceptors extends InterceptorsWrapper {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    debugPrint("[Dio] Response: ${response.statusCode} ${response.data}");
+    debugPrint("[Dio] Response: ${response.statusCode}");
     return handler.next(response);
   }
 

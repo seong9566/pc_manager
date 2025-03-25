@@ -11,4 +11,7 @@ class ApiEndPoints {
 
   /// DashBoard
   static const getThisTimeDataList = "DashBoard/sign/v1/GetThisTimeDataList";
+
+  ///Management
+  static const getStoreList = "/Store/sign/v1/GetStoreList";
 }

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/model/dash_board_model.dart';
 
-import '../data/dash_boaard_repository_impl.dart';
+import '../data/dash_board_repository_impl.dart';
 import '../data/dash_board_repository_interface.dart';
 
 /// 의존 역전 원칙에 의해 UseCase는 Interface만 알고 있음
