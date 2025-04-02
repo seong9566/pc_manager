@@ -75,9 +75,7 @@ class _AnalyticsBodyState extends State<AnalyticsBody> {
         SizedBox(width: 12),
 
         /// DatePicker : Default : 현재 날짜
-        _datePicker("2025-03-17", () {
-          debugPrint("[Flutter] >> DatePicker Click!");
-        }),
+        _datePicker("2025-03-17", () {}),
       ],
     );
   }

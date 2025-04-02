@@ -1,12 +1,32 @@
 class ManagementModel {
+  /**
+   *
+   * int pId { get; set; }
+      string ip { get; set; }
+      int port { get; set; }
+      string name { get; set; }
+      string addr { get; set; }
+      int seatNumber { get; set; }
+      float price { get; set; }
+      float pricePercent { get; set; }
+      string pcSpec { get; set; }
+      string telecom { get; set; }
+      string memo { get; set; }
+      string region { get; set; }
+      int countryTbId { get; set; }
+      int cityTbId { get; set; }
+      int townTbId { get; set; }
+   */
   final int pId;
   final String ip;
   final int port;
   final String name;
   final String addr;
+
+  /// flutter dart에서 float 타입이 없이 전부다 double라서 아마 이거 써도 될거에요 ㅇㅇ 더블로 ㄱㄱ
   final int seatNumber;
   final int price;
-  final String pricePercent;
+  final double pricePercent;
   final String pcSpec;
   final String telecom;
   final String memo;

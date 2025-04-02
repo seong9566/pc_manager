@@ -19,12 +19,12 @@ class _DashBoardViewState extends ConsumerState<DashBoardView> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         SizedBox(height: Responsive.isDesktop(context) ? 120 : 20),
-        // TextButton(
-        //   onPressed: () {
-        //     ref.read(dashBoardViewModelProvider.notifier).getDashBoardData();
-        //   },
-        //   child: Text("Api TestButton "),
-        // ),
+        TextButton(
+          onPressed: () {
+            ref.read(dashBoardViewModelProvider.notifier).getDashBoardData();
+          },
+          child: Text("Api TestButton "),
+        ),
 
         /// Header
         DashBoardHeader(),

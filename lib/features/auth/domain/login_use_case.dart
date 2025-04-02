@@ -1,6 +1,7 @@
 import 'package:ip_manager/model/login_model.dart';
 import 'package:riverpod/riverpod.dart';
 
+import '../../../model/user_role_model.dart';
 import '../data/auth_repository.dart';
 
 /**
@@ -22,5 +23,10 @@ class AuthUseCase {
 
   Future<SignModel> sign(String userId, String passWord) async {
     return await authRepository.sign(userId, passWord);
+  }
+
+  Future<UserRoleModel> getRole() async {
+    var data = await authRepository.getRole();
+    return data;
   }
 }

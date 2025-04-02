@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:ip_manager/core/database/prefs.dart';
 import 'package:ip_manager/core/network/api_interceptors.dart';
 import 'package:ip_manager/model/login_model.dart';
+import 'package:ip_manager/model/user_role_model.dart';
 import 'package:riverpod/riverpod.dart';
 
 import 'login_service.dart';
@@ -41,8 +41,13 @@ class AuthRepository {
     return SignModel.fromJson(responseData.data);
   }
 
-  // /// **로그아웃 API 호출**
-  // Future<void> logout() async {
-  //   await apiClient.request(DioMethod.post, url: "/auth/logout");
-  // }
+  Future<UserRoleModel> getRole() async {
+    final responseData = await authService.getRole();
+    return UserRoleModel.fromJson(responseData.data['data']);
+  }
+
+// /// **로그아웃 API 호출**
+// Future<void> logout() async {
+//   await apiClient.request(DioMethod.post, url: "/auth/logout");
+// }
 }

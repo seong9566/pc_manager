@@ -37,6 +37,14 @@ class AuthService {
     return response; // 원본 API 응답 데이터 반환
   }
 
+  Future<Response> getRole() async {
+    final response = await apiClient.request(
+      DioMethod.get,
+      url: ApiEndPoints.getUserRole,
+    );
+    return response;
+  }
+
   /// ** Logout **
   // Future<void> logout() async {
   //   await apiClient.request(

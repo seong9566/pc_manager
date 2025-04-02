@@ -23,6 +23,7 @@ class _AnalyticsHeaderState extends State<AnalyticsHeader> {
           child: SearchTextField(
             hintText: 'PC방 이름으로 검색',
             controller: _controller,
+            onComplete: () {},
           ),
         ),
         CustomDropdown(),

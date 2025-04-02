@@ -1,19 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ip_manager/core/config/app_colors.dart';
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
 import 'package:ip_manager/model/management_model.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
 
-const double nameWidth = 150;
-const double addressWidth = 180;
+const double nameWidth = 180;
+const double addressWidth = 200;
 const double ipWidth = 160;
 const double portWidth = 80;
-const double seatWidth = 80;
+const double seatWidth = 100;
 const double priceWidth = 120;
-const double specificationWidth = 180;
+const double specificationWidth = 200;
 const double agencyWidth = 100;
-const double memoWidth = 160;
+const double memoWidth = 200;
 const double actionWidth = 100;
+
+const double totalWidth =
+    nameWidth +
+    addressWidth +
+    ipWidth +
+    portWidth +
+    seatWidth +
+    priceWidth +
+    specificationWidth +
+    agencyWidth +
+    memoWidth +
+    actionWidth;
 
 class ManagementBody extends ConsumerStatefulWidget {
   const ManagementBody({super.key});
@@ -28,7 +41,6 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
     final state = ref.watch(managementViewModelProvider);
     return state.when(
       data: (management) {
-        debugPrint("[Flutter] >> management : ${management}");
         return Expanded(child: _body(management));
       },
       error: (error, stack) => Center(child: Text('새로 고침 해주세요.')),
@@ -56,7 +68,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// 📌 Title & Button
+          ///  Title & Button
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -94,15 +106,16 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
           ),
           SizedBox(height: 16),
 
-          /// 📌 가로 스크롤 적용
+          /// 가로 스크롤 적용
           Expanded(
             child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: IntrinsicWidth(
+              scrollDirection: Axis.vertical,
+              child: SizedBox(
+                width: totalWidth,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /// 📌 테이블 헤더
+                    ///  테이블 헤더
                     Row(
                       children: [
                         _bodyTitleText('이름', nameWidth),
@@ -120,44 +133,23 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                     SizedBox(height: 8),
                     Divider(height: 1, color: Colors.black),
 
-                    /// 📌 세로 스크롤 추가
-                    Expanded(
-                      child: SingleChildScrollView(
+                    ///  세로 스크롤 추가
+                    SingleChildScrollView(
+                      child: ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
                         scrollDirection: Axis.vertical,
-                        child: Column(
-                          children: List.generate(20, (index) {
-                            return Column(
-                              children: [
-                                SizedBox(height: 12),
-                                Row(
-                                  children: [
-                                    _bodyContentText('옐로우 피씨방', nameWidth),
-                                    _bodyContentText(
-                                      '서울시 관악구 조원동',
-                                      addressWidth,
-                                    ),
-                                    _bodyContentText(
-                                      '255.255.255.255',
-                                      ipWidth,
-                                    ),
-                                    _bodyContentText('8080', portWidth),
-                                    _bodyContentText('128', seatWidth),
-                                    _bodyContentText('9,000', priceWidth),
-                                    _bodyContentText(
-                                      'RTX4070 Ti',
-                                      specificationWidth,
-                                    ),
-                                    _bodyContentText('SKT', agencyWidth),
-                                    _bodyContentText('메모 예시 작성', memoWidth),
-                                    _bodyContentButtons(),
-                                  ],
-                                ),
-                                SizedBox(height: 6),
-                                Divider(height: 1, color: Colors.grey),
-                              ],
-                            );
-                          }),
-                        ),
+                        shrinkWrap: true,
+                        itemCount: item.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
+                            children: [
+                              SizedBox(height: 6),
+                              _contentItem(item[index]),
+                              SizedBox(height: 6),
+                              Divider(height: 1, color: Colors.grey),
+                            ],
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -170,15 +162,33 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
     );
   }
 
-  /// 📌 액션 버튼
+  Widget _contentItem(ManagementModel item) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        _bodyContentText(item.name, nameWidth),
+        _bodyContentText(item.addr, addressWidth),
+        _bodyContentText(item.ip, ipWidth),
+        _bodyContentText(item.port.toString(), portWidth),
+        _bodyContentText(item.seatNumber.toString(), seatWidth),
+        _bodyContentText(item.price.toString(), priceWidth),
+        _bodyContentText(item.pcSpec, specificationWidth),
+        _bodyContentText(item.telecom, agencyWidth),
+        _bodyContentText(item.memo, memoWidth),
+        _bodyContentButtons(),
+      ],
+    );
+  }
+
+  ///  액션 버튼
   Widget _bodyContentButtons() {
     return Column(
       children: [
-        _contentBtn('수정', Colors.yellow.shade800),
+        _contentBtn('수정', AppColors.yellowColor),
         SizedBox(height: 4),
-        _contentBtn('삭제', Colors.redAccent),
+        _contentBtn('삭제', AppColors.redColor),
         SizedBox(height: 4),
-        _contentBtn('분석', Colors.purpleAccent),
+        _contentBtn('분석', AppColors.purpleColor),
       ],
     );
   }
@@ -201,7 +211,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
     );
   }
 
-  /// 📌 본문 텍스트
+  ///  본문 텍스트
   Widget _bodyContentText(String text, double width) {
     return SizedBox(
       width: width,
@@ -216,7 +226,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
     );
   }
 
-  /// 📌 헤더 텍스트
+  ///  헤더 텍스트
   Widget _bodyTitleText(String title, double width) {
     return SizedBox(
       width: width,

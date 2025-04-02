@@ -15,6 +15,11 @@ class Prefs {
   Future setToken(String token) =>
       PreferencesHelper().setString('token', token);
 
+  Future setUserRole(String role) =>
+      PreferencesHelper().setString('role', role);
+
+  Future<String> get getUserRole => PreferencesHelper().getString('role');
+
   Future<bool> get isAutoLogin => PreferencesHelper().getBool('autoLogin');
 
   Future setIsAutoLogin(bool isAutoLogin) =>

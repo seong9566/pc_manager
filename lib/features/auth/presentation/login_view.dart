@@ -113,6 +113,7 @@ class _LoginScreenState extends ConsumerState<LoginView>
           content: Text(message),
           actions: [
             TextButton(
+              /// TODO : Nativagor pop하면 실패 시 라우터 에러
               onPressed: () => Navigator.pop(context),
               child: Text("확인"),
             ),

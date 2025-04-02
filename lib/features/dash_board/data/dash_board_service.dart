@@ -14,9 +14,17 @@ class DashBoardService {
   DashBoardService(this.apiClient);
 
   Future<Response> getThisTimeDataList() async {
-    return await apiClient.request(
+    final data = await apiClient.request(
       DioMethod.get,
       url: ApiEndPoints.getThisTimeDataList,
+    );
+    return data;
+  }
+
+  Future<Response> getTopAnalyze() async {
+    return await apiClient.request(
+      DioMethod.get,
+      url: ApiEndPoints.getTopAnalyzeName,
     );
   }
 }

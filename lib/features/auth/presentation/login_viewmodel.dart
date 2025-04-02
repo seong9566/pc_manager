@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
+import 'package:ip_manager/core/database/prefs.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../domain/login_use_case.dart';
@@ -28,10 +30,22 @@ class LoginViewModel extends AsyncNotifier<bool> {
       if (user.data == null) {
         throw Exception('${user.message}');
       }
+      await getRole();
       state = AsyncValue.data(true);
     } catch (e, stackTrace) {
       final errorMessage = e.toString().split(': ').last;
       state = AsyncValue.error(errorMessage, stackTrace);
+    }
+  }
+
+  Future<void> getRole() async {
+    try {
+      final user = await _loginUseCase.getRole();
+      debugPrint("[Flutter] >> user : ${user.role}");
+      String role = user.role;
+      Prefs().setUserRole(role);
+    } catch (e) {
+      debugPrint("[Flutter] >> ViewModel GetRole $e");
     }
   }
 

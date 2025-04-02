@@ -20,9 +20,12 @@ class ApiClient implements RemoteDataSource {
     _dio = Dio(
       BaseOptions(
         baseUrl: ApiEndPoints().baseUrl,
-        connectTimeout: const Duration(seconds: 5),
-        receiveTimeout: const Duration(seconds: 5),
-        headers: {"Content-Type": "application/json"},
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10),
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
       ),
     );
     _dio.interceptors.add(interceptor);
@@ -64,14 +67,17 @@ class ApiClient implements RemoteDataSource {
   // }
 
   Future<Response> dioPost(String url, {required dynamic data}) async {
-    debugPrint("[Flutter] >> Dio Post \nUrl : $url, Data:$data");
+    debugPrint("[Flutter] >>  BaseUrl : ${_dio.options.baseUrl}");
+    debugPrint("[Flutter] >> Dio Post Url : $url, Data:$data");
     Response response = await _dio.post(url, data: data);
     return response;
   }
 
   Future<Response> dioGet(String url, {dynamic queryData}) async {
-    debugPrint("[Flutter] >> Dio Get \nUrl : $url, Data:$queryData");
+    debugPrint("[Flutter] >> Dio Get Url : $url, queryData :$queryData");
     Response response;
+
+    ///....
     if (queryData == null) {
       response = await _dio.get(url);
     } else {

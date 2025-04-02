@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
+import 'package:ip_manager/core/database/prefs.dart';
 import 'package:ip_manager/features/analytics/analytics_view.dart';
 import 'package:ip_manager/features/base/presentation/widget/side_menu.dart';
 import 'package:ip_manager/features/dash_board/presentation/dash_board_view.dart';
 import 'package:ip_manager/features/store_add/presentation/store_add_view.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
+import 'package:toastification/toastification.dart';
 
 import '../../management/presentation/management_view.dart';
 
@@ -29,6 +31,22 @@ class _BaseViewState extends ConsumerState<BaseView> {
       AnalyticsView(),
       StoreAddView(),
     ];
+    // 화면 렌더링 후 배너 띄우기
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      String role = await Prefs().getUserRole;
+      if (mounted) {
+        toastification.show(
+          context: context,
+          showIcon: false,
+          autoCloseDuration: Duration(milliseconds: 2000),
+          title: Text(
+            "$role님 어서오세요!",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          alignment: Alignment.topCenter,
+        );
+      }
+    });
     super.initState();
   }
 

@@ -13,11 +13,19 @@ class ManagementService {
 
   ManagementService(this.apiClient);
 
-  Future<Response> getStoreList() async {
+  Future<Response> getStoreList(String? pcName) async {
     return await apiClient.request(
       DioMethod.get,
       url: ApiEndPoints.getStoreList,
-      data: {"pagenumber": 1},
+      data: {'searchPcName': pcName},
+    );
+  }
+
+  Future<Response> searchStoreByName(String name) async {
+    return await apiClient.request(
+      DioMethod.get,
+      url: ApiEndPoints.getStoreSearchName,
+      data: {"search": name},
     );
   }
 }

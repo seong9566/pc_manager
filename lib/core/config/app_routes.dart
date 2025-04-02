@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ip_manager/features/base/presentation/base_view.dart';
-import 'package:ip_manager/features/tmp/tmp_view.dart';
 
 import '../../features/auth/presentation/login_view.dart';
 

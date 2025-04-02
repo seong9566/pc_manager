@@ -16,7 +16,11 @@ class ManagementUseCase {
 
   ManagementUseCase(this.managementRepository);
 
-  Future<List<ManagementModel>> getStoreList() async {
-    return await managementRepository.getStoreList();
+  Future<List<ManagementModel>> getStoreList(String? pcName) async {
+    return await managementRepository.getStoreList(pcName);
+  }
+
+  Future<List<ManagementModel>> searchStoreByName(String name) async {
+    return await managementRepository.searchStoreByName(name);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/model/dash_board_model.dart';
+import 'package:ip_manager/model/top_analyze_model.dart';
 
 import '../data/dash_board_repository_impl.dart';
 import '../data/dash_board_repository_interface.dart';
@@ -18,5 +19,9 @@ class DashBoardUseCase {
 
   Future<DashBoardModel> getThisTimeDataList() async {
     return await dashBoardRepository.getThisTimeDataList();
+  }
+
+  Future<TopAnalyzeModel> getTopAnalyze() async {
+    return await dashBoardRepository.getTopAnalyze();
   }
 }
