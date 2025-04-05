@@ -42,7 +42,7 @@ class DashBoardViewModel extends StateNotifier<DashBoardState> {
     await getTopAnalyze();
 
     /// 데이터 한번에 요청 하면 DB 에서 트랜잭션 이유 때문인지.. 데이터를 넘겨주지 않음
-    await Future.delayed(Duration(milliseconds: 1000));
+    await Future.delayed(Duration(milliseconds: 1500));
     await getDashBoardData();
   }
 

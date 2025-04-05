@@ -79,6 +79,8 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                   color: Colors.black,
                 ),
               ),
+              // Text("선택된 옵션 : 서울시 관악구 조원로"),
+              // Text("총 매장 수 : 2개"),
               GestureDetector(
                 onTap: () {
                   setState(() {
