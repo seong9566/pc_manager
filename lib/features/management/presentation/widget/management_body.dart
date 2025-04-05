@@ -16,8 +16,7 @@ const double agencyWidth = 100;
 const double memoWidth = 200;
 const double actionWidth = 100;
 
-const double totalWidth =
-    nameWidth +
+const double totalWidth = nameWidth +
     addressWidth +
     ipWidth +
     portWidth +
@@ -89,7 +88,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.purpleAccent.shade400,
+                    color: AppColors.purpleColor,
                     borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
                   child: Text(
@@ -109,35 +108,35 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
           /// 가로 스크롤 적용
           Expanded(
             child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
+              scrollDirection: Axis.horizontal,
               child: SizedBox(
                 width: totalWidth,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ///  테이블 헤더
-                    Row(
-                      children: [
-                        _bodyTitleText('이름', nameWidth),
-                        _bodyTitleText('주소', addressWidth),
-                        _bodyTitleText('IP', ipWidth),
-                        _bodyTitleText('포트', portWidth),
-                        _bodyTitleText('좌석수', seatWidth),
-                        _bodyTitleText('요금제 가격', priceWidth),
-                        _bodyTitleText('PC 사양', specificationWidth),
-                        _bodyTitleText('통신사', agencyWidth),
-                        _bodyTitleText('메모', memoWidth),
-                        _bodyTitleText('액션', actionWidth),
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                    Divider(height: 1, color: Colors.black),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ///  테이블 헤더
+                      Row(
+                        children: [
+                          _bodyTitleText('이름', nameWidth),
+                          _bodyTitleText('주소', addressWidth),
+                          _bodyTitleText('IP', ipWidth),
+                          _bodyTitleText('포트', portWidth),
+                          _bodyTitleText('좌석수', seatWidth),
+                          _bodyTitleText('요금제 가격', priceWidth),
+                          _bodyTitleText('PC 사양', specificationWidth),
+                          _bodyTitleText('통신사', agencyWidth),
+                          _bodyTitleText('메모', memoWidth),
+                          _bodyTitleText('액션', actionWidth),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Divider(height: 1, color: Colors.black),
 
-                    ///  세로 스크롤 추가
-                    SingleChildScrollView(
-                      child: ListView.builder(
+                      ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
-                        scrollDirection: Axis.vertical,
+                        // scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         itemCount: item.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -151,8 +150,8 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                           );
                         },
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

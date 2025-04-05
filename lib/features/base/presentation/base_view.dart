@@ -5,7 +5,7 @@ import 'package:ip_manager/core/database/prefs.dart';
 import 'package:ip_manager/features/analytics/analytics_view.dart';
 import 'package:ip_manager/features/base/presentation/widget/side_menu.dart';
 import 'package:ip_manager/features/dash_board/presentation/dash_board_view.dart';
-import 'package:ip_manager/features/store_add/presentation/store_add_view.dart';
+import 'package:ip_manager/features/management/presentation/store_add_view.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
 import 'package:toastification/toastification.dart';
 
@@ -22,6 +22,7 @@ class _BaseViewState extends ConsumerState<BaseView> {
   List<Widget> pages = [];
 
   bool mobileSideMenu = false;
+  bool sideMenuOn = true;
 
   @override
   void initState() {
@@ -48,6 +49,12 @@ class _BaseViewState extends ConsumerState<BaseView> {
       }
     });
     super.initState();
+  }
+
+  void sideMenuTouch() {
+    setState(() {
+      sideMenuOn = !sideMenuOn;
+    });
   }
 
   void _onItemTapped(int index) {
@@ -77,7 +84,7 @@ class _BaseViewState extends ConsumerState<BaseView> {
             child: Row(
               children: [
                 /// Body
-                if (Responsive.isDesktop(context))
+                if (Responsive.isDesktop(context) && sideMenuOn)
                   Expanded(
                     // 2/9 = 0.22 , 22%의 공간을 차지.
                     flex: 2, // 전체 공간의 2

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
@@ -22,10 +23,9 @@ class _SideMenuState extends ConsumerState<SideMenu> {
           children: [
             Expanded(
               child: SingleChildScrollView(
-                padding:
-                    Responsive.isDesktop(context)
-                        ? EdgeInsets.only(top: 20, left: 24, right: 80)
-                        : EdgeInsets.only(top: 10, left: 10, right: 10),
+                padding: Responsive.isDesktop(context)
+                    ? EdgeInsets.only(top: 20, left: 24, right: 80)
+                    : EdgeInsets.only(top: 10, left: 10, right: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -55,10 +55,9 @@ class _SideMenuState extends ConsumerState<SideMenu> {
         width: double.infinity,
         height: 40,
         decoration: BoxDecoration(
-          color:
-              isSelected
-                  ? Colors.blueAccent.shade100
-                  : Colors.white, // 선택된 항목만 파란색
+          color: isSelected
+              ? Colors.blueAccent.shade100
+              : Colors.white, // 선택된 항목만 파란색
           borderRadius: BorderRadius.circular(8),
         ),
         child: Padding(

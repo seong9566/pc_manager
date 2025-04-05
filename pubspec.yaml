@@ -36,6 +36,8 @@ dependencies:
 
   # util
   go_router: ^14.8.1
+  kpostal: ^1.1.0
+  kpostal_web: ^0.0.5
 
 dev_dependencies:
   flutter_test:

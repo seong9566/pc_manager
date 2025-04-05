@@ -17,6 +17,7 @@ class ManagementModel {
       int cityTbId { get; set; }
       int townTbId { get; set; }
    */
+
   final int pId;
   final String ip;
   final int port;

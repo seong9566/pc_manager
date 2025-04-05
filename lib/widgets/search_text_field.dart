@@ -22,7 +22,9 @@ class SearchTextField extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
-        onEditingComplete: onComplete(),
+        onEditingComplete: () {
+          onComplete();
+        },
         decoration: InputDecoration(
           suffixIcon: Padding(
             padding: const EdgeInsets.only(right: 28),

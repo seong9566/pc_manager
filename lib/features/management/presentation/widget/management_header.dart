@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
 import 'package:ip_manager/widgets/search_text_field.dart';
 
 class ManagementHeader extends ConsumerStatefulWidget {
@@ -23,7 +24,12 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
           child: SearchTextField(
             hintText: 'PC방 이름으로 검색',
             controller: _controller,
-            onComplete: () {},
+            onComplete: () {
+              debugPrint("[Flutter] >> 피씨방 이름으로 검색 실행");
+              ref
+                  .read(managementViewModelProvider.notifier)
+                  .getStoreList(pcName: _controller.text.trim());
+            },
           ),
         ),
         DropdownButtonHideUnderline(

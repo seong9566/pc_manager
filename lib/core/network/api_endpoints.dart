@@ -5,7 +5,6 @@ class ApiEndPoints {
   final baseUrl = "http://210.98.189.99:7777/api/";
 
   // http://172.20.10.6:7777/api/Login/v1/test
-  // static const addUser = "/Login/v1/test";
   static const addUser = "Login/v1/AddUser";
   static const checkUserId = "Login/v1/CheckUserId";
   static const login = "Login/v1/Login";
@@ -24,4 +23,5 @@ class ApiEndPoints {
   ///Management
   static const getStoreList = "Store/sign/v1/GetStoreList";
   static const getStoreSearchName = "Store/sign/v1/GetStoreSearchName";
+  static const addStore = "Store/sign/v1/AddStore";
 }

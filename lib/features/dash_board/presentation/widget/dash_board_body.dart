@@ -13,6 +13,10 @@ const double portWidth = 100;
 const double rateWidth = 200;
 
 const List<double> analyzeResultWidthList = [nameWidth, rateWidth];
+const double analyzingTotalWidth =
+    nameWidth + addressWidth + ipWidth + portWidth;
+const double analyzeResultWidth =
+    nameWidth + addressWidth + ipWidth + portWidth + rateWidth;
 const List<double> analyzingWidthList = [
   nameWidth,
   addressWidth,
@@ -157,52 +161,63 @@ class _DashBoardBodyState extends ConsumerState<DashBoardBody> {
               shrinkWrap: true,
               itemCount: data.length,
               itemBuilder: (context, index) {
-                return Row(
+                return Column(
                   children: [
-                    SizedBox(
-                      width: analyzingWidthList[0],
-                      child: Text(
-                        data[index].name,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.grey,
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: analyzingWidthList[0],
+                            child: Text(
+                              data[index].name,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: analyzingWidthList[1],
+                            child: Text(
+                              data[index].addr,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: analyzingWidthList[2],
+                            child: Text(
+                              data[index].ip,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: analyzingWidthList[3],
+                            child: Text(
+                              data[index].port.toString(),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(
-                      width: analyzingWidthList[1],
-                      child: Text(
-                        data[index].addr,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: analyzingWidthList[2],
-                      child: Text(
-                        data[index].ip,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: analyzingWidthList[3],
-                      child: Text(
-                        data[index].port.toString(),
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
+                    Divider(
+                      height: 1,
+                      color: Colors.grey.shade400,
+                    )
                   ],
                 );
               },
@@ -284,30 +299,41 @@ class _DashBoardBodyState extends ConsumerState<DashBoardBody> {
               shrinkWrap: true,
               itemCount: data.length,
               itemBuilder: (context, index) {
-                return Row(
+                return Column(
                   children: [
-                    SizedBox(
-                      width: analyzeResultWidthList[0],
-                      child: Text(
-                        data[index].pcRoomName,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.grey,
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: analyzeResultWidthList[0],
+                            child: Text(
+                              data[index].pcRoomName,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: analyzeResultWidthList[1],
+                            child: Text(
+                              data[index].returnRate,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(
-                      width: analyzeResultWidthList[1],
-                      child: Text(
-                        data[index].returnRate,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
+                    Divider(
+                      height: 1,
+                      color: Colors.grey.shade400,
+                    )
                   ],
                 );
               },

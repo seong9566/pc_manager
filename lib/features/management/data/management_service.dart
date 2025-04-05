@@ -28,4 +28,12 @@ class ManagementService {
       data: {"search": name},
     );
   }
+
+  Future<Response> addStore({required Map<String, Object> data}) async {
+    return await apiClient.request(
+      DioMethod.post,
+      url: ApiEndPoints.addStore,
+      data: data,
+    );
+  }
 }
