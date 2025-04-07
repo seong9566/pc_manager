@@ -44,6 +44,15 @@ class ManagementRepositoryImpl implements IManagementRepository {
   }
 
   @override
+  Future<ResponseModel> deleteStore({required int pId}) async {
+    final data = {"pId": pId};
+    final response = await managementService.deleteStore(data: data);
+    debugPrint("[Flutter] >> response : $response");
+    final result = ResponseModel.fromJson(response.data);
+    return result;
+  }
+
+  @override
   Future<ResponseModel> addStore(
       {required String ip,
       required int port,

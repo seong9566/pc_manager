@@ -30,6 +30,10 @@ class ManagementUseCase {
     return await managementRepository.searchStoreByName(name);
   }
 
+  Future<ResponseModel?> deleteStore({required int pId}) async {
+    return await managementRepository.deleteStore(pId: pId);
+  }
+
   Future<ResponseModel?> addStore({
     required String ip,
     required int port,

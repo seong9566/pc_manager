@@ -21,4 +21,6 @@ abstract class IManagementRepository {
     String? telecom,
     String? memo,
   });
+
+  Future<ResponseModel> deleteStore({required int pId});
 }

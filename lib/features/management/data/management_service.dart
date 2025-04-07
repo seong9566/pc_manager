@@ -36,4 +36,12 @@ class ManagementService {
       data: data,
     );
   }
+
+  Future<Response> deleteStore({required Map<String, Object> data}) async {
+    return await apiClient.request(
+      DioMethod.put,
+      url: ApiEndPoints.deleteStore,
+      data: data,
+    );
+  }
 }

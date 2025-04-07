@@ -24,4 +24,5 @@ class ApiEndPoints {
   static const getStoreList = "Store/sign/v1/GetStoreList";
   static const getStoreSearchName = "Store/sign/v1/GetStoreSearchName";
   static const addStore = "Store/sign/v1/AddStore";
+  static const deleteStore = "Store/sign/v1/DeleteStore";
 }

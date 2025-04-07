@@ -34,7 +34,7 @@ class DashBoardBody extends ConsumerWidget {
           child: _buildScrollableTable(
             title: '최근 분석결과',
             headers: ['매장 이름', '가동률'],
-            columnWidths: const [180.0, 200.0, 100.0],
+            columnWidths: const [180.0, 200.0, 100.0, 160.0, 250.0, 48],
             rows: state.data.datas
                 .map((e) => [e.pcRoomName, e.returnRate])
                 .toList(),
@@ -70,53 +70,50 @@ class DashBoardBody extends ConsumerWidget {
             const SizedBox(height: 16),
             SizedBox(
               width: totalWidth + 24,
-              height: 350,
-              child: Scrollbar(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: SizedBox(
-                    width: totalWidth,
-                    child: ListView.builder(
-                      itemCount: rows.length + 1,
-                      itemBuilder: (context, index) {
-                        final isHeader = index == 0;
-                        final cells = isHeader ? headers : rows[index - 1];
-                        return Column(
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: Row(
-                                children: List.generate(cells.length, (i) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 12.0),
-                                    child: SizedBox(
-                                      width: columnWidths[i],
-                                      child: Text(
-                                        cells[i],
-                                        style: TextStyle(
-                                          fontSize: isHeader ? 18 : 14,
-                                          fontWeight: isHeader
-                                              ? FontWeight.bold
-                                              : FontWeight.normal,
-                                          color: isHeader
-                                              ? Colors.black
-                                              : Colors.grey[700],
-                                        ),
+              height: 500,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SizedBox(
+                  width: totalWidth,
+                  child: ListView.builder(
+                    itemCount: rows.length + 1,
+                    itemBuilder: (context, index) {
+                      final isHeader = index == 0;
+                      final cells = isHeader ? headers : rows[index - 1];
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Row(
+                              children: List.generate(cells.length, (i) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 12.0),
+                                  child: SizedBox(
+                                    width: columnWidths[i],
+                                    child: Text(
+                                      cells[i],
+                                      style: TextStyle(
+                                        fontSize: isHeader ? 18 : 14,
+                                        fontWeight: isHeader
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                        color: isHeader
+                                            ? Colors.black
+                                            : Colors.grey[700],
                                       ),
                                     ),
-                                  );
-                                }),
-                              ),
+                                  ),
+                                );
+                              }),
                             ),
-                            Divider(
-                              height: 1,
-                              color: Colors.grey,
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                          ),
+                          Divider(
+                            height: 1,
+                            color: Colors.grey,
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ),
               ),

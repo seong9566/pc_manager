@@ -50,6 +50,20 @@ class ManagementViewModel
     }
   }
 
+  Future<ResponseModel?> deleteStore({required int pId}) async {
+    final result = await managementUseCase.deleteStore(pId: pId);
+    final previous = state;
+    state =
+        AsyncValue.data([...state.value!..removeWhere((e) => e.pId == pId)]);
+
+    if (result!.code != 200) {
+      debugPrint("[Flutter] >> Store Delete Failed Server Error!");
+      state = previous; // 실패 시 롤백
+      return null;
+    }
+    return result;
+  }
+
   Future<ResponseModel?> addStore({
     required String ip,
     required int port,
@@ -81,11 +95,8 @@ class ManagementViewModel
         memo: memo);
     if (result!.code != 200) {
       debugPrint("[Flutter] >> Store Add Failed Server Error!");
+      return null;
     }
-
-    debugPrint("[Flutter] >> result : ${result!.data}");
-    debugPrint("[Flutter] >> result : ${result.message}");
-    debugPrint("[Flutter] >> result : ${result.code}");
     return result;
   }
 }

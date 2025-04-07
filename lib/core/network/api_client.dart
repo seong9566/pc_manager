@@ -67,7 +67,6 @@ class ApiClient implements RemoteDataSource {
   // }
 
   Future<Response> dioPost(String url, {required dynamic data}) async {
-    debugPrint("[Flutter] >>  BaseUrl : ${_dio.options.baseUrl}");
     debugPrint("[Flutter] >> Dio Post Url : $url, Data:$data");
     Response response = await _dio.post(url, data: data);
     return response;
@@ -77,7 +76,6 @@ class ApiClient implements RemoteDataSource {
     debugPrint("[Flutter] >> Dio Get Url : $url, queryData :$queryData");
     Response response;
 
-    ///....
     if (queryData == null) {
       response = await _dio.get(url);
     } else {

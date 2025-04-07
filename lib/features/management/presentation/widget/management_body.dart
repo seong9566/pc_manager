@@ -35,6 +35,12 @@ class ManagementBody extends ConsumerStatefulWidget {
 }
 
 class _ManagementBodyState extends ConsumerState<ManagementBody> {
+  void deleteStore({required int pId}) {
+    debugPrint("[Flutter] >>  삭제 클릭");
+    debugPrint("[Flutter] >> item Id : $pId");
+    ref.read(managementViewModelProvider.notifier).deleteStore(pId: pId);
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(managementViewModelProvider);
@@ -176,37 +182,48 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
         _bodyContentText(item.pcSpec, specificationWidth),
         _bodyContentText(item.telecom, agencyWidth),
         _bodyContentText(item.memo, memoWidth),
-        _bodyContentButtons(),
+        _bodyContentButtons(item),
       ],
     );
   }
 
   ///  액션 버튼
-  Widget _bodyContentButtons() {
+  Widget _bodyContentButtons(ManagementModel item) {
     return Column(
       children: [
-        _contentBtn('수정', AppColors.yellowColor),
+        _contentBtn('수정', AppColors.yellowColor, () {
+          debugPrint("[Flutter] >>  수정 클릭");
+        }),
         SizedBox(height: 4),
-        _contentBtn('삭제', AppColors.redColor),
+        _contentBtn('삭제', AppColors.redColor, () {
+          deleteStore(pId: item.pId);
+        }),
         SizedBox(height: 4),
-        _contentBtn('분석', AppColors.purpleColor),
+        _contentBtn('분석', AppColors.purpleColor, () {
+          debugPrint("[Flutter] >>  분석 클릭");
+        }),
       ],
     );
   }
 
-  Widget _contentBtn(String text, Color color) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
+  Widget _contentBtn(String text, Color color, Function onTap) {
+    return GestureDetector(
+      onTap: () {
+        onTap();
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ),
     );
