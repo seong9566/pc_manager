@@ -6,6 +6,10 @@ import 'package:ip_manager/core/network/remote_data_source.dart';
 import 'package:riverpod/riverpod.dart';
 
 /// **API 클라이언트 Provider**
+/// Dio 요청시 병렬 처리가 안되는 문제
+/// 문제 : Dio 요청시 Options를 공유 해서이다.
+/// Flutter Web 특성상 공유를 하게 되면 요청이 누락되거나, 늦어지는 경우가 종종 있다.
+/// Delay를 주는 방법 + 각 요청 마다 Option을 정의 해서 요청시 공유 하지 않도록 하는게 바람직하다.
 final apiClientProvider = Provider<ApiClient>((ref) {
   final interceptor = ref.read(apiInterceptorProvider);
   return ApiClient(interceptor);
@@ -19,6 +23,8 @@ class ApiClient implements RemoteDataSource {
   ApiClient(ApiInterceptors interceptor) {
     _dio = Dio(
       BaseOptions(
+        /// 모든 에러 코드를 허용, 직접 컨트롤 하기 위함
+        validateStatus: (status) => true,
         baseUrl: ApiEndPoints().baseUrl,
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
@@ -54,7 +60,7 @@ class ApiClient implements RemoteDataSource {
           res = await dioDelete(url, data: data);
           break;
       }
-      return res;
+      return res!;
     } catch (error) {
       rethrow;
     }
@@ -66,38 +72,103 @@ class ApiClient implements RemoteDataSource {
   //   debugPrint(" Authorization Token Set: Bearer $_accessToken");
   // }
 
-  Future<Response> dioPost(String url, {required dynamic data}) async {
-    debugPrint("[Flutter] >> Dio Post Url : $url, Data:$data");
-    Response response = await _dio.post(url, data: data);
-    return response;
-  }
-
-  Future<Response> dioGet(String url, {dynamic queryData}) async {
-    debugPrint("[Flutter] >> Dio Get Url : $url, queryData :$queryData");
-    Response response;
-
-    if (queryData == null) {
-      response = await _dio.get(url);
-    } else {
-      response = await _dio.get(url, queryParameters: queryData);
+  Future<Response?> dioGet(String url, {dynamic queryData}) async {
+    try {
+      debugPrint("[Flutter] >> Dio Get Url : $url, queryData :$queryData");
+      return await _dio.get(
+        url,
+        queryParameters: queryData,
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        ),
+      );
+    } on DioException catch (e) {
+      throw {
+        "header": e.requestOptions.headers["authorization"],
+        "method": "GET",
+        "statusCode": e.response?.statusCode,
+        "message": e.response?.data ?? "",
+        "url": url,
+        "error": e.error,
+      };
     }
-    return response;
   }
 
-  Future<Response> dioPut(String url, {required dynamic data}) async {
-    debugPrint("[Flutter] >> Dio Put\nUrl : $url, Data:$data");
-    Response response = await _dio.put(url, data: data);
-    return response;
-  }
-
-  Future<Response> dioDelete(String url, {dynamic data}) async {
-    debugPrint("[Flutter] >> Dio Delete\nUrl : $url, Data:$data");
-    Response response;
-    if (data == null) {
-      response = await _dio.delete(url);
-    } else {
-      response = await _dio.delete(url, data: data);
+  Future<Response?> dioPost(String url, {required dynamic data}) async {
+    try {
+      debugPrint("[Flutter] >> Dio Post Url : $url, Data:$data");
+      return await _dio.post(
+        url,
+        data: data,
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        ),
+      );
+    } on DioException catch (e) {
+      throw {
+        "header": e.requestOptions.headers["authorization"],
+        "method": "POST",
+        "statusCode": e.response?.statusCode,
+        "message": e.response?.data ?? "",
+        "url": url,
+        "error": e.error,
+      };
     }
-    return response;
+  }
+
+  Future<Response?> dioPut(String url, {required dynamic data}) async {
+    try {
+      debugPrint("[Flutter] >> Dio Put Url : $url, Data:$data");
+      return await _dio.put(
+        url,
+        data: data,
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        ),
+      );
+    } on DioException catch (e) {
+      throw {
+        "header": e.requestOptions.headers["authorization"],
+        "method": "PUT",
+        "statusCode": e.response?.statusCode,
+        "message": e.response?.data ?? "",
+        "url": url,
+        "error": e.error,
+      };
+    }
+  }
+
+  Future<Response?> dioDelete(String url, {dynamic data}) async {
+    try {
+      debugPrint("[Flutter] >> Dio Delete Url : $url, Data:$data");
+      return await _dio.delete(
+        url,
+        data: data,
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        ),
+      );
+    } on DioException catch (e) {
+      throw {
+        "header": e.requestOptions.headers["authorization"],
+        "method": "DELETE",
+        "statusCode": e.response?.statusCode,
+        "message": e.response?.data ?? "",
+        "url": url,
+        "error": e.error,
+      };
+    }
   }
 }

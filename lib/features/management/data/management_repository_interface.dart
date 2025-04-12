@@ -1,12 +1,13 @@
 import 'package:ip_manager/model/management_model.dart';
 import 'package:ip_manager/model/response_model.dart';
+import '../../../model/ping_model.dart';
 
 abstract class IManagementRepository {
   Future<List<ManagementModel>> getStoreList(String? pcName);
 
   Future<List<ManagementModel>> searchStoreByName(String name);
 
-  Future<ResponseModel> addStore({
+  Future<ResponseModel<void>> addStore({
     required String ip,
     required int port,
     required String name,
@@ -22,5 +23,20 @@ abstract class IManagementRepository {
     String? memo,
   });
 
-  Future<ResponseModel> deleteStore({required int pId});
+  Future<ResponseModel<void>> updateStore({
+    required int pId,
+    required String ip,
+    required int port,
+    required String name,
+    required int seatNumber,
+    required double price,
+    required double pricePercent,
+    required String pcSpec,
+    required String telecom,
+    required String memo,
+  });
+
+  Future<ResponseModel<void>> deleteStore({required int pId});
+
+  Future<ResponseModel<PingModel>> sendIpPing({required int pId});
 }

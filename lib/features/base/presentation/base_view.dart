@@ -9,6 +9,7 @@ import 'package:ip_manager/features/management/presentation/store_add_view.dart'
 import 'package:ip_manager/provider/base_view_index_provider.dart';
 import 'package:toastification/toastification.dart';
 
+import '../../../model/management_model.dart';
 import '../../management/presentation/management_view.dart';
 
 class BaseView extends ConsumerStatefulWidget {
@@ -59,6 +60,7 @@ class _BaseViewState extends ConsumerState<BaseView> {
 
   void _onItemTapped(int index) {
     setState(() {
+      ref.read(selectedStoreProvider.notifier).state = ManagementModel.empty();
       ref.read(baseViewIndexProvider.notifier).state = index;
     });
   }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
-import 'package:ip_manager/model/dash_board_model.dart';
-import 'package:ip_manager/model/management_model.dart';
+
 import '../dash_board_viewmodel.dart';
 
 class DashBoardBody extends ConsumerWidget {
@@ -26,7 +25,7 @@ class DashBoardBody extends ConsumerWidget {
             headers: ['이름', '주소', 'IP', '포트'],
             columnWidths: const [160.0, 250.0, 200.0, 100.0, 48],
             rows: storeState
-                .map((e) => [e.name, e.addr, e.ip, e.port.toString()])
+                .map((e) => [e.name!, e.addr!, e.ip!, e.port.toString()])
                 .toList(),
           ),
         ),
@@ -70,7 +69,7 @@ class DashBoardBody extends ConsumerWidget {
             const SizedBox(height: 16),
             SizedBox(
               width: totalWidth + 24,
-              height: 500,
+              height: 460,
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(

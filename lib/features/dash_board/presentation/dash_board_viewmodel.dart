@@ -62,7 +62,7 @@ class DashBoardViewModel extends StateNotifier<DashBoardState> {
       final result = await dashBoardUseCase.getTopAnalyze();
       state = state.copyWith(topAnalyzeModel: result);
     } catch (e) {
-      debugPrint("[Flutter] >>  GetTopAnalyze error : $e");
+      debugPrint("[Flutter] >> GetTopAnalyze error : $e");
     }
   }
 }

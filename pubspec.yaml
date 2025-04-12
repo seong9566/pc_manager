@@ -30,6 +30,7 @@ dependencies:
   toastification: ^2.3.0
   dropdown_button2: ^2.3.9
   flutter_expandable_table: ^2.1.0
+  shimmer: ^3.0.0
 
   # db
   shared_preferences: ^2.5.2

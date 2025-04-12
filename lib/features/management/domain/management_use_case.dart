@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/model/management_model.dart';
 
+import '../../../model/ping_model.dart';
 import '../../../model/response_model.dart';
 import '../data/management_repository_impl.dart';
 import '../data/management_repository_interface.dart';
@@ -17,7 +18,6 @@ final managementUseCaseProvider = Provider<ManagementUseCase>((ref) {
 });
 
 class ManagementUseCase {
-  /// Provider의 의존성 주입으로 인해 Interface를 생성해도 구현체가 동작하게 됌.
   final IManagementRepository managementRepository;
 
   ManagementUseCase(this.managementRepository);
@@ -30,11 +30,15 @@ class ManagementUseCase {
     return await managementRepository.searchStoreByName(name);
   }
 
-  Future<ResponseModel?> deleteStore({required int pId}) async {
+  Future<ResponseModel<PingModel>> sendIpPing({required int pId}) async {
+    return await managementRepository.sendIpPing(pId: pId);
+  }
+
+  Future<ResponseModel<void>> deleteStore({required int pId}) async {
     return await managementRepository.deleteStore(pId: pId);
   }
 
-  Future<ResponseModel?> addStore({
+  Future<ResponseModel<void>> addStore({
     required String ip,
     required int port,
     required String name,
@@ -49,25 +53,46 @@ class ManagementUseCase {
     String? telecom,
     String? memo,
   }) async {
-    try {
-      final result = await managementRepository.addStore(
-          ip: ip,
-          port: port,
-          name: name,
-          addr: addr,
-          seatNumber: seatNumber,
-          price: price,
-          pricePercent: pricePercent,
-          countryName: countryName,
-          cityName: cityName,
-          townName: townName,
-          pcSpec: pcSpec,
-          telecom: telecom,
-          memo: memo);
-      return result;
-    } catch (e) {
-      debugPrint("[Flutter] >> Add Store Error : $e");
-      return null;
-    }
+    return await managementRepository.addStore(
+      ip: ip,
+      port: port,
+      name: name,
+      addr: addr,
+      seatNumber: seatNumber,
+      price: price,
+      pricePercent: pricePercent,
+      countryName: countryName,
+      cityName: cityName,
+      townName: townName,
+      pcSpec: pcSpec,
+      telecom: telecom,
+      memo: memo,
+    );
+  }
+
+  Future<ResponseModel<void>> updateStore({
+    required int pId,
+    required String ip,
+    required int port,
+    required String name,
+    required int seatNumber,
+    required double price,
+    required double pricePercent,
+    required String pcSpec,
+    required String telecom,
+    required String memo,
+  }) async {
+    return await managementRepository.updateStore(
+      pId: pId,
+      ip: ip,
+      port: port,
+      name: name,
+      seatNumber: seatNumber,
+      price: price,
+      pricePercent: pricePercent,
+      pcSpec: pcSpec,
+      telecom: telecom,
+      memo: memo,
+    );
   }
 }

@@ -4,6 +4,9 @@ import 'package:ip_manager/core/config/app_colors.dart';
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
 import 'package:ip_manager/model/management_model.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
+import 'package:shimmer/shimmer.dart';
+
+import '../../../../model/ping_model.dart';
 
 const double nameWidth = 180;
 const double addressWidth = 200;
@@ -35,12 +38,6 @@ class ManagementBody extends ConsumerStatefulWidget {
 }
 
 class _ManagementBodyState extends ConsumerState<ManagementBody> {
-  void deleteStore({required int pId}) {
-    debugPrint("[Flutter] >>  삭제 클릭");
-    debugPrint("[Flutter] >> item Id : $pId");
-    ref.read(managementViewModelProvider.notifier).deleteStore(pId: pId);
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(managementViewModelProvider);
@@ -52,6 +49,20 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
       loading: () {
         return Center(child: CircularProgressIndicator());
       },
+    );
+  }
+
+  /// TODO: 추후 로딩에 적용 하기
+  Widget skeletonLoader() {
+    return Shimmer.fromColors(
+      baseColor: Color.fromRGBO(240, 240, 240, 1),
+      highlightColor: Colors.white,
+      child: Container(
+        width: 300,
+        height: 200,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5), color: Colors.grey),
+      ),
     );
   }
 
@@ -173,15 +184,15 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        _bodyContentText(item.name, nameWidth),
-        _bodyContentText(item.addr, addressWidth),
-        _bodyContentText(item.ip, ipWidth),
+        _bodyContentText(item.name!, nameWidth),
+        _bodyContentText(item.addr!, addressWidth),
+        _bodyContentText(item.ip!, ipWidth),
         _bodyContentText(item.port.toString(), portWidth),
         _bodyContentText(item.seatNumber.toString(), seatWidth),
         _bodyContentText(item.price.toString(), priceWidth),
-        _bodyContentText(item.pcSpec, specificationWidth),
-        _bodyContentText(item.telecom, agencyWidth),
-        _bodyContentText(item.memo, memoWidth),
+        _bodyContentText(item.pcSpec!, specificationWidth),
+        _bodyContentText(item.telecom!, agencyWidth),
+        _bodyContentText(item.memo!, memoWidth),
         _bodyContentButtons(item),
       ],
     );
@@ -192,17 +203,115 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
     return Column(
       children: [
         _contentBtn('수정', AppColors.yellowColor, () {
-          debugPrint("[Flutter] >>  수정 클릭");
+          ref.read(selectedStoreProvider.notifier).state = item;
+          ref.read(baseViewIndexProvider.notifier).state = 3;
         }),
         SizedBox(height: 4),
         _contentBtn('삭제', AppColors.redColor, () {
-          deleteStore(pId: item.pId);
+          ref
+              .read(managementViewModelProvider.notifier)
+              .deleteStore(pId: item.pId!);
         }),
         SizedBox(height: 4),
-        _contentBtn('분석', AppColors.purpleColor, () {
+        _contentBtn('분석', AppColors.purpleColor, () async {
           debugPrint("[Flutter] >>  분석 클릭");
+          if (item.pId == null) {
+            debugPrint("[Flutter] >> pId is null");
+          }
+          // 로딩 다이얼로그 먼저 띄우기
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) {
+              return const Center(child: CircularProgressIndicator());
+            },
+          );
+
+          // 데이터 요청
+          final data = await ref
+              .read(managementViewModelProvider.notifier)
+              .sendIpPing(pId: item.pId!);
+          // 로딩 다이얼로그 닫기
+          if (context.mounted) {
+            Navigator.of(context).pop();
+          }
+
+          if (data == null) {
+            debugPrint("[Flutter] >> ping Data null");
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('PING 데이터를 불러오지 못했습니다')),
+            );
+            return;
+          }
+
+          // 결과 다이얼로그 띄우기
+          showPingDialog(context, item.name ?? '', data);
         }),
       ],
+    );
+  }
+
+  void showPingDialog(BuildContext context, String storeName, PingModel ping) {
+    String pingStatus = "${ping.used} / ${ping.unUsed + ping.used}";
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          backgroundColor: Colors.white,
+          child: SizedBox(
+            width: 300,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    storeName,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      const Text(
+                        '현재 활성 PING 수',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Container(
+                          height: 40,
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade300),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            pingStatus,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 

@@ -37,10 +37,26 @@ class ManagementService {
     );
   }
 
+  Future<Response> updateStore({required Map<String, Object> data}) async {
+    return await apiClient.request(
+      DioMethod.put,
+      url: ApiEndPoints.updateStore,
+      data: data,
+    );
+  }
+
   Future<Response> deleteStore({required Map<String, Object> data}) async {
     return await apiClient.request(
       DioMethod.put,
       url: ApiEndPoints.deleteStore,
+      data: data,
+    );
+  }
+
+  Future<Response> sendIpPing({required Map<String, Object> data}) async {
+    return await apiClient.request(
+      DioMethod.get,
+      url: ApiEndPoints.sendIpPing,
       data: data,
     );
   }

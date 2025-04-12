@@ -4,12 +4,14 @@ class CustomTextField extends StatelessWidget {
   final bool? isSubAddress;
   final String hintText;
   final TextEditingController controller;
+  final bool? isEdit;
 
   const CustomTextField({
     super.key,
     required this.hintText,
     required this.controller,
     this.isSubAddress = false,
+    this.isEdit = false,
   });
 
   @override
@@ -23,6 +25,11 @@ class CustomTextField extends StatelessWidget {
         ),
         child: TextField(
           controller: controller,
+          readOnly: isEdit!,
+          style: TextStyle(
+            color: isEdit! ? Colors.grey : Colors.black,
+            fontSize: 14,
+          ),
           decoration: InputDecoration(
             isDense: true,
             contentPadding: EdgeInsets.only(left: 12, top: 12),

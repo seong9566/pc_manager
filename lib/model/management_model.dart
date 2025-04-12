@@ -17,24 +17,21 @@ class ManagementModel {
       int cityTbId { get; set; }
       int townTbId { get; set; }
    */
-
-  final int pId;
-  final String ip;
-  final int port;
-  final String name;
-  final String addr;
-
-  /// flutter dart에서 float 타입이 없이 전부다 double라서 아마 이거 써도 될거에요 ㅇㅇ 더블로 ㄱㄱ
-  final int seatNumber;
-  final int price;
-  final double pricePercent;
-  final String pcSpec;
-  final String telecom;
-  final String memo;
-  final String region;
-  final int countryTbId;
-  final int cityTbId;
-  final int townTbId;
+  final int? pId;
+  final String? ip;
+  final int? port;
+  final String? name;
+  final String? addr;
+  final int? seatNumber;
+  final int? price;
+  final double? pricePercent;
+  final String? pcSpec;
+  final String? telecom;
+  final String? memo;
+  final String? region;
+  final int? countryTbId;
+  final int? cityTbId;
+  final int? townTbId;
 
   ManagementModel({
     required this.pId,
@@ -93,4 +90,27 @@ class ManagementModel {
       'townTbId': townTbId,
     };
   }
+
+  factory ManagementModel.empty() {
+    return ManagementModel(
+      pId: 0,
+      ip: null,
+      port: null,
+      name: '',
+      addr: '',
+      seatNumber: null,
+      price: null,
+      pricePercent: null,
+      pcSpec: '',
+      telecom: '',
+      memo: '',
+      region: '',
+      countryTbId: 0,
+      cityTbId: 0,
+      townTbId: 0,
+    );
+  }
+
+  /// pId는 서버에서 데이터를 만들 때 고유 값으로 부여 하기 때문에 0은 null값과 동일함.
+  bool get isEmpty => pId == 0;
 }

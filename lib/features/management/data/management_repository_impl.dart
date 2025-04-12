@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/features/management/data/management_repository_interface.dart';
 import 'package:ip_manager/model/management_model.dart';
 
+import '../../../model/ping_model.dart';
 import '../../../model/response_model.dart';
 import 'management_service.dart';
 
@@ -25,48 +28,46 @@ class ManagementRepositoryImpl implements IManagementRepository {
   @override
   Future<List<ManagementModel>> getStoreList(String? pcName) async {
     final response = await managementService.getStoreList(pcName);
-
-    /// rawList -> data 순서로 데이터 타입 일치 시켜주지 않을 시 JSArray<dynamic> 에러 발생
-    final List<dynamic> rawList = response.data['data'];
-    final List<ManagementModel> data =
-        rawList.map((item) => ManagementModel.fromJson(item)).toList();
-    return data;
+    final parsed = ResponseModel<List<dynamic>>.fromJson(
+      response.data,
+      (json) => json,
+    );
+    return parsed.data.map((e) => ManagementModel.fromJson(e)).toList();
   }
 
   @override
   Future<List<ManagementModel>> searchStoreByName(String name) async {
     final response = await managementService.searchStoreByName(name);
-
-    final List<dynamic> rawList = response.data['data'];
-    final List<ManagementModel> data =
-        rawList.map((item) => ManagementModel.fromJson(item)).toList();
-    return data;
+    final parsed = ResponseModel<List<dynamic>>.fromJson(
+      response.data,
+      (json) => json,
+    );
+    return parsed.data.map((e) => ManagementModel.fromJson(e)).toList();
   }
 
   @override
-  Future<ResponseModel> deleteStore({required int pId}) async {
+  Future<ResponseModel<void>> deleteStore({required int pId}) async {
     final data = {"pId": pId};
     final response = await managementService.deleteStore(data: data);
-    debugPrint("[Flutter] >> response : $response");
-    final result = ResponseModel.fromJson(response.data);
-    return result;
+    return ResponseModel<void>.fromJson(response.data, (_) => null);
   }
 
   @override
-  Future<ResponseModel> addStore(
-      {required String ip,
-      required int port,
-      required String name,
-      required String addr,
-      required int seatNumber,
-      required double price,
-      required double pricePercent,
-      required String countryName,
-      required String cityName,
-      required String townName,
-      String? pcSpec,
-      String? telecom,
-      String? memo}) async {
+  Future<ResponseModel<void>> addStore({
+    required String ip,
+    required int port,
+    required String name,
+    required String addr,
+    required int seatNumber,
+    required double price,
+    required double pricePercent,
+    required String countryName,
+    required String cityName,
+    required String townName,
+    String? pcSpec,
+    String? telecom,
+    String? memo,
+  }) async {
     final data = {
       "ip": ip,
       "port": port,
@@ -83,7 +84,54 @@ class ManagementRepositoryImpl implements IManagementRepository {
       if (memo != null) "memo": memo,
     };
     final response = await managementService.addStore(data: data);
-    final result = ResponseModel.fromJson(response.data);
-    return result;
+    return ResponseModel<void>.fromJson(response.data, (_) {});
+  }
+
+  @override
+  Future<ResponseModel<void>> updateStore({
+    required int pId,
+    required String ip,
+    required int port,
+    required String name,
+    required int seatNumber,
+    required double price,
+    required double pricePercent,
+    required String pcSpec,
+    required String telecom,
+    required String memo,
+  }) async {
+    final data = {
+      "pId": pId,
+      "ip": ip,
+      "port": port,
+      "name": name,
+      "seatNumber": seatNumber,
+      "price": price,
+      "pricePercent": pricePercent,
+      "pcSpec": pcSpec,
+      "telecom": telecom,
+      "memo": memo,
+    };
+    final response = await managementService.updateStore(data: data);
+    return ResponseModel<void>.fromJson(response.data, (_) {});
+  }
+
+  @override
+  Future<ResponseModel<PingModel>> sendIpPing({required int pId}) async {
+    final data = {"pId": pId};
+    final response = await managementService.sendIpPing(data: data);
+
+    if (response.data["data"] == null) {
+      return ResponseModel<PingModel>(
+        message: response.data["message"] ?? '',
+        code: response.data["code"] ?? 0,
+        data: PingModel.empty,
+      );
+    }
+
+    return ResponseModel<PingModel>.fromJson(
+      response.data,
+      (json) => PingModel.fromJson(json),
+    );
   }
 }
