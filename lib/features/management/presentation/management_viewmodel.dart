@@ -138,7 +138,7 @@ class ManagementViewModel
         pcSpec: pcSpec,
         telecom: telecom,
         memo: memo);
-    if (result!.code != 200) {
+    if (result.code != 200) {
       debugPrint("[Flutter] >> Store Update Failed Server Error!");
       return null;
     }

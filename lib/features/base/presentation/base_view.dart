@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/core/database/prefs.dart';
-import 'package:ip_manager/features/analytics/analytics_view.dart';
+import 'package:ip_manager/features/analytics/presentation/analytics_view.dart';
 import 'package:ip_manager/features/base/presentation/widget/side_menu.dart';
 import 'package:ip_manager/features/dash_board/presentation/dash_board_view.dart';
 import 'package:ip_manager/features/management/presentation/store_add_view.dart';

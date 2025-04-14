@@ -16,9 +16,13 @@ class ApiEndPoints {
   /// 유저 권한 정보
   static const getUserRole = "Login/sign/v1/getRole";
 
-  ///
+  /// Analyze
   static const getThisTimeDataList = "DashBoard/sign/v1/GetThisTimeDataList";
   static const getTopAnalyzeName = "DashBoard/sign/v1/GetTopAnalyzeName";
+  static const getThisDayDataList = "DashBoard/sign/v1/GetThisDayDataList";
+  static const getPeriodList = "DashBoard/sign/v1/GetPeriodList";
+  static const getMonthDataList = "DashBoard/sign/v1/GetMonthDataList";
+  static const getDaysDataList = "DashBoard/sign/v1/GetDaysDataList";
 
   ///Management
   static const getStoreList = "Store/sign/v1/GetStoreList";

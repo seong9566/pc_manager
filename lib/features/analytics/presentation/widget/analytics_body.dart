@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/app_colors.dart';
-import 'package:ip_manager/features/analytics/widget/selected_scroll_table.dart';
+import 'package:ip_manager/features/analytics/presentation/widget/selected_scroll_table.dart';
 
 import 'all_scroll_table.dart';
 
-class AnalyticsBody extends StatefulWidget {
+class AnalyticsBody extends ConsumerStatefulWidget {
   const AnalyticsBody({super.key});
 
   @override
-  State<AnalyticsBody> createState() => _AnalyticsBodyState();
+  ConsumerState<AnalyticsBody> createState() => _AnalyticsBodyState();
 }
 
-class _AnalyticsBodyState extends State<AnalyticsBody> {
+class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
   late AnalyticsType currentType;
 
   @override
@@ -41,7 +42,7 @@ class _AnalyticsBodyState extends State<AnalyticsBody> {
       children: [
         _rowButtons(),
         SizedBox(height: 20),
-        SizedBox(height: 640, child: table),
+        SizedBox(height: 500, child: table),
       ],
     );
   }

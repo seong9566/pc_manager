@@ -133,7 +133,10 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
           )
           .then((resultMessage) {
         if (mounted) {
-          resultDialog(context, resultMessage!.message, resultMessage.data);
+          resultDialog(
+            context,
+            resultMessage!.message,
+          );
         }
       });
     } else {
@@ -156,13 +159,16 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
           )
           .then((resultMessage) {
         if (mounted) {
-          resultDialog(context, resultMessage!.message, resultMessage.data);
+          resultDialog(
+            context,
+            resultMessage!.message,
+          );
         }
       });
     }
   }
 
-  void resultDialog(BuildContext context, String message, bool result) {
+  void resultDialog(BuildContext context, String message) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -172,10 +178,8 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              if (result) {
-                ref.read(managementViewModelProvider.notifier).getStoreList();
-                ref.read(baseViewIndexProvider.notifier).state = 1;
-              }
+              ref.read(managementViewModelProvider.notifier).getStoreList();
+              ref.read(baseViewIndexProvider.notifier).state = 1;
             },
             child: const Text("확인"),
           ),

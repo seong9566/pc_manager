@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:ip_manager/features/analytics/widget/analytics_body.dart';
-import 'package:ip_manager/features/analytics/widget/analytics_header.dart';
+import 'package:ip_manager/features/analytics/presentation/widget/analytics_body.dart';
+import 'package:ip_manager/features/analytics/presentation/widget/analytics_header.dart';
 
-import '../../core/config/app_theme.dart';
+import '../../../core/config/app_theme.dart';
 
 class AnalyticsView extends StatelessWidget {
   const AnalyticsView({super.key});

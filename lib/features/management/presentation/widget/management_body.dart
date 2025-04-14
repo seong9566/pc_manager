@@ -208,13 +208,10 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
         }),
         SizedBox(height: 4),
         _contentBtn('삭제', AppColors.redColor, () {
-          ref
-              .read(managementViewModelProvider.notifier)
-              .deleteStore(pId: item.pId!);
+          showDeleteDialog(context, item.name!, item.pId!);
         }),
         SizedBox(height: 4),
         _contentBtn('분석', AppColors.purpleColor, () async {
-          debugPrint("[Flutter] >>  분석 클릭");
           if (item.pId == null) {
             debugPrint("[Flutter] >> pId is null");
           }
@@ -249,6 +246,38 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
         }),
       ],
     );
+  }
+
+  void showDeleteDialog(BuildContext context, String storeName, int pId) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            backgroundColor: Colors.white,
+            title: Text("PC방 삭제"),
+            content: Text("$storeName을 정말 삭제 하시겠습니까?"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  ref
+                      .read(managementViewModelProvider.notifier)
+                      .deleteStore(pId: pId);
+                  ref.read(baseViewIndexProvider.notifier).state = 1;
+                },
+                child: const Text("확인"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("취소"),
+              ),
+            ],
+          );
+        });
   }
 
   void showPingDialog(BuildContext context, String storeName, PingModel ping) {
