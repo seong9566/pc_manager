@@ -17,7 +17,13 @@ class _AllTableScreenState extends ConsumerState<AllTableScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(analyticsViewModelProvider).thisDayData;
     if (state.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(
+        child: Text(
+          '데이터가 없습니다. 새로고침 또는 다른 날을 선택해 주세요.',
+          style: TextStyle(
+              fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+        ),
+      );
     }
 
     /// ExpandableTable은 내부적으로 ScrollController를 갖고 있기 때문에,

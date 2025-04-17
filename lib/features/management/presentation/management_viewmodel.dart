@@ -71,7 +71,7 @@ class ManagementViewModel
     state =
         AsyncValue.data([...state.value!..removeWhere((e) => e.pId == pId)]);
     debugPrint("[Flutter] >> result: $result");
-    if (result!.code != 200) {
+    if (result.code != 200) {
       debugPrint("[Flutter] >> Store Delete Failed Server Error!");
       state = previous; // 실패 시 롤백
       return null;
@@ -108,7 +108,7 @@ class ManagementViewModel
         pcSpec: pcSpec,
         telecom: telecom,
         memo: memo);
-    if (result!.code != 200) {
+    if (result.code != 200) {
       debugPrint("[Flutter] >> Store Add Failed Server Error!");
       return null;
     }

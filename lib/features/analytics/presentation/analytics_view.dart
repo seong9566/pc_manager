@@ -11,14 +11,14 @@ class AnalyticsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      padding: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
+      padding: const EdgeInsets.only(top: 120, bottom: 12, left: 12, right: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(8)),
         boxShadow: [AppTheme.greyShadow],
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           /// Header

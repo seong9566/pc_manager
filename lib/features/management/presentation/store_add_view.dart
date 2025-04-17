@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/app_theme.dart';
+import 'package:ip_manager/features/analytics/presentation/analytics_viewmodel.dart';
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
 import 'package:kpostal_web/kpostal_web.dart';
@@ -171,14 +172,19 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
   void resultDialog(BuildContext context, String message) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: const Text("PC방 추가"),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () {
+              /// PC 추가 시 Analytics 데이터 갱신 해줘야함.
               Navigator.of(context).pop();
               ref.read(managementViewModelProvider.notifier).getStoreList();
+              ref
+                  .read(analyticsViewModelProvider.notifier)
+                  .getThisDayDataList(targetDate: DateTime.now());
               ref.read(baseViewIndexProvider.notifier).state = 1;
             },
             child: const Text("확인"),

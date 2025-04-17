@@ -31,9 +31,9 @@ class ApiInterceptors extends InterceptorsWrapper {
   }
 
   @override
-  void onError(DioException e, ErrorInterceptorHandler handler) {
-    debugPrint("[Dio] Error: ${e.message}");
-    return handler.next(e);
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    debugPrint("[Dio] Error: ${err.message}");
+    return handler.next(err);
   }
 
   /// **토큰 설정 함수**

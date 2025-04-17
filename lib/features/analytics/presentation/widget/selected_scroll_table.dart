@@ -1,23 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_expandable_table/flutter_expandable_table.dart';
 
+import '../../../../model/time_count_model.dart';
+
 class SelectedScrollTable extends StatefulWidget {
-  const SelectedScrollTable({super.key});
+  final List<PcStatModel> tableData;
+
+  const SelectedScrollTable({required this.tableData, super.key});
 
   @override
   State<SelectedScrollTable> createState() => _SelectedScrollTableState();
 }
 
 class _SelectedScrollTableState extends State<SelectedScrollTable> {
-  static const int columnsCount = 7; // 컬럼 개수
-  static const int rowsCount = 30; // 행 개수
+  final int columnsCount = 6;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return _buildFixedTable();
+    int rowsCount = widget.tableData.length; // 행 개수
+    return _buildFixedTable(rowsCount);
   }
 
-  /// 📌 기본 셀 스타일 (동적 너비 적용)
+  ///  기본 셀 스타일 (동적 너비 적용)
   Widget _buildCell(
     String content, {
     FontWeight fontWeight = FontWeight.normal,
@@ -46,7 +56,7 @@ class _SelectedScrollTableState extends State<SelectedScrollTable> {
     );
   }
 
-  /// 📌 행 헤더 (고정)
+  ///  행 헤더 (고정)
   ExpandableTableCell _buildRowHeader(String text, {bool isHeader = false}) {
     return ExpandableTableCell(
       child: Container(
@@ -70,7 +80,7 @@ class _SelectedScrollTableState extends State<SelectedScrollTable> {
     );
   }
 
-  /// 📌 컬럼 헤더 (고정)
+  ///  컬럼 헤더 (고정)
   ExpandableTableCell _buildColumnHeader(String text) {
     return ExpandableTableCell(
       child: LayoutBuilder(
@@ -98,10 +108,9 @@ class _SelectedScrollTableState extends State<SelectedScrollTable> {
     );
   }
 
-  /// 📌 테이블 데이터 생성 (각 열 크기를 자동 조정)
-  ExpandableTable _buildFixedTable() {
+  ///  테이블 데이터 생성 (각 열 크기를 자동 조정)
+  ExpandableTable _buildFixedTable(int rowsCount) {
     final List<String> columnTitles = [
-      "이름",
       "가동 PC 수",
       "평균 가동률",
       "PC 이용 매출",
@@ -110,7 +119,7 @@ class _SelectedScrollTableState extends State<SelectedScrollTable> {
       "요금제 비율",
     ];
 
-    // 📌 컬럼 헤더 생성 (동적 너비 반영)
+    // 컬럼 헤더 생성 (동적 너비 반영)
     final List<ExpandableTableHeader> headers = List.generate(
       columnsCount,
       (index) => ExpandableTableHeader(
@@ -119,23 +128,28 @@ class _SelectedScrollTableState extends State<SelectedScrollTable> {
       ),
     );
 
-    // 📌 행 데이터 생성
+    // 행 데이터 생성
     final List<ExpandableTableRow> rows = List.generate(
       rowsCount,
-      (rowIndex) => ExpandableTableRow(
-        height: 40, // 행 높이
-        firstCell: _buildRowHeader('PC방 ${rowIndex + 1}'), // 행 헤더
-        cells: List.generate(
-          columnsCount,
-          (columnIndex) => ExpandableTableCell(
-            child: _buildCell('ㄷ개ㅑ서대ㅑㅓㅎ대갸허대ㅑ거해ㅑㄷ너해ㅑㄴ얼햐ㅐ'), // 동적으로 크기 조정
-          ),
-        ),
-      ),
+      (rowIndex) {
+        final PcStatModel row = widget.tableData[rowIndex];
+        return ExpandableTableRow(
+          height: 40,
+          firstCell: _buildRowHeader(row.pcName), // 행 헤더
+          cells: [
+            ExpandableTableCell(child: _buildCell(row.usedPcFormatted)),
+            ExpandableTableCell(child: _buildCell(row.averageRate)),
+            ExpandableTableCell(child: _buildCell(row.pcPriceFormatted)),
+            ExpandableTableCell(child: _buildCell(row.foodPriceFormatted)),
+            ExpandableTableCell(child: _buildCell(row.totalPriceFormatted)),
+            ExpandableTableCell(child: _buildCell(row.pricePercentFormatted)),
+          ],
+        );
+      },
     );
 
     return ExpandableTable(
-      firstHeaderCell: ExpandableTableCell(child: _buildCell('')),
+      firstHeaderCell: ExpandableTableCell(child: _buildCell('이름')),
       headers: headers,
       rows: rows,
       scrollShadowColor: Colors.grey.shade400,

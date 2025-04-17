@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ip_manager/features/analytics/presentation/analytics_viewmodel.dart';
 
 import '../../../../widgets/search_text_field.dart';
 import 'custom_drop_down.dart';
@@ -28,15 +27,6 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
             onComplete: () {},
           ),
         ),
-        TextButton(
-            onPressed: () {
-              final DateTime data = DateTime.parse('2025-04-05');
-
-              ref
-                  .read(analyticsViewModelProvider.notifier)
-                  .getThisDayDataList(targetDate: data);
-            },
-            child: Text('test')),
         CustomDropdown(),
       ],
     );

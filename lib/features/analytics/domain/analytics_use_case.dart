@@ -87,14 +87,16 @@ class AnalyticsUseCase {
   }
 
   Future<List<PcStatModel>?> getPeriodData({
-    required DateTime targetDate,
+    required DateTime startDate,
+    required DateTime endDate,
     String? pcName,
     int? countryTbId,
     int? townTbId,
     int? cityTbId,
   }) async {
     final result = await analyticsRepository.getPeriodList(
-      targetDate: targetDate,
+      startDate: startDate,
+      endDate: endDate,
       pcName: pcName,
       countryTbId: countryTbId,
       townTbId: townTbId,

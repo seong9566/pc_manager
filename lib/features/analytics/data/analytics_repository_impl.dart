@@ -50,7 +50,7 @@ class AnalyticsRepositoryImpl implements IAnalyticsRepository {
     int? cityTbId,
   }) async {
     final data = {
-      "targetDate": targetDate.toIso8601String(),
+      "target": targetDate.toIso8601String(),
       "pcName": pcName,
       "countryTbId": countryTbId,
       "townTbId": townTbId,
@@ -58,7 +58,6 @@ class AnalyticsRepositoryImpl implements IAnalyticsRepository {
     };
 
     final response = await analyticsService.getDaysDataList(data: data);
-
     return ResponseModel<List<PcStatModel>>.fromJson(
       response.data,
       (json) => List<PcStatModel>.from(
@@ -97,14 +96,16 @@ class AnalyticsRepositoryImpl implements IAnalyticsRepository {
   /// 기간별 기록
   @override
   Future<ResponseModel<List<PcStatModel>>> getPeriodList({
-    required DateTime targetDate,
+    required DateTime startDate,
+    required DateTime endDate,
     String? pcName,
     int? countryTbId,
     int? townTbId,
     int? cityTbId,
   }) async {
     final data = {
-      "targetDate": targetDate.toIso8601String(),
+      "startDate": startDate.toIso8601String(),
+      "endDate": endDate.toIso8601String(),
       "pcName": pcName,
       "countryTbId": countryTbId,
       "townTbId": townTbId,

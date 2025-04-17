@@ -20,7 +20,8 @@ abstract class IAnalyticsRepository {
   });
 
   Future<ResponseModel<List<PcStatModel>>> getPeriodList({
-    required DateTime targetDate,
+    required DateTime startDate,
+    required DateTime endDate,
     String? pcName,
     int? countryTbId,
     int? townTbId,

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ip_manager/core/extension/date_time_extension.dart';
 import 'package:ip_manager/features/analytics/domain/analytics_use_case.dart';
 import 'package:ip_manager/model/time_count_model.dart';
 
@@ -43,14 +44,27 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     init();
   }
 
+  // 초기엔 모두 오늘 날
   Future<void> init() async {
-    /// TODO : 테스트를 위한 04-05 데이터로 셋팅
-    // final DateTime now = DateTime.parse('2025-04-05');
-    final DateTime now = DateTime.now();
     await Future.delayed(Duration(seconds: 1));
-    getThisDayDataList(targetDate: now);
+    final DateTime now = DateTime.now();
+    final DateTime dayDate = DateTime(now.year, now.month, now.day);
+    getThisDayDataList(targetDate: now.toDateOnlyForDateTime());
+
+    await Future.delayed(Duration(seconds: 1));
+    final DateTime startDate = now.toDateOnlyForDateTime();
+    final DateTime endDate = startDate.add(const Duration(days: 1));
+    getPeriodDataList(startDate: startDate, endDate: endDate);
+
+    await Future.delayed(Duration(seconds: 1));
+    final DateTime monthDate = DateTime(now.year, now.month);
+    getMonthDataList(targetDate: monthDate);
+
+    await Future.delayed(Duration(seconds: 1));
+    getDaysDataList(targetDate: dayDate);
   }
 
+  /// 전체 분석 록록
   Future<void> getThisDayDataList({
     required DateTime targetDate,
     String? pcName,
@@ -108,14 +122,16 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
   }
 
   Future<void> getPeriodDataList({
-    required DateTime targetDate,
+    required DateTime startDate,
+    required DateTime endDate,
     String? pcName,
     int? countryTbId,
     int? townTbId,
     int? cityTbId,
   }) async {
     final data = await analyticsUseCase.getPeriodData(
-      targetDate: targetDate,
+      startDate: startDate,
+      endDate: endDate,
       pcName: pcName,
       countryTbId: countryTbId,
       townTbId: townTbId,
