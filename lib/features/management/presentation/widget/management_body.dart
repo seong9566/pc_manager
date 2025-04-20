@@ -4,6 +4,7 @@ import 'package:ip_manager/core/config/app_colors.dart';
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
 import 'package:ip_manager/model/management_model.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
+import 'package:ip_manager/widgets/simple_button.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../../model/ping_model.dart';
@@ -98,28 +99,13 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
               ),
               // Text("선택된 옵션 : 서울시 관악구 조원로"),
               // Text("총 매장 수 : 2개"),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    ref.read(baseViewIndexProvider.notifier).state = 3;
-                  });
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppColors.purpleColor,
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                  ),
-                  child: Text(
-                    '매장 추가',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
+              SimpleButton(
+                  onTap: () {
+                    setState(() {
+                      ref.read(baseViewIndexProvider.notifier).state = 3;
+                    });
+                  },
+                  title: '매장 추가'),
             ],
           ),
           SizedBox(height: 16),

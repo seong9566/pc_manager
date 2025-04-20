@@ -1,9 +1,52 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ip_manager/model/account_model.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+import '../core/config/app_colors.dart';
 import '../features/analytics/presentation/widget/analytics_body.dart';
 import '../provider/date_provider.dart';
+
+final cityDropDownItems = <String>[
+  '서울특별시',
+  '부산광역시',
+  '대구광역시',
+  '인천광역시',
+  '광주광역시',
+  '대전광역시',
+  '울산광역시',
+  '세종특별자치시',
+  '경기도',
+  '강원도',
+  '충청북도',
+  '충청남도',
+  '전라북도',
+  '전라남도',
+  '경상북도',
+  '경상남도',
+  '제주특별자치도',
+];
+// final cityDropDownItems = [
+
+// DropdownMenuItem(value: '서울특별시', child: Text('서울특별시')),
+// DropdownMenuItem(value: '부산광역시', child: Text('부산광역시')),
+// DropdownMenuItem(value: '대구광역시', child: Text('대구광역시')),
+// DropdownMenuItem(value: '인천광역시', child: Text('인천광역시')),
+// DropdownMenuItem(value: '광주광역시', child: Text('광주광역시')),
+// DropdownMenuItem(value: '대전광역시', child: Text('대전광역시')),
+// DropdownMenuItem(value: '울산광역시', child: Text('울산광역시')),
+// DropdownMenuItem(value: '세종특별자치시', child: Text('세종특별자치시')),
+// DropdownMenuItem(value: '경기도', child: Text('경기도')),
+// DropdownMenuItem(value: '강원도', child: Text('강원도')),
+// DropdownMenuItem(value: '충청북도', child: Text('충청북도')),
+// DropdownMenuItem(value: '충청남도', child: Text('충청남도')),
+// DropdownMenuItem(value: '전라북도', child: Text('전라북도')),
+// DropdownMenuItem(value: '전라남도', child: Text('전라남도')),
+// DropdownMenuItem(value: '경상북도', child: Text('경상북도')),
+// DropdownMenuItem(value: '경상남도', child: Text('경상남도')),
+// DropdownMenuItem(value: '제주특별자치도', child: Text('제주특별자치도')),
+// ];
 
 Future<void> showAnalyticsDatePicker({
   required BuildContext context,
@@ -60,5 +103,257 @@ Future<void> showAnalyticsDatePicker({
         ),
       ),
     ),
+  );
+}
+
+Future<void> showEditAccountDialog(
+  BuildContext context, {
+  required String title,
+  required String subTitle,
+  // --- 초기값(Optional) 파라미터들 ---
+  String? initialUserId,
+  String? initialPassword,
+  bool? initialAdminYn, // true→Manager, false→Guest
+  String? initialCountryName,
+  // -------------------------------
+  required Function({
+    required String userId,
+    required String password,
+    required bool adminYn,
+    required String countryName,
+  }) onSubmitted,
+}) {
+  // TextField 컨트롤러에 초기 텍스트 세팅 (값이 없으면 빈문자열)
+  final idController = TextEditingController(text: initialUserId ?? '');
+  final pwController = TextEditingController(text: initialPassword ?? '');
+  final pwConfirmController =
+      TextEditingController(text: initialPassword ?? '');
+
+  // 초기 booleans (Manager/Guest)
+  bool isManager = initialAdminYn == true;
+  bool isGuest = initialAdminYn == false && initialAdminYn != null;
+  // (초기AdminYn이 null이면 둘다 false)
+
+  // 초기 도시
+  String? selectedCity = initialCountryName;
+
+  // 포커스 노드들 …
+  final idFocus = FocusNode();
+  final pwFocus = FocusNode();
+  final pwConfirmFocus = FocusNode();
+
+  return showGeneralDialog(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: title,
+    barrierColor: Colors.black54,
+    transitionDuration: const Duration(milliseconds: 150),
+    pageBuilder: (ctx, anim1, anim2) {
+      final width = MediaQuery.of(ctx).size.width;
+      return StatefulBuilder(
+        builder: (ctx, setState) {
+          return Center(
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                width: width * 0.4,
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 제목/부제
+                      Text(title,
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 4),
+                      Text(subTitle,
+                          style: const TextStyle(color: Colors.black54)),
+                      const SizedBox(height: 16),
+
+                      // 계정 ID
+                      TextField(
+                        controller: idController,
+                        focusNode: idFocus,
+                        textInputAction: TextInputAction.next,
+                        onSubmitted: (_) =>
+                            FocusScope.of(ctx).requestFocus(pwFocus),
+                        decoration: InputDecoration(
+                          hintText: "계정 ID",
+                          border: const OutlineInputBorder(),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColors.greyColor),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: AppColors.purpleColor),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // 비밀번호
+                      TextField(
+                        controller: pwController,
+                        obscureText: true,
+                        focusNode: pwFocus,
+                        textInputAction: TextInputAction.next,
+                        onSubmitted: (_) =>
+                            FocusScope.of(ctx).requestFocus(pwConfirmFocus),
+                        decoration: InputDecoration(
+                          hintText: "비밀번호",
+                          border: const OutlineInputBorder(),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColors.greyColor),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: AppColors.purpleColor),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // 비밀번호 확인
+                      TextField(
+                        controller: pwConfirmController,
+                        obscureText: true,
+                        focusNode: pwConfirmFocus,
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (_) {},
+                        decoration: InputDecoration(
+                          hintText: "비밀번호 확인",
+                          border: const OutlineInputBorder(),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColors.greyColor),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: AppColors.purpleColor),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Manager / Guest 체크박스
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: isManager,
+                            onChanged: (v) => setState(() {
+                              isManager = v!;
+                              isGuest = !v;
+                            }),
+                            checkColor: AppColors.purpleColor,
+                            fillColor: MaterialStateProperty.all(Colors.white),
+                            side: MaterialStateBorderSide.resolveWith((states) {
+                              return BorderSide(
+                                color: states.contains(MaterialState.selected)
+                                    ? AppColors.purpleColor
+                                    : AppColors.greyColor,
+                                width: 2,
+                              );
+                            }),
+                          ),
+                          Text('Manager',
+                              style: TextStyle(
+                                  color: isManager
+                                      ? AppColors.purpleColor
+                                      : AppColors.greyColor)),
+                          const SizedBox(width: 16),
+                          Checkbox(
+                            value: isGuest,
+                            onChanged: (v) => setState(() {
+                              isGuest = v!;
+                              isManager = !v;
+                            }),
+                            checkColor: AppColors.purpleColor,
+                            fillColor: MaterialStateProperty.all(Colors.white),
+                            side: MaterialStateBorderSide.resolveWith((states) {
+                              return BorderSide(
+                                color: states.contains(MaterialState.selected)
+                                    ? AppColors.purpleColor
+                                    : AppColors.greyColor,
+                                width: 2,
+                              );
+                            }),
+                          ),
+                          Text('Guest',
+                              style: TextStyle(
+                                  color: isGuest
+                                      ? AppColors.purpleColor
+                                      : AppColors.greyColor)),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      // 도시 검색 드롭다운
+                      DropdownSearch<String>(
+                        popupProps: PopupProps.menu(
+                          showSearchBox: true,
+                          constraints: const BoxConstraints(maxHeight: 250),
+                        ),
+                        items: cityDropDownItems,
+                        selectedItem: selectedCity,
+                        dropdownDecoratorProps: DropDownDecoratorProps(
+                          dropdownSearchDecoration: InputDecoration(
+                            hintText: '시·도 선택',
+                            border: const OutlineInputBorder(),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: AppColors.greyColor),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: AppColors.purpleColor),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 14),
+                          ),
+                        ),
+                        onChanged: (v) => setState(() => selectedCity = v),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // 입력 완료 버튼
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.purpleColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          onPressed: () {
+                            onSubmitted(
+                              userId: idController.text,
+                              password: pwController.text,
+                              adminYn: isManager,
+                              countryName: selectedCity ?? '',
+                            );
+                            Navigator.of(ctx).pop();
+                          },
+                          child: const Text('입력 완료',
+                              style: TextStyle(fontSize: 16)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    },
+    transitionBuilder: (_, anim, __, child) =>
+        FadeTransition(opacity: anim, child: child),
   );
 }

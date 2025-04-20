@@ -10,6 +10,7 @@ import 'package:ip_manager/provider/base_view_index_provider.dart';
 import 'package:toastification/toastification.dart';
 
 import '../../../model/management_model.dart';
+import '../../account/presentation/account_view.dart';
 import '../../management/presentation/management_view.dart';
 
 class BaseView extends ConsumerStatefulWidget {
@@ -25,6 +26,8 @@ class _BaseViewState extends ConsumerState<BaseView> {
   bool mobileSideMenu = false;
   bool sideMenuOn = true;
 
+  String role = "";
+
   @override
   void initState() {
     pages = [
@@ -32,10 +35,11 @@ class _BaseViewState extends ConsumerState<BaseView> {
       ManagementView(),
       AnalyticsView(),
       StoreAddView(),
+      AccountView(),
     ];
     // 화면 렌더링 후 배너 띄우기
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      String role = await Prefs().getUserRole;
+      role = await Prefs().getUserRole;
       if (mounted) {
         toastification.show(
           context: context,
@@ -47,6 +51,7 @@ class _BaseViewState extends ConsumerState<BaseView> {
           ),
           alignment: Alignment.topCenter,
         );
+        setState(() {});
       }
     });
     super.initState();
@@ -91,6 +96,7 @@ class _BaseViewState extends ConsumerState<BaseView> {
                     // 2/9 = 0.22 , 22%의 공간을 차지.
                     flex: 2, // 전체 공간의 2
                     child: SideMenu(
+                      role: role,
                       selectedIndex: selectedIndex,
                       onTap: _onItemTapped,
                     ),
@@ -145,6 +151,7 @@ class _BaseViewState extends ConsumerState<BaseView> {
                       height: double.infinity,
                       color: Colors.white,
                       child: SideMenu(
+                        role: role,
                         selectedIndex: selectedIndex,
                         onTap: (index) {
                           Navigator.pop(context); // 닫기

@@ -1,13 +1,20 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
+import 'package:ip_manager/provider/base_view_index_provider.dart';
+
+import '../../../account/presentation/account_viewmodel.dart';
 
 class SideMenu extends ConsumerStatefulWidget {
   final Function(int index) onTap;
   final int selectedIndex;
+  final String role;
 
-  const SideMenu({super.key, required this.onTap, required this.selectedIndex});
+  const SideMenu(
+      {super.key,
+      required this.onTap,
+      required this.selectedIndex,
+      required this.role});
 
   @override
   ConsumerState<SideMenu> createState() => _SideMenuState();
@@ -15,11 +22,17 @@ class SideMenu extends ConsumerStatefulWidget {
 
 class _SideMenuState extends ConsumerState<SideMenu> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Drawer(
       backgroundColor: Colors.white,
       child: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: SingleChildScrollView(
@@ -40,6 +53,18 @@ class _SideMenuState extends ConsumerState<SideMenu> {
                 ),
               ),
             ),
+            if (widget.role == "Master")
+              GestureDetector(
+                onTap: () {
+                  ref.read(accountViewModel.notifier).init();
+                  ref.read(baseViewIndexProvider.notifier).state = 4;
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 24),
+                  child: Image.asset("assets/icon/setting.png"),
+                ),
+              ),
+            SizedBox(height: 20),
           ],
         ),
       ),

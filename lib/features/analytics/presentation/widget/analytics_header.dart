@@ -17,9 +17,10 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
-          width: 840,
+          width: 600,
           margin: EdgeInsets.only(right: 24, bottom: 12),
           child: SearchTextField(
             hintText: 'PC방 이름으로 검색',

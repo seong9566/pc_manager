@@ -91,7 +91,7 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
             currentType = AnalyticsType.daily;
           });
         }, AnalyticsType.daily),
-        SizedBox(width: 24),
+        Spacer(),
 
         /// DatePicker : Default : 현재 날짜
         _datePicker(),
@@ -143,9 +143,16 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
           },
         );
       },
-      child: Text(
-        '선택된 날짜 : $label',
-        style: TextStyle(fontSize: 20, color: Colors.black),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        decoration: BoxDecoration(
+          color: AppColors.purpleColor,
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+        ),
+        child: Text(
+          '선택된 날짜 : $label',
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
       ),
     );
   }

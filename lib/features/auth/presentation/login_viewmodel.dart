@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/database/prefs.dart';
-import 'package:riverpod/riverpod.dart';
 
 import '../domain/login_use_case.dart';
 

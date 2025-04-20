@@ -163,9 +163,9 @@ class _LoginScreenState extends ConsumerState<LoginView>
           _title(),
           _subTitle(),
           SizedBox(height: 20),
-          AuthTextField(hintText: '아이디', controller: _id),
+          AuthTextField(hintText: '아이디', controller: _id, obscureText: false),
           SizedBox(height: 20),
-          AuthTextField(hintText: '비밀번호', controller: _pw),
+          AuthTextField(hintText: '비밀번호', controller: _pw, obscureText: true),
           SizedBox(height: 20),
           DefaultButton(
             text: '로그인',
@@ -208,14 +208,19 @@ class _LoginScreenState extends ConsumerState<LoginView>
               ),
             ),
           SizedBox(height: 20),
-          AuthTextField(hintText: '아이디', controller: _id2, error: signIdError),
+          AuthTextField(
+              hintText: '아이디',
+              controller: _id2,
+              error: signIdError,
+              obscureText: false),
           SizedBox(height: 20),
-          AuthTextField(hintText: '비밀번호', controller: _pw2),
+          AuthTextField(hintText: '비밀번호', controller: _pw2, obscureText: true),
           SizedBox(height: 20),
           AuthTextField(
             hintText: '비밀번호 확인',
             controller: _pwConfirm,
             error: signPwError,
+            obscureText: true,
           ),
           SizedBox(height: 20),
           DefaultButton(

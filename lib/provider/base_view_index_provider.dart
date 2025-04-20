@@ -13,3 +13,4 @@ final selectedStoreProvider = StateProvider<ManagementModel?>((ref) => null);
 // ManagementView() : 1
 // AnalyticsView() : 2
 // StoreAddView() : 3
+// UserManagementView() : 4
