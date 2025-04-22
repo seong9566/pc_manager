@@ -23,7 +23,20 @@ class _SelectedScrollTableState extends State<SelectedScrollTable> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.tableData.isEmpty) {
+      return Center(
+        child: Text(
+          '데이터가 없습니다.\n이름을 모두 정확하게 입력해 주세요.',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey.shade600,
+          ),
+        ),
+      );
+    }
     int rowsCount = widget.tableData.length; // 행 개수
+
     return _buildFixedTable(rowsCount);
   }
 

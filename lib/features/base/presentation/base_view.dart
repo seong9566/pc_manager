@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
-import 'package:ip_manager/core/database/prefs.dart';
 import 'package:ip_manager/features/analytics/presentation/analytics_view.dart';
 import 'package:ip_manager/features/base/presentation/widget/side_menu.dart';
 import 'package:ip_manager/features/dash_board/presentation/dash_board_view.dart';
@@ -10,6 +9,7 @@ import 'package:ip_manager/provider/base_view_index_provider.dart';
 import 'package:toastification/toastification.dart';
 
 import '../../../model/management_model.dart';
+import '../../../provider/user_session.dart';
 import '../../account/presentation/account_view.dart';
 import '../../management/presentation/management_view.dart';
 
@@ -26,8 +26,6 @@ class _BaseViewState extends ConsumerState<BaseView> {
   bool mobileSideMenu = false;
   bool sideMenuOn = true;
 
-  String role = "";
-
   @override
   void initState() {
     pages = [
@@ -39,7 +37,8 @@ class _BaseViewState extends ConsumerState<BaseView> {
     ];
     // 화면 렌더링 후 배너 띄우기
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      role = await Prefs().getUserRole;
+      final session = ref.read(userSessionProvider);
+      final role = session.role ?? '';
       if (mounted) {
         toastification.show(
           context: context,
@@ -51,7 +50,6 @@ class _BaseViewState extends ConsumerState<BaseView> {
           ),
           alignment: Alignment.topCenter,
         );
-        setState(() {});
       }
     });
     super.initState();
@@ -96,7 +94,7 @@ class _BaseViewState extends ConsumerState<BaseView> {
                     // 2/9 = 0.22 , 22%의 공간을 차지.
                     flex: 2, // 전체 공간의 2
                     child: SideMenu(
-                      role: role,
+                      role: ref.watch(userSessionProvider).role ?? '',
                       selectedIndex: selectedIndex,
                       onTap: _onItemTapped,
                     ),
@@ -151,7 +149,7 @@ class _BaseViewState extends ConsumerState<BaseView> {
                       height: double.infinity,
                       color: Colors.white,
                       child: SideMenu(
-                        role: role,
+                        role: ref.watch(userSessionProvider).role ?? '',
                         selectedIndex: selectedIndex,
                         onTap: (index) {
                           Navigator.pop(context); // 닫기

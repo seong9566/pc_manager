@@ -115,29 +115,30 @@ Future<void> showEditAccountDialog(
   String? initialPassword,
   bool? initialAdminYn, // true→Manager, false→Guest
   String? initialCountryName,
+  bool? initialUseYn, // true→사용, false→미사용
   // -------------------------------
   required Function({
     required String userId,
     required String password,
     required bool adminYn,
     required String countryName,
+    required bool useYn,
   }) onSubmitted,
 }) {
-  // TextField 컨트롤러에 초기 텍스트 세팅 (값이 없으면 빈문자열)
   final idController = TextEditingController(text: initialUserId ?? '');
   final pwController = TextEditingController(text: initialPassword ?? '');
   final pwConfirmController =
       TextEditingController(text: initialPassword ?? '');
 
-  // 초기 booleans (Manager/Guest)
+  // 초기 booleans
   bool isManager = initialAdminYn == true;
   bool isGuest = initialAdminYn == false && initialAdminYn != null;
-  // (초기AdminYn이 null이면 둘다 false)
+  // 초기 사용 여부 (기본 true)
+  bool isUse = initialUseYn ?? true;
 
   // 초기 도시
   String? selectedCity = initialCountryName;
 
-  // 포커스 노드들 …
   final idFocus = FocusNode();
   final pwFocus = FocusNode();
   final pwConfirmFocus = FocusNode();
@@ -164,7 +165,6 @@ Future<void> showEditAccountDialog(
                 ),
                 child: SingleChildScrollView(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // 제목/부제
@@ -225,7 +225,6 @@ Future<void> showEditAccountDialog(
                         obscureText: true,
                         focusNode: pwConfirmFocus,
                         textInputAction: TextInputAction.done,
-                        onSubmitted: (_) {},
                         decoration: InputDecoration(
                           hintText: "비밀번호 확인",
                           border: const OutlineInputBorder(),
@@ -240,7 +239,7 @@ Future<void> showEditAccountDialog(
                       ),
                       const SizedBox(height: 16),
 
-                      // Manager / Guest 체크박스
+                      // Manager / Guest
                       Row(
                         children: [
                           Checkbox(
@@ -250,15 +249,13 @@ Future<void> showEditAccountDialog(
                               isGuest = !v;
                             }),
                             checkColor: AppColors.purpleColor,
-                            fillColor: MaterialStateProperty.all(Colors.white),
-                            side: MaterialStateBorderSide.resolveWith((states) {
-                              return BorderSide(
-                                color: states.contains(MaterialState.selected)
-                                    ? AppColors.purpleColor
-                                    : AppColors.greyColor,
-                                width: 2,
-                              );
-                            }),
+                            fillColor: WidgetStateProperty.all(Colors.white),
+                            side: WidgetStateBorderSide.resolveWith((s) =>
+                                BorderSide(
+                                    color: s.contains(MaterialState.selected)
+                                        ? AppColors.purpleColor
+                                        : AppColors.greyColor,
+                                    width: 2)),
                           ),
                           Text('Manager',
                               style: TextStyle(
@@ -273,15 +270,13 @@ Future<void> showEditAccountDialog(
                               isManager = !v;
                             }),
                             checkColor: AppColors.purpleColor,
-                            fillColor: MaterialStateProperty.all(Colors.white),
-                            side: MaterialStateBorderSide.resolveWith((states) {
-                              return BorderSide(
-                                color: states.contains(MaterialState.selected)
-                                    ? AppColors.purpleColor
-                                    : AppColors.greyColor,
-                                width: 2,
-                              );
-                            }),
+                            fillColor: WidgetStateProperty.all(Colors.white),
+                            side: WidgetStateBorderSide.resolveWith((s) =>
+                                BorderSide(
+                                    color: s.contains(MaterialState.selected)
+                                        ? AppColors.purpleColor
+                                        : AppColors.greyColor,
+                                    width: 2)),
                           ),
                           Text('Guest',
                               style: TextStyle(
@@ -292,7 +287,53 @@ Future<void> showEditAccountDialog(
                       ),
                       const SizedBox(height: 16),
 
-                      // 도시 검색 드롭다운
+                      // 사용 여부
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: isUse,
+                            onChanged: (v) => setState(() {
+                              isUse = v!;
+                            }),
+                            checkColor: AppColors.purpleColor,
+                            fillColor: WidgetStateProperty.all(Colors.white),
+                            side: WidgetStateBorderSide.resolveWith((s) =>
+                                BorderSide(
+                                    color: s.contains(MaterialState.selected)
+                                        ? AppColors.purpleColor
+                                        : AppColors.greyColor,
+                                    width: 2)),
+                          ),
+                          Text('사용',
+                              style: TextStyle(
+                                  color: isUse
+                                      ? AppColors.purpleColor
+                                      : AppColors.greyColor)),
+                          const SizedBox(width: 16),
+                          Checkbox(
+                            value: !isUse,
+                            onChanged: (v) => setState(() {
+                              isUse = !v!;
+                            }),
+                            checkColor: AppColors.purpleColor,
+                            fillColor: WidgetStateProperty.all(Colors.white),
+                            side: WidgetStateBorderSide.resolveWith((s) =>
+                                BorderSide(
+                                    color: s.contains(MaterialState.selected)
+                                        ? AppColors.purpleColor
+                                        : AppColors.greyColor,
+                                    width: 2)),
+                          ),
+                          Text('미사용',
+                              style: TextStyle(
+                                  color: !isUse
+                                      ? AppColors.purpleColor
+                                      : AppColors.greyColor)),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      // 도시 선택
                       DropdownSearch<String>(
                         popupProps: PopupProps.menu(
                           showSearchBox: true,
@@ -320,7 +361,7 @@ Future<void> showEditAccountDialog(
                       ),
                       const SizedBox(height: 24),
 
-                      // 입력 완료 버튼
+                      // 입력 완료
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -337,6 +378,7 @@ Future<void> showEditAccountDialog(
                               password: pwController.text,
                               adminYn: isManager,
                               countryName: selectedCity ?? '',
+                              useYn: isUse,
                             );
                             Navigator.of(ctx).pop();
                           },

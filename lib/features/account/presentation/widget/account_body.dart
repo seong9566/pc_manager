@@ -41,6 +41,7 @@ class _AccountBodyState extends ConsumerState<AccountBody> {
               required userId,
               required password,
               required adminYn,
+              required useYn,
               required countryName,
             }) async {
               final ok =
@@ -49,6 +50,7 @@ class _AccountBodyState extends ConsumerState<AccountBody> {
                         userId: userId,
                         password: password,
                         adminYn: adminYn,
+                        useYn: useYn,
                         countryName: countryName,
                       );
               if (!ok) {

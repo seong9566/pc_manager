@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ip_manager/core/config/app_colors.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
 
@@ -8,7 +9,7 @@ import '../../../account/presentation/account_viewmodel.dart';
 class SideMenu extends ConsumerStatefulWidget {
   final Function(int index) onTap;
   final int selectedIndex;
-  final String role;
+  final String? role;
 
   const SideMenu(
       {super.key,
@@ -75,16 +76,8 @@ class _SideMenuState extends ConsumerState<SideMenu> {
     bool isSelected = widget.selectedIndex == index;
     return GestureDetector(
       onTap: () => widget.onTap(index),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        width: double.infinity,
-        height: 40,
-        decoration: BoxDecoration(
-          color: isSelected
-              ? Colors.blueAccent.shade100
-              : Colors.white, // 선택된 항목만 파란색
-          borderRadius: BorderRadius.circular(8),
-        ),
+      child: Container(
+        color: Colors.transparent,
         child: Padding(
           padding: const EdgeInsets.all(6),
           child: Row(
@@ -94,16 +87,14 @@ class _SideMenuState extends ConsumerState<SideMenu> {
                 title,
                 style: TextStyle(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color:
-                      isSelected ? Colors.white : Colors.black, // 선택된 항목만 흰색 글씨
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isSelected ? AppColors.purpleColor : Colors.black,
                 ),
               ),
               Icon(
                 icon,
                 size: 18,
-                color:
-                    isSelected ? Colors.white : Colors.black, // 선택된 항목만 흰색 아이콘
+                color: isSelected ? AppColors.purpleColor : Colors.black,
               ),
             ],
           ),

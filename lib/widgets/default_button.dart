@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../core/config/app_colors.dart';
+
 class DefaultButton extends StatelessWidget {
   final String text;
   final VoidCallback callback;
@@ -14,10 +16,9 @@ class DefaultButton extends StatelessWidget {
         width: double.infinity,
         height: 50,
         decoration: BoxDecoration(
-          color: Color(0xFFA46DDC),
+          color: AppColors.purpleColor,
           borderRadius: BorderRadius.all(Radius.circular(8)),
         ),
-
         child: Center(
           child: Text(
             text,

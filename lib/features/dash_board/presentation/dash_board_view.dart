@@ -18,7 +18,7 @@ class _DashBoardViewState extends ConsumerState<DashBoardView> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SizedBox(height: Responsive.isDesktop(context) ? 120 : 20),
+          SizedBox(height: Responsive.isDesktop(context) ? 40 : 20),
           // TextButton(
           //   onPressed: () {
           //     ref.read(dashBoardViewModelProvider.notifier).getDashBoardData();

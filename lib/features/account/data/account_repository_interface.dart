@@ -16,6 +16,7 @@ abstract class IAccountRepository {
     required String userId,
     required String password,
     required bool adminYn,
+    required bool useYn,
     required String countryName,
   });
 

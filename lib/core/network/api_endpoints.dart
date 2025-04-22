@@ -1,10 +1,14 @@
 class ApiEndPoints {
   // final baseUrl = "http://127.0.0.1:7777/api/";
+  //
   // final baseUrl = "http://192.0.0.2:7777/api/";
 
   final baseUrl = "http://210.98.189.99:7777/api/";
 
+  // final baseUrl = "http://210.98.189.99:5001/api/";
+
   // http://172.20.10.6:7777/api/Login/v1/test
+
   static const addUser = "Login/v1/AddUser";
   static const checkUserId = "Login/v1/CheckUserId";
   static const login = "Login/v1/Login";

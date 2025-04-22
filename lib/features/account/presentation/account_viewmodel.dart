@@ -66,6 +66,7 @@ class AccountViewModel extends StateNotifier<AccountState> {
     required String userId,
     required String password,
     required bool adminYn,
+    required bool useYn,
     required String countryName,
   }) async {
     try {
@@ -74,6 +75,7 @@ class AccountViewModel extends StateNotifier<AccountState> {
         userId: userId,
         password: password,
         adminYn: adminYn,
+        useYn: useYn,
         countryName: countryName,
       );
       if (success) await refresh();

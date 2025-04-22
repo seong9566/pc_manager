@@ -34,6 +34,7 @@ class _AccountHeaderState extends ConsumerState<AccountHeader> {
                     required userId,
                     required password,
                     required adminYn,
+                    required useYn,
                     required countryName,
                   }) async {
                     final ok =

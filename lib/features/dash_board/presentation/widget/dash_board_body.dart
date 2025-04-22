@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
+import 'package:ip_manager/widgets/default_button.dart';
 
 import '../dash_board_viewmodel.dart';
 
@@ -13,7 +14,15 @@ class DashBoardBody extends ConsumerWidget {
     final storeState = ref.watch(managementViewModelProvider).value;
 
     if (state == null || storeState == null) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(
+          child: SizedBox(
+        width: 200,
+        child: DefaultButton(
+            text: '새로 고침',
+            callback: () {
+              ref.read(dashBoardViewModelProvider.notifier).getDashBoardData();
+            }),
+      ));
     }
 
     return Row(
@@ -69,7 +78,7 @@ class DashBoardBody extends ConsumerWidget {
             const SizedBox(height: 16),
             SizedBox(
               width: totalWidth + 24,
-              height: 460,
+              height: 380,
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(

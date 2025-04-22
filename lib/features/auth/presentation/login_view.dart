@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
+import 'package:ip_manager/core/database/prefs.dart';
 import 'package:ip_manager/features/auth/presentation/widget/auth_text_field.dart';
+import 'package:ip_manager/provider/user_session.dart';
 import 'package:ip_manager/widgets/default_button.dart';
 
+import '../../../core/config/app_colors.dart';
+import '../../../core/config/app_theme.dart';
 import 'login_viewmodel.dart';
 
 class LoginView extends ConsumerStatefulWidget {
@@ -42,9 +46,18 @@ class _LoginScreenState extends ConsumerState<LoginView>
 
     final state = ref.read(loginViewModelProvider);
     state.when(
-      data: (isOk) {
+      data: (isOk) async {
         if (isOk) {
-          context.replaceNamed('base');
+          // context.replaceNamed('base');
+          String role = await Prefs().getUserRole;
+          final session = ref.read(userSessionProvider.notifier);
+          session.updateSession(
+            role: role,
+            isLogin: true, // API 호출로 받은 토큰
+          );
+          if (mounted) {
+            context.goNamed('base');
+          }
         }
       },
       error: (error, _) {
@@ -105,19 +118,77 @@ class _LoginScreenState extends ConsumerState<LoginView>
   }
 
   void _loginFailedDialog(String message, String title) {
-    showDialog(
+    showGeneralDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: [
-            TextButton(
-              /// TODO : Nativagor pop하면 실패 시 라우터 에러
-              onPressed: () => Navigator.pop(context),
-              child: Text("확인"),
-            ),
-          ],
+      barrierDismissible: true,
+      barrierLabel: "LoginFailed",
+      pageBuilder: (_, __, ___) {
+        return Align(
+          alignment: Alignment.center,
+          child: Container(
+              width: 360,
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.shade400,
+                    offset: const Offset(0, 0),
+                    blurRadius: 8,
+                  )
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      '로그인 실패',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 24),
+                  Text(
+                    '아이디 또는 비밀번호를 확인해 주세요.',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                  SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 40,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.purpleColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      onPressed: () => context.pop(),
+                      child: const Text(
+                        '확인',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              )),
         );
       },
     );

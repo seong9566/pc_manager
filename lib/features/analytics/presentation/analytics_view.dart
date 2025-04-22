@@ -1,31 +1,87 @@
+// lib/features/analytics/presentation/analytics_view.dart
+
 import 'package:flutter/material.dart';
-import 'package:ip_manager/features/analytics/presentation/widget/analytics_body.dart';
-import 'package:ip_manager/features/analytics/presentation/widget/analytics_header.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ip_manager/features/analytics/presentation/analytics_viewmodel.dart';
+import 'package:ip_manager/provider/date_provider.dart';
 
-import '../../../core/config/app_theme.dart';
+import 'widget/analytics_header.dart';
+import 'widget/analytics_body.dart';
 
-class AnalyticsView extends StatelessWidget {
-  const AnalyticsView({super.key});
+class AnalyticsView extends ConsumerStatefulWidget {
+  const AnalyticsView({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<AnalyticsView> createState() => _AnalyticsViewState();
+}
+
+class _AnalyticsViewState extends ConsumerState<AnalyticsView> {
+  late AnalyticsType currentType;
+
+  @override
+  void initState() {
+    super.initState();
+    currentType = AnalyticsType.all;
+  }
+
+  /// PC 이름 검색 콜백
+  void _onSearch(String pcName) {
+    final vm = ref.read(analyticsViewModelProvider.notifier);
+    final dateState = ref.read(dateViewModel);
+
+    switch (currentType) {
+      case AnalyticsType.all:
+        vm.getThisDayDataList(
+          targetDate: dateState.selectDate,
+          pcName: pcName,
+        );
+        break;
+      case AnalyticsType.daily:
+        vm.getDaysDataList(
+          targetDate: dateState.selectDate,
+          pcName: pcName,
+        );
+        break;
+      case AnalyticsType.monthly:
+        final monthDate = DateTime(
+          dateState.selectDate.year,
+          dateState.selectDate.month,
+        );
+        vm.getMonthDataList(
+          targetDate: monthDate,
+          pcName: pcName,
+        );
+        break;
+      case AnalyticsType.period:
+        final start = dateState.periodStart;
+        final end = dateState.periodEnd;
+        if (start != null && end != null) {
+          vm.getPeriodDataList(
+            startDate: start,
+            endDate: end,
+            pcName: pcName,
+          );
+        }
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      padding: const EdgeInsets.only(top: 120, bottom: 12, left: 12, right: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-        boxShadow: [AppTheme.greyShadow],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// Header
-          AnalyticsHeader(),
-          AnalyticsBody(),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 40),
+
+        // 1) 검색창 + 드롭다운
+        AnalyticsHeader(onSearch: _onSearch),
+
+        // 2) 탭 버튼들 + 날짜 선택
+        AnalyticsBody(
+          currentType: currentType,
+          onTypeChanged: (newType) => setState(() => currentType = newType),
+        ),
+      ],
     );
   }
 }

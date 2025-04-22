@@ -39,6 +39,7 @@ class AccountUseCase {
     required String userId,
     required String password,
     required bool adminYn,
+    required bool useYn,
     required String countryName,
   }) {
     return _repo.updateAccount(
@@ -46,6 +47,7 @@ class AccountUseCase {
       userId: userId,
       password: password,
       adminYn: adminYn,
+      useYn: useYn,
       countryName: countryName,
     );
   }

@@ -44,6 +44,7 @@ class AccountRepositoryImpl implements IAccountRepository {
     required String userId,
     required String password,
     required bool adminYn,
+    required bool useYn,
     required String countryName,
   }) async {
     final ok = await _service.updateAccount(
@@ -51,6 +52,7 @@ class AccountRepositoryImpl implements IAccountRepository {
       userId: userId,
       password: password,
       adminYn: adminYn,
+      useYn: useYn,
       countryName: countryName,
     );
     return ok;

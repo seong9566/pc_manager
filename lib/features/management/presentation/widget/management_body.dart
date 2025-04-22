@@ -4,6 +4,7 @@ import 'package:ip_manager/core/config/app_colors.dart';
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
 import 'package:ip_manager/model/management_model.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
+import 'package:ip_manager/widgets/default_button.dart';
 import 'package:ip_manager/widgets/simple_button.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -48,7 +49,12 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
       },
       error: (error, stack) => Center(child: Text('새로 고침 해주세요.')),
       loading: () {
-        return Center(child: CircularProgressIndicator());
+        return Center(
+            child: DefaultButton(
+                text: '새로 고침',
+                callback: () {
+                  ref.read(managementViewModelProvider.notifier).getStoreList();
+                }));
       },
     );
   }
@@ -220,7 +226,6 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
           }
 
           if (data == null) {
-            debugPrint("[Flutter] >> ping Data null");
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('PING 데이터를 불러오지 못했습니다')),
             );

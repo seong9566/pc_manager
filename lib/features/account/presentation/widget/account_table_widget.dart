@@ -81,7 +81,8 @@ class AccountTable extends StatelessWidget {
                       flex: 2,
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text(a.uId, style: cellStyle),
+                        child: Text(a.adminYn == true ? "Manager" : "Guest",
+                            style: cellStyle),
                       ),
                     ),
 
@@ -90,6 +91,8 @@ class AccountTable extends StatelessWidget {
                       flex: 3,
                       child: Align(
                         alignment: Alignment.centerLeft,
+
+                        /// TODO 서버에서 준걸로 처리 해야함.
                         child: Text("부산 광역시", style: cellStyle),
                       ),
                     ),

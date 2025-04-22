@@ -22,11 +22,11 @@ class AccountService {
       DioMethod.get,
       url: ApiEndPoints.accountList,
     );
-    debugPrint("[Flutter] >>  resp.data : ${resp.data}");
 
     final dynamic raw = resp.data;
     final Map<String, dynamic> json = raw as Map<String, dynamic>;
 
+    debugPrint("[Flutter] >> raw : $raw");
     return ResponseModel.fromJson(
       json,
       (dataJson) => (dataJson as List<dynamic>)
@@ -71,14 +71,15 @@ class AccountService {
     required String userId,
     required String password,
     required bool adminYn,
+    required bool useYn,
     required String countryName,
   }) async {
     final body = {
       'pId': pId,
-      'userId': userId,
-      'password': password,
+      'uId': userId,
+      'pwd': password,
       'adminYn': adminYn,
-      'useYn': true,
+      'useYn': useYn,
       'countryName': countryName,
     };
     final resp = await _apiClient.request(DioMethod.post,
