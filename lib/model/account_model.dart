@@ -6,6 +6,7 @@ class AccountModel {
   final bool adminYn;
   final bool useYn;
   final String createDt;
+  final String countryName;
 
   AccountModel({
     required this.pId,
@@ -13,6 +14,7 @@ class AccountModel {
     required this.adminYn,
     required this.useYn,
     required this.createDt,
+    required this.countryName,
   });
 
   factory AccountModel.fromJson(Map<String, dynamic> json) {
@@ -22,6 +24,7 @@ class AccountModel {
       adminYn: json['adminYn'] as bool,
       useYn: json['useYn'] as bool,
       createDt: json['createDt'] as String,
+      countryName: json['countryName'] as String,
     );
   }
 
@@ -31,5 +34,6 @@ class AccountModel {
         'adminYn': adminYn,
         'useYn': useYn,
         'createDt': createDt,
+        'countryName': countryName,
       };
 }
