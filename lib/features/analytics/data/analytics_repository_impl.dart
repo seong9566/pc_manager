@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/features/analytics/data/analytics_repository_interface.dart';
 import 'package:ip_manager/features/analytics/data/analytics_service.dart';
@@ -32,7 +31,6 @@ class AnalyticsRepositoryImpl implements IAnalyticsRepository {
     };
 
     final response = await analyticsService.getThisDayData(data: data);
-    debugPrint("[Flutter] >> 전체 분석 : ${response.data}");
 
     return ResponseModel<List<PcRoomAnalytics>>.fromJson(
       response.data,
@@ -116,7 +114,6 @@ class AnalyticsRepositoryImpl implements IAnalyticsRepository {
 
     final response = await analyticsService.getPeriodList(data: data);
 
-    debugPrint("[Flutter] >> 기간 선택 : ${response.data}");
     return ResponseModel<List<PcStatModel>>.fromJson(
       response.data,
       (json) => List<PcStatModel>.from(

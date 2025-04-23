@@ -8,7 +8,6 @@ import 'package:ip_manager/provider/user_session.dart';
 import 'package:ip_manager/widgets/default_button.dart';
 
 import '../../../core/config/app_colors.dart';
-import '../../../core/config/app_theme.dart';
 import 'login_viewmodel.dart';
 
 class LoginView extends ConsumerStatefulWidget {

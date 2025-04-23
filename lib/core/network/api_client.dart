@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/network/api_endpoints.dart';
 import 'package:ip_manager/core/network/api_interceptors.dart';
 import 'package:ip_manager/core/network/remote_data_source.dart';
-import 'package:riverpod/riverpod.dart';
 
 /// **API 클라이언트 Provider**
 /// Dio 요청시 병렬 처리가 안되는 문제

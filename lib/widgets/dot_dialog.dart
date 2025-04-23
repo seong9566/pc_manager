@@ -1,11 +1,10 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ip_manager/model/account_model.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../core/config/app_colors.dart';
-import '../features/analytics/presentation/widget/analytics_body.dart';
+import '../features/analytics/presentation/analytics_viewmodel.dart';
 import '../provider/date_provider.dart';
 
 final cityDropDownItems = <String>[
@@ -58,6 +57,25 @@ Future<void> showAnalyticsDatePicker({
   required void Function(DateTime, DateTime) onRangeSelected,
   required void Function(DateTime) onMonthSelected,
 }) {
+  // 탭별 초기 날짜 가져오기
+  final dateState = ref.read(dateViewModel);
+  DateTime initialDate;
+  switch (type) {
+    case AnalyticsType.all:
+      initialDate = dateState.allDate;
+      break;
+    case AnalyticsType.daily:
+      initialDate = dateState.dailyDate;
+      break;
+    case AnalyticsType.monthly:
+      initialDate = dateState.monthlyDate;
+      break;
+    case AnalyticsType.period:
+      // 기간 모드는 Single 모드가 아니기에, 초기 날짜는 편의상 시작일 또는 오늘로
+      initialDate = periodStart ?? DateTime.now();
+      break;
+  }
+
   return showDialog(
     context: context,
     builder: (_) => AlertDialog(
@@ -96,8 +114,12 @@ Future<void> showAnalyticsDatePicker({
           selectionMode: type == AnalyticsType.period
               ? DateRangePickerSelectionMode.range
               : DateRangePickerSelectionMode.single,
-          initialSelectedDate: ref.read(dateViewModel).selectDate,
-          initialSelectedRange: (periodStart != null && periodEnd != null)
+          // 탭별로 분리된 초기 선택값
+          initialSelectedDate:
+              (type == AnalyticsType.period) ? null : initialDate,
+          initialSelectedRange: (type == AnalyticsType.period &&
+                  periodStart != null &&
+                  periodEnd != null)
               ? PickerDateRange(periodStart, periodEnd)
               : null,
         ),
@@ -252,7 +274,7 @@ Future<void> showEditAccountDialog(
                             fillColor: WidgetStateProperty.all(Colors.white),
                             side: WidgetStateBorderSide.resolveWith((s) =>
                                 BorderSide(
-                                    color: s.contains(MaterialState.selected)
+                                    color: s.contains(WidgetState.selected)
                                         ? AppColors.purpleColor
                                         : AppColors.greyColor,
                                     width: 2)),
@@ -273,7 +295,7 @@ Future<void> showEditAccountDialog(
                             fillColor: WidgetStateProperty.all(Colors.white),
                             side: WidgetStateBorderSide.resolveWith((s) =>
                                 BorderSide(
-                                    color: s.contains(MaterialState.selected)
+                                    color: s.contains(WidgetState.selected)
                                         ? AppColors.purpleColor
                                         : AppColors.greyColor,
                                     width: 2)),
@@ -299,7 +321,7 @@ Future<void> showEditAccountDialog(
                             fillColor: WidgetStateProperty.all(Colors.white),
                             side: WidgetStateBorderSide.resolveWith((s) =>
                                 BorderSide(
-                                    color: s.contains(MaterialState.selected)
+                                    color: s.contains(WidgetState.selected)
                                         ? AppColors.purpleColor
                                         : AppColors.greyColor,
                                     width: 2)),
@@ -319,7 +341,7 @@ Future<void> showEditAccountDialog(
                             fillColor: WidgetStateProperty.all(Colors.white),
                             side: WidgetStateBorderSide.resolveWith((s) =>
                                 BorderSide(
-                                    color: s.contains(MaterialState.selected)
+                                    color: s.contains(WidgetState.selected)
                                         ? AppColors.purpleColor
                                         : AppColors.greyColor,
                                     width: 2)),

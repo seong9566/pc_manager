@@ -146,3 +146,10 @@ final analyticsViewModelProvider =
     StateNotifierProvider<AnalyticsViewModel, AnalyticsState>((ref) {
   return AnalyticsViewModel(ref.read(analyticsUseCaseProvider));
 });
+
+enum AnalyticsType {
+  all, // 전체 분석기록
+  period, // 기간별 분석
+  monthly, // 월별 분석
+  daily, // 일별 분석
+}

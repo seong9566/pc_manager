@@ -32,21 +32,18 @@ class _AnalyticsViewState extends ConsumerState<AnalyticsView> {
     switch (currentType) {
       case AnalyticsType.all:
         vm.getThisDayDataList(
-          targetDate: dateState.selectDate,
+          targetDate: dateState.allDate,
           pcName: pcName,
         );
         break;
       case AnalyticsType.daily:
         vm.getDaysDataList(
-          targetDate: dateState.selectDate,
+          targetDate: dateState.dailyDate,
           pcName: pcName,
         );
         break;
       case AnalyticsType.monthly:
-        final monthDate = DateTime(
-          dateState.selectDate.year,
-          dateState.selectDate.month,
-        );
+        final monthDate = dateState.monthlyDate;
         vm.getMonthDataList(
           targetDate: monthDate,
           pcName: pcName,
