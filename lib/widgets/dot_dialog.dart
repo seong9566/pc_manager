@@ -1,6 +1,7 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../core/config/app_colors.dart';
@@ -132,13 +133,11 @@ Future<void> showEditAccountDialog(
   BuildContext context, {
   required String title,
   required String subTitle,
-  // --- 초기값(Optional) 파라미터들 ---
   String? initialUserId,
   String? initialPassword,
   bool? initialAdminYn, // true→Manager, false→Guest
   String? initialCountryName,
   bool? initialUseYn, // true→사용, false→미사용
-  // -------------------------------
   required Function({
     required String userId,
     required String password,
@@ -152,18 +151,10 @@ Future<void> showEditAccountDialog(
   final pwConfirmController =
       TextEditingController(text: initialPassword ?? '');
 
-  // 초기 booleans
   bool isManager = initialAdminYn == true;
   bool isGuest = initialAdminYn == false && initialAdminYn != null;
-  // 초기 사용 여부 (기본 true)
   bool isUse = initialUseYn ?? true;
-
-  // 초기 도시
   String? selectedCity = initialCountryName;
-
-  final idFocus = FocusNode();
-  final pwFocus = FocusNode();
-  final pwConfirmFocus = FocusNode();
 
   return showGeneralDialog(
     context: context,
@@ -172,252 +163,201 @@ Future<void> showEditAccountDialog(
     barrierColor: Colors.black54,
     transitionDuration: const Duration(milliseconds: 150),
     pageBuilder: (ctx, anim1, anim2) {
-      final width = MediaQuery.of(ctx).size.width;
-      return StatefulBuilder(
-        builder: (ctx, setState) {
-          return Center(
-            child: Material(
-              color: Colors.transparent,
-              child: Container(
-                width: width * 0.4,
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 제목/부제
-                      Text(title,
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 4),
-                      Text(subTitle,
-                          style: const TextStyle(color: Colors.black54)),
-                      const SizedBox(height: 16),
+      final mq = MediaQuery.of(ctx);
+      final isMobile = Responsive.isMobileLarge(context);
+      final dialogWidth = mq.size.width * (isMobile ? 0.9 : 0.4);
 
-                      // 계정 ID
-                      TextField(
-                        controller: idController,
-                        focusNode: idFocus,
-                        textInputAction: TextInputAction.next,
-                        onSubmitted: (_) =>
-                            FocusScope.of(ctx).requestFocus(pwFocus),
-                        decoration: InputDecoration(
-                          hintText: "계정 ID",
-                          border: const OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColors.greyColor),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: AppColors.purpleColor),
-                          ),
+      return Center(
+        child: Material(
+          color: Colors.transparent,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: dialogWidth,
+              maxHeight: mq.size.height * 0.9,
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: SingleChildScrollView(
+                child: StatefulBuilder(
+                  builder: (ctx, setState) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 제목
+                        Text(title,
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 4),
+                        Text(subTitle,
+                            style: const TextStyle(color: Colors.black54)),
+                        const SizedBox(height: 16),
+
+                        // ID
+                        TextField(
+                          controller: idController,
+                          decoration: _buildDecoration('계정 ID'),
                         ),
-                      ),
-                      const SizedBox(height: 12),
+                        const SizedBox(height: 12),
 
-                      // 비밀번호
-                      TextField(
-                        controller: pwController,
-                        obscureText: true,
-                        focusNode: pwFocus,
-                        textInputAction: TextInputAction.next,
-                        onSubmitted: (_) =>
-                            FocusScope.of(ctx).requestFocus(pwConfirmFocus),
-                        decoration: InputDecoration(
-                          hintText: "비밀번호",
-                          border: const OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColors.greyColor),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: AppColors.purpleColor),
-                          ),
+                        // PW
+                        TextField(
+                          controller: pwController,
+                          obscureText: true,
+                          decoration: _buildDecoration('비밀번호'),
                         ),
-                      ),
-                      const SizedBox(height: 12),
+                        const SizedBox(height: 12),
 
-                      // 비밀번호 확인
-                      TextField(
-                        controller: pwConfirmController,
-                        obscureText: true,
-                        focusNode: pwConfirmFocus,
-                        textInputAction: TextInputAction.done,
-                        decoration: InputDecoration(
-                          hintText: "비밀번호 확인",
-                          border: const OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColors.greyColor),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: AppColors.purpleColor),
-                          ),
+                        // PW 확인
+                        TextField(
+                          controller: pwConfirmController,
+                          obscureText: true,
+                          decoration: _buildDecoration('비밀번호 확인'),
                         ),
-                      ),
-                      const SizedBox(height: 16),
+                        const SizedBox(height: 16),
 
-                      // Manager / Guest
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: isManager,
-                            onChanged: (v) => setState(() {
-                              isManager = v!;
-                              isGuest = !v;
-                            }),
-                            checkColor: AppColors.purpleColor,
-                            fillColor: WidgetStateProperty.all(Colors.white),
-                            side: WidgetStateBorderSide.resolveWith((s) =>
-                                BorderSide(
-                                    color: s.contains(WidgetState.selected)
-                                        ? AppColors.purpleColor
-                                        : AppColors.greyColor,
-                                    width: 2)),
-                          ),
-                          Text('Manager',
-                              style: TextStyle(
-                                  color: isManager
-                                      ? AppColors.purpleColor
-                                      : AppColors.greyColor)),
-                          const SizedBox(width: 16),
-                          Checkbox(
-                            value: isGuest,
-                            onChanged: (v) => setState(() {
-                              isGuest = v!;
-                              isManager = !v;
-                            }),
-                            checkColor: AppColors.purpleColor,
-                            fillColor: WidgetStateProperty.all(Colors.white),
-                            side: WidgetStateBorderSide.resolveWith((s) =>
-                                BorderSide(
-                                    color: s.contains(WidgetState.selected)
-                                        ? AppColors.purpleColor
-                                        : AppColors.greyColor,
-                                    width: 2)),
-                          ),
-                          Text('Guest',
-                              style: TextStyle(
-                                  color: isGuest
-                                      ? AppColors.purpleColor
-                                      : AppColors.greyColor)),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-
-                      // 사용 여부
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: isUse,
-                            onChanged: (v) => setState(() {
-                              isUse = v!;
-                            }),
-                            checkColor: AppColors.purpleColor,
-                            fillColor: WidgetStateProperty.all(Colors.white),
-                            side: WidgetStateBorderSide.resolveWith((s) =>
-                                BorderSide(
-                                    color: s.contains(WidgetState.selected)
-                                        ? AppColors.purpleColor
-                                        : AppColors.greyColor,
-                                    width: 2)),
-                          ),
-                          Text('사용',
-                              style: TextStyle(
-                                  color: isUse
-                                      ? AppColors.purpleColor
-                                      : AppColors.greyColor)),
-                          const SizedBox(width: 16),
-                          Checkbox(
-                            value: !isUse,
-                            onChanged: (v) => setState(() {
-                              isUse = !v!;
-                            }),
-                            checkColor: AppColors.purpleColor,
-                            fillColor: WidgetStateProperty.all(Colors.white),
-                            side: WidgetStateBorderSide.resolveWith((s) =>
-                                BorderSide(
-                                    color: s.contains(WidgetState.selected)
-                                        ? AppColors.purpleColor
-                                        : AppColors.greyColor,
-                                    width: 2)),
-                          ),
-                          Text('미사용',
-                              style: TextStyle(
-                                  color: !isUse
-                                      ? AppColors.purpleColor
-                                      : AppColors.greyColor)),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-
-                      // 도시 선택
-                      DropdownSearch<String>(
-                        popupProps: PopupProps.menu(
-                          showSearchBox: true,
-                          constraints: const BoxConstraints(maxHeight: 250),
-                        ),
-                        items: cityDropDownItems,
-                        selectedItem: selectedCity,
-                        dropdownDecoratorProps: DropDownDecoratorProps(
-                          dropdownSearchDecoration: InputDecoration(
-                            hintText: '시·도 선택',
-                            border: const OutlineInputBorder(),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: AppColors.greyColor),
+                        // Manager / Guest
+                        Row(
+                          children: [
+                            _buildCheckbox(
+                              label: 'Manager',
+                              value: isManager,
+                              onChanged: (v) => setState(() {
+                                isManager = v!;
+                                isGuest = !v;
+                              }),
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: AppColors.purpleColor),
+                            const SizedBox(width: 16),
+                            _buildCheckbox(
+                              label: 'Guest',
+                              value: isGuest,
+                              onChanged: (v) => setState(() {
+                                isGuest = v!;
+                                isManager = !v;
+                              }),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 14),
-                          ),
+                          ],
                         ),
-                        onChanged: (v) => setState(() => selectedCity = v),
-                      ),
-                      const SizedBox(height: 24),
+                        const SizedBox(height: 16),
 
-                      // 입력 완료
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.purpleColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                        // 사용 여부
+                        Row(
+                          children: [
+                            _buildCheckbox(
+                              label: '사용',
+                              value: isUse,
+                              onChanged: (v) => setState(() {
+                                isUse = v!;
+                              }),
                             ),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                          onPressed: () {
-                            onSubmitted(
-                              userId: idController.text,
-                              password: pwController.text,
-                              adminYn: isManager,
-                              countryName: selectedCity ?? '',
-                              useYn: isUse,
-                            );
-                            Navigator.of(ctx).pop();
-                          },
-                          child: const Text('입력 완료',
-                              style: TextStyle(fontSize: 16)),
+                            const SizedBox(width: 16),
+                            _buildCheckbox(
+                              label: '미사용',
+                              value: !isUse,
+                              onChanged: (v) => setState(() {
+                                isUse = !v!;
+                              }),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(height: 16),
+
+                        // 도시 선택
+                        DropdownSearch<String>(
+                          popupProps: PopupProps.menu(
+                            showSearchBox: true,
+                            constraints: const BoxConstraints(maxHeight: 250),
+                          ),
+                          items: cityDropDownItems,
+                          selectedItem: selectedCity,
+                          dropdownDecoratorProps: DropDownDecoratorProps(
+                            dropdownSearchDecoration:
+                                _buildDecoration('시·도 선택'),
+                          ),
+                          onChanged: (v) => setState(() => selectedCity = v),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // 완 료 버튼
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.purpleColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            onPressed: () {
+                              onSubmitted(
+                                userId: idController.text,
+                                password: pwController.text,
+                                adminYn: isManager,
+                                countryName: selectedCity ?? '',
+                                useYn: isUse,
+                              );
+                              Navigator.of(ctx).pop();
+                            },
+                            child: const Text('입력 완료',
+                                style: TextStyle(fontSize: 16)),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
-          );
-        },
+          ),
+        ),
       );
     },
     transitionBuilder: (_, anim, __, child) =>
         FadeTransition(opacity: anim, child: child),
+  );
+}
+
+/// 공통 InputDecoration 빌더
+InputDecoration _buildDecoration(String hint) {
+  return InputDecoration(
+    hintText: hint,
+    border: const OutlineInputBorder(),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: AppColors.greyColor),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: AppColors.purpleColor),
+    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+  );
+}
+
+/// 공통 Checkbox + Label
+Widget _buildCheckbox({
+  required String label,
+  required bool value,
+  required ValueChanged<bool?> onChanged,
+}) {
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Checkbox(
+        value: value,
+        onChanged: onChanged,
+        checkColor: AppColors.purpleColor,
+        fillColor: WidgetStateProperty.all(Colors.white),
+        side: WidgetStateBorderSide.resolveWith((s) => BorderSide(
+            color: s.contains(WidgetState.selected)
+                ? AppColors.purpleColor
+                : AppColors.greyColor,
+            width: 2)),
+      ),
+      Text(label,
+          style: TextStyle(color: value ? AppColors.purpleColor : Colors.grey)),
+    ],
   );
 }

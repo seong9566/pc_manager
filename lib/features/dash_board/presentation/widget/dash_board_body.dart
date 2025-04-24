@@ -60,6 +60,12 @@ class DashBoardBody extends ConsumerWidget {
   }) {
     final double totalWidth = columnWidths.reduce((a, b) => a + b);
 
+    const headerStyle = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 18,
+    );
+    final cellStyle = TextStyle(fontSize: 14, color: Colors.grey[700]);
+
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Container(
@@ -72,56 +78,68 @@ class DashBoardBody extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 카드 상단 제목
             Text(title,
                 style:
                     const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
+
+            // 가로 스크롤 + 고정 높이 박스
             SizedBox(
-              width: totalWidth + 24,
-              height: 380,
+              height: 380, // 원하는 높이
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(
                   width: totalWidth,
-                  child: ListView.builder(
-                    itemCount: rows.length + 1,
-                    itemBuilder: (context, index) {
-                      final isHeader = index == 0;
-                      final cells = isHeader ? headers : rows[index - 1];
-                      return Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Row(
-                              children: List.generate(cells.length, (i) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 12.0),
-                                  child: SizedBox(
-                                    width: columnWidths[i],
-                                    child: Text(
-                                      cells[i],
-                                      style: TextStyle(
-                                        fontSize: isHeader ? 18 : 14,
-                                        fontWeight: isHeader
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                        color: isHeader
-                                            ? Colors.black
-                                            : Colors.grey[700],
+                  child: Column(
+                    children: [
+                      // ─── 헤더 고정 ─────────────────────
+                      Row(
+                        children: List.generate(headers.length, (i) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 12.0),
+                            child: SizedBox(
+                              width: columnWidths[i],
+                              child: Text(
+                                headers[i],
+                                style: headerStyle,
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                      const Divider(height: 1, color: Colors.grey),
+
+                      // ─── 내용 부분만 스크롤 ─────────────────────
+                      Expanded(
+                        child: ListView.separated(
+                          itemCount: rows.length,
+                          separatorBuilder: (_, __) =>
+                              const Divider(height: 1, color: Colors.grey),
+                          itemBuilder: (context, rowIndex) {
+                            final cells = rows[rowIndex];
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Row(
+                                children: List.generate(cells.length, (i) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 12.0),
+                                    child: SizedBox(
+                                      width: columnWidths[i],
+                                      child: Text(
+                                        cells[i],
+                                        style: cellStyle,
                                       ),
                                     ),
-                                  ),
-                                );
-                              }),
-                            ),
-                          ),
-                          Divider(
-                            height: 1,
-                            color: Colors.grey,
-                          ),
-                        ],
-                      );
-                    },
+                                  );
+                                }),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

@@ -36,7 +36,7 @@ class _AccountBodyState extends ConsumerState<AccountBody> {
             initialPassword: '',
             // 보안상 비밀번호는 빈 문자열로 두거나 별도 플로우로 처리
             initialAdminYn: acc.adminYn,
-            initialCountryName: "0",
+            initialCountryName: acc.countryName,
             onSubmitted: ({
               required userId,
               required password,
