@@ -62,9 +62,7 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
 
   Map<String, String> splitAddress(String address) {
     final parts = address.trim().split(RegExp(r'\s+'));
-
     String extractRoadName(String input) {
-      // 숫자나 '길', '로', '번길' 등이 붙기 전까지 잘라냄
       final match = RegExp(r'^[가-힣]+').firstMatch(input);
       return match?.group(0) ?? '';
     }
@@ -81,22 +79,28 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
       context: context,
       barrierDismissible: true,
       barrierLabel: "KAKAO Address",
-      pageBuilder: (_, __, ___) {
-        return KakaoAddressWidget(
-          onComplete: (kakaoAddress) {
-            print('onComplete KakaoAddress: ${kakaoAddress.address}');
-            final parsed = splitAddress(kakaoAddress.address);
-
-            setState(() {
-              address = kakaoAddress.address;
-              _cityController.text = parsed['city'] ?? '';
-              _townController.text = parsed['town'] ?? '';
-              _countryController.text = parsed['country'] ?? '';
-            });
-          },
-          onClose: () {
-            Navigator.pop(context);
-          },
+      pageBuilder: (dContext, __, ___) {
+        return Dialog(
+          child: Container(
+            height: 500,
+            width: 500,
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: KakaoAddressWidget(
+              onComplete: (kakaoAddress) {
+                final parsed = splitAddress(kakaoAddress.address);
+                setState(() {
+                  address = kakaoAddress.address;
+                  _cityController.text = parsed['city'] ?? '';
+                  _townController.text = parsed['town'] ?? '';
+                  _countryController.text = parsed['country'] ?? '';
+                });
+              },
+              onClose: () => Navigator.pop(dContext),
+            ),
+          ),
         );
       },
     );
@@ -107,21 +111,20 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
     final isEdit = selectedStore != null && !selectedStore.isEmpty;
 
     final ip = _ipController.text.trim();
-    final port = int.parse(_portController.text.trim());
+    final port = int.tryParse(_portController.text.trim()) ?? 0;
     final name = _nameController.text.trim();
-    final seatNumber = int.parse(_seatController.text.trim());
-    final price = double.parse(_priceController.text.trim());
-    final pricePercent = double.parse(_rateOfPlanController.text.trim());
+    final seatNumber = int.tryParse(_seatController.text.trim()) ?? 0;
+    final price = double.tryParse(_priceController.text.trim()) ?? 0;
+    final pricePercent =
+        double.tryParse(_rateOfPlanController.text.trim()) ?? 0;
     final pcSpec = _specController.text.trim();
     final telecom = _agencyController.text.trim();
     final memo = _memoController.text.trim();
 
-    if (isEdit) {
-      final pId = selectedStore.pId!;
-      ref
-          .read(managementViewModelProvider.notifier)
-          .updateStore(
-            pId: pId,
+    final notifier = ref.read(managementViewModelProvider.notifier);
+    final future = isEdit
+        ? notifier.updateStore(
+            pId: selectedStore.pId!,
             ip: ip,
             port: port,
             name: name,
@@ -132,18 +135,7 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
             telecom: telecom,
             memo: memo,
           )
-          .then((resultMessage) {
-        if (mounted) {
-          resultDialog(
-            context,
-            resultMessage!.message,
-          );
-        }
-      });
-    } else {
-      ref
-          .read(managementViewModelProvider.notifier)
-          .addStore(
+        : notifier.addStore(
             ip: ip,
             port: port,
             name: name,
@@ -157,62 +149,52 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
             pcSpec: pcSpec.isEmpty ? null : pcSpec,
             telecom: telecom.isEmpty ? null : telecom,
             memo: memo.isEmpty ? null : memo,
-          )
-          .then((resultMessage) {
-        if (mounted) {
-          resultDialog(
-            context,
-            resultMessage!.message,
           );
-        }
-      });
-    }
-  }
 
-  void resultDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text("PC방 추가"),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () {
-              /// PC 추가 시 Analytics 데이터 갱신 해줘야함.
-              Navigator.of(context).pop();
-              ref.read(managementViewModelProvider.notifier).getStoreList();
-              ref
-                  .read(analyticsViewModelProvider.notifier)
-                  .getThisDayDataList(targetDate: DateTime.now());
-              ref.read(baseViewIndexProvider.notifier).state = 1;
-            },
-            child: const Text("확인"),
+    future.then((resultMessage) {
+      if (mounted && resultMessage != null) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text(isEdit ? '수정 완료' : '추가 완료'),
+            content: Text(resultMessage.message),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  ref.read(managementViewModelProvider.notifier).getStoreList();
+                  ref
+                      .read(analyticsViewModelProvider.notifier)
+                      .getThisDayDataList(targetDate: DateTime.now());
+                  ref.read(baseViewIndexProvider.notifier).state = 1;
+                },
+                child: const Text('확인'),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        );
+      }
+    });
   }
 
-  void cancelDialog() {
+  void cancelDialog(bool isEdit) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (_) => AlertDialog(
         title: Text('정말 취소하시겠습니까?'),
-        content: Text('입력한 정보가 모두 사라집니다.'),
+        content: Text(isEdit ? '수정한 내용은 저장 되지 않습니다.' : '입력한 정보가 모두 사라집니다.'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('아니요'),
-          ),
+              onPressed: () => Navigator.pop(context),
+              child: const Text('아니요')),
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.pop(context);
               ref.read(selectedStoreProvider.notifier).state =
                   ManagementModel.empty();
               ref.read(baseViewIndexProvider.notifier).state = 1;
             },
-            child: Text('네'),
+            child: const Text('네'),
           ),
         ],
       ),
@@ -223,15 +205,14 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
   Widget build(BuildContext context) {
     ref.listen<ManagementModel?>(
       selectedStoreProvider,
-      (prev, next) {
+      (_, next) {
         _initializeControllers(next);
         setState(() {});
       },
     );
-
     final isEdit = ref.watch(selectedStoreProvider)?.isEmpty == false;
 
-    return Container(
+    return Padding(
       padding: EdgeInsets.only(
         left: 24,
         top: 20,
@@ -245,61 +226,137 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [AppTheme.greyShadow],
         ),
-        child: _body(isEdit),
-      ),
-    );
-  }
-
-  Widget _body(bool isEdit) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 20),
-        Text('PC방 추가',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-        SizedBox(height: 20),
-        CustomTextField(hintText: 'PC방 이름', controller: _nameController),
-        SizedBox(height: 20),
-        _addressRow(isEdit),
-        SizedBox(height: 20),
-
-        /// 주소는 ReadOnly
-        Row(children: [
-          CustomTextField(
-              hintText: 'AA시', controller: _cityController, isEdit: true),
-          SizedBox(width: 10),
-          CustomTextField(
-              hintText: 'BB구', controller: _townController, isEdit: true),
-          SizedBox(width: 10),
-          CustomTextField(
-              hintText: 'CC동', controller: _countryController, isEdit: true),
-        ]),
-        SizedBox(height: 20),
-        CustomTextField(hintText: 'IP', controller: _ipController),
-        SizedBox(height: 20),
-        CustomTextField(hintText: 'Port', controller: _portController),
-        SizedBox(height: 20),
-        CustomTextField(hintText: '좌석 수', controller: _seatController),
-        SizedBox(height: 20),
-        CustomTextField(hintText: '요금제 가격', controller: _priceController),
-        SizedBox(height: 20),
-        CustomTextField(
-            hintText: 'PC 요금제 비율', controller: _rateOfPlanController),
-        SizedBox(height: 20),
-        CustomTextField(hintText: 'PC 사양', controller: _specController),
-        SizedBox(height: 20),
-        CustomTextField(hintText: '통신사', controller: _agencyController),
-        SizedBox(height: 20),
-        CustomTextField(hintText: '메모', controller: _memoController),
-        SizedBox(height: 20),
-        Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buttonItem('추가', AppColors.purpleColor, addStore),
-            SizedBox(width: 20),
-            _buttonItem('취소', AppColors.purpleColor, cancelDialog),
+            const SizedBox(height: 20),
+            const Text('PC방 추가',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+
+            // 이 Expanded가 반드시 Column의 직계 자식이어야 합니다.
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                children: [
+                  CustomTextField(
+                    hintText: 'PC방 이름',
+                    controller: _nameController,
+                    useExpanded: false,
+                  ),
+                  const SizedBox(height: 20),
+                  _addressRow(isEdit),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      CustomTextField(
+                        hintText: 'AA시',
+                        controller: _cityController,
+                        isEdit: true,
+                        useExpanded: true,
+                      ),
+                      const SizedBox(width: 8),
+                      CustomTextField(
+                        hintText: 'BB구',
+                        controller: _townController,
+                        isEdit: true,
+                        useExpanded: true,
+                      ),
+                      const SizedBox(width: 8),
+                      CustomTextField(
+                        hintText: 'CC동',
+                        controller: _countryController,
+                        isEdit: true,
+                        useExpanded: true,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    hintText: 'IP',
+                    controller: _ipController,
+                    useExpanded: false,
+                  ),
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    hintText: 'Port',
+                    controller: _portController,
+                    useExpanded: false,
+                  ),
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    hintText: '좌석 수',
+                    controller: _seatController,
+                    useExpanded: false,
+                  ),
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    hintText: '요금제 가격',
+                    controller: _priceController,
+                    useExpanded: false,
+                  ),
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    hintText: 'PC 요금제 비율',
+                    controller: _rateOfPlanController,
+                    useExpanded: false,
+                  ),
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    hintText: 'PC 사양',
+                    controller: _specController,
+                    useExpanded: false,
+                  ),
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    hintText: '통신사',
+                    controller: _agencyController,
+                    useExpanded: false,
+                  ),
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    hintText: '메모',
+                    controller: _memoController,
+                    useExpanded: false,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 48,
+                          child: ElevatedButton(
+                            onPressed: addStore,
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.purpleColor),
+                            child: const Text('추가',
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: SizedBox(
+                          height: 48,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              cancelDialog(isEdit);
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.grey),
+                            child: const Text('취소',
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
-      ],
+      ),
     );
   }
 
@@ -308,46 +365,32 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
       children: [
         Expanded(
           child: Container(
-            padding: EdgeInsets.only(left: 12),
-            height: 40,
+            height: 48,
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(5),
             ),
-            alignment: Alignment.centerLeft,
             child: Text(
               address.isEmpty ? '주소를 입력해 주세요.' : address,
-              style: TextStyle(color: Colors.grey, fontSize: 14),
+              style: TextStyle(color: Colors.grey.shade600),
             ),
           ),
         ),
         if (!isEdit) ...[
-          SizedBox(width: 20),
-          _buttonItem('주소 검색', AppColors.purpleColor, () {
-            openAddressDialog(context);
-          }),
-        ]
+          const SizedBox(width: 12),
+          SizedBox(
+            height: 48,
+            child: ElevatedButton(
+              onPressed: () => openAddressDialog(context),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.purpleColor),
+              child: const Text('주소 검색', style: TextStyle(color: Colors.white)),
+            ),
+          ),
+        ],
       ],
-    );
-  }
-
-  Widget _buttonItem(String text, Color color, Function() onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 100,
-        height: 40,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          text,
-          style: TextStyle(
-              fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white),
-        ),
-      ),
     );
   }
 }
