@@ -166,7 +166,7 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
                   ref
                       .read(analyticsViewModelProvider.notifier)
                       .getThisDayDataList(targetDate: DateTime.now());
-                  ref.read(baseViewIndexProvider.notifier).state = 1;
+                  ref.read(tabIndexProvider.notifier).select(1);
                 },
                 child: const Text('확인'),
               ),
@@ -192,7 +192,7 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
               Navigator.pop(context);
               ref.read(selectedStoreProvider.notifier).state =
                   ManagementModel.empty();
-              ref.read(baseViewIndexProvider.notifier).state = 1;
+              ref.read(tabIndexProvider.notifier).select(1);
             },
             child: const Text('네'),
           ),

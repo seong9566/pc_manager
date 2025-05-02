@@ -94,4 +94,8 @@ class ManagementUseCase {
       memo: memo,
     );
   }
+
+  Future<List<ManagementModel>> getCountryStoreList({required int countryId}) {
+    return managementRepository.getCountryStoreList(countryId: countryId);
+  }
 }

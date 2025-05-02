@@ -138,6 +138,19 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
 
   Widget _rowButtons(String dateLabel) {
     return LayoutBuilder(builder: (context, constraints) {
+      // Reset button setup
+      final dateVm = ref.read(dateViewModel.notifier);
+      final analyticsVm = ref.read(analyticsViewModelProvider.notifier);
+
+      final resetBtn = TextButton(
+        onPressed: () {
+          dateVm.initDate();
+          analyticsVm.searchPcName('');
+          analyticsVm.init();
+        },
+        style: TextButton.styleFrom(foregroundColor: AppColors.purpleColor),
+        child: const Text('초기화'),
+      );
       final isNarrow = constraints.maxWidth < 600;
 
       final tabs = AnalyticsType.values.map((type) {
@@ -173,15 +186,26 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
           children: [
             Wrap(alignment: WrapAlignment.center, spacing: 16, children: tabs),
             const SizedBox(height: 12),
-            dateBtn,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                dateBtn,
+                const SizedBox(width: 8),
+                resetBtn,
+              ],
+            ),
           ],
         );
       } else {
-        return Row(children: [
-          ...tabs.expand((w) => [w, const SizedBox(width: 24)]).toList(),
-          const Spacer(),
-          dateBtn,
-        ]);
+        return Row(
+          children: [
+            ...tabs.expand((w) => [w, const SizedBox(width: 24)]).toList(),
+            const Spacer(),
+            dateBtn,
+            const SizedBox(width: 8),
+            resetBtn,
+          ],
+        );
       }
     });
   }

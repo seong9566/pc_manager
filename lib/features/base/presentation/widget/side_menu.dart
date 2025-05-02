@@ -57,8 +57,7 @@ class _SideMenuState extends ConsumerState<SideMenu> {
             if (widget.role == "Master")
               GestureDetector(
                 onTap: () {
-                  ref.read(accountViewModel.notifier).init();
-                  ref.read(baseViewIndexProvider.notifier).state = 4;
+                  ref.read(tabIndexProvider.notifier).select(4); // 이동
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 24),

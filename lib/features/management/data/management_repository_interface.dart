@@ -39,4 +39,6 @@ abstract class IManagementRepository {
   Future<ResponseModel<void>> deleteStore({required int pId});
 
   Future<ResponseModel<PingModel>> sendIpPing({required int pId});
+
+  Future<List<ManagementModel>> getCountryStoreList({required int countryId});
 }

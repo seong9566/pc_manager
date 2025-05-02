@@ -26,6 +26,9 @@ class ApiEndPoints {
   /// 유저 권한 정보
   static const getUserRole = "Login/sign/v1/getRole";
 
+  /// 도시 리스트
+  static const getCountryInfo = "Country/sign/v1/GetCountryInfo";
+
   /// Analyze
   static const getThisTimeDataList = "DashBoard/sign/v1/GetThisTimeDataList";
   static const getTopAnalyzeName = "DashBoard/sign/v1/GetTopAnalyzeName";
@@ -36,7 +39,7 @@ class ApiEndPoints {
 
   ///Management
   static const getStoreList = "Store/sign/v1/GetStoreList";
-  static const getStoreSearchName = "Store/sign/v1/GetStoreSearchName";
+  static const getStoreSearchName = "Store/sign/v1/GetCountryStoreList";
   static const addStore = "Store/sign/v1/AddStore";
   static const updateStore = "Store/sign/v1/UpdateStore";
   static const deleteStore = "Store/sign/v1/DeleteStore";

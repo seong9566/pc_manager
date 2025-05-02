@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/app_colors.dart';
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
+import 'package:ip_manager/features/management/presentation/widget/management_skeleton.dart';
 import 'package:ip_manager/model/management_model.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
-import 'package:ip_manager/widgets/default_button.dart';
 import 'package:ip_manager/widgets/simple_button.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../../../../model/ping_model.dart';
 
@@ -44,33 +43,15 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
   Widget build(BuildContext context) {
     final state = ref.watch(managementViewModelProvider);
     return state.when(
-      data: (management) {
-        return Expanded(child: _body(management));
-      },
-      error: (error, stack) => Center(child: Text('새로 고침 해주세요.')),
-      loading: () {
-        return Center(
-            child: DefaultButton(
-                text: '새로 고침',
-                callback: () {
-                  ref.read(managementViewModelProvider.notifier).getStoreList();
-                }));
-      },
-    );
-  }
-
-  /// TODO: 추후 로딩에 적용 하기
-  Widget skeletonLoader() {
-    return Shimmer.fromColors(
-      baseColor: Color.fromRGBO(240, 240, 240, 1),
-      highlightColor: Colors.white,
-      child: Container(
-        width: 300,
-        height: 200,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5), color: Colors.grey),
-      ),
-    );
+        data: (management) {
+          return Expanded(child: _body(management));
+        },
+        error: (error, stack) => Center(child: Text('새로 고침 해주세요.')),
+        loading: () {
+          return Center(
+            child: ManagementSkeleton(),
+          );
+        });
   }
 
   Widget _body(List<ManagementModel> item) {
@@ -108,7 +89,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
               SimpleButton(
                   onTap: () {
                     setState(() {
-                      ref.read(baseViewIndexProvider.notifier).state = 3;
+                      ref.read(tabIndexProvider.notifier).select(3);
                     });
                   },
                   title: '매장 추가'),
@@ -196,7 +177,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
       children: [
         _contentBtn('수정', AppColors.yellowColor, () {
           ref.read(selectedStoreProvider.notifier).state = item;
-          ref.read(baseViewIndexProvider.notifier).state = 3;
+          ref.read(tabIndexProvider.notifier).select(3);
         }),
         SizedBox(height: 4),
         _contentBtn('삭제', AppColors.redColor, () {
@@ -256,7 +237,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                   ref
                       .read(managementViewModelProvider.notifier)
                       .deleteStore(pId: pId);
-                  ref.read(baseViewIndexProvider.notifier).state = 1;
+                  ref.read(tabIndexProvider.notifier).select(1);
                 },
                 child: const Text("확인"),
               ),

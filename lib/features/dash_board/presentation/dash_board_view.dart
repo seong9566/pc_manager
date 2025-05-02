@@ -15,22 +15,26 @@ class _DashBoardViewState extends ConsumerState<DashBoardView> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(height: Responsive.isDesktop(context) ? 40 : 20),
-          // TextButton(
-          //   onPressed: () {
-          //     ref.read(dashBoardViewModelProvider.notifier).getDashBoardData();
-          //   },
-          //   child: Text("Api TestButton "),
-          // ),
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(height: Responsive.isDesktop(context) ? 40 : 20),
+            // TextButton(
+            //   onPressed: () {
+            //     ref.read(dashBoardViewModelProvider.notifier).getDashBoardData();
+            //   },
+            //   child: Text("Api TestButton "),
+            // ),
 
-          /// Header
-          DashBoardHeader(),
-          SizedBox(height: 40),
-          if (Responsive.isDesktop(context)) DashBoardBody(),
-        ],
+            /// Header
+            DashBoardHeader(),
+            SizedBox(height: 40),
+            DashBoardBody(),
+            // if (Responsive.isDesktop(context))
+          ],
+        ),
       ),
     );
   }

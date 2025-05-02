@@ -60,4 +60,14 @@ class ManagementService {
       data: data,
     );
   }
+
+  Future<Response> getStoreListByCountry({required int countryId}) async {
+    return await apiClient.request(
+      DioMethod.get,
+      url: ApiEndPoints.getStoreSearchName,
+      data: {
+        'countryId': countryId,
+      },
+    );
+  }
 }

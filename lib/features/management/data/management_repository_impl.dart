@@ -131,4 +131,17 @@ class ManagementRepositoryImpl implements IManagementRepository {
       (json) => PingModel.fromJson(json),
     );
   }
+
+  @override
+  Future<List<ManagementModel>> getCountryStoreList(
+      {required int countryId}) async {
+    final response = await managementService.getStoreListByCountry(
+      countryId: countryId,
+    );
+    final parsed = ResponseModel<List<dynamic>>.fromJson(
+      response.data,
+      (json) => json,
+    );
+    return parsed.data.map((e) => ManagementModel.fromJson(e)).toList();
+  }
 }

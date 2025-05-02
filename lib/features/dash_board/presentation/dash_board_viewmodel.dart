@@ -58,6 +58,8 @@ class DashBoardViewModel extends StateNotifier<DashBoardState> {
 
   Future<void> getTopAnalyze() async {
     debugPrint("[Flutter] >> GetTopAnalyze...");
+    await Future.delayed(Duration(milliseconds: 500));
+
     try {
       final result = await dashBoardUseCase.getTopAnalyze();
       state = state.copyWith(topAnalyzeModel: result);

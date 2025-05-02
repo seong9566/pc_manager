@@ -9,7 +9,7 @@ import 'widget/analytics_header.dart';
 import 'widget/analytics_body.dart';
 
 class AnalyticsView extends ConsumerStatefulWidget {
-  const AnalyticsView({Key? key}) : super(key: key);
+  const AnalyticsView({super.key});
 
   @override
   ConsumerState<AnalyticsView> createState() => _AnalyticsViewState();
@@ -26,40 +26,42 @@ class _AnalyticsViewState extends ConsumerState<AnalyticsView> {
 
   /// PC 이름 검색 콜백
   void _onSearch(String pcName) {
+    {
+      ref.read(analyticsViewModelProvider.notifier).searchPcName(pcName);
+    }
+  }
+
+  void _onCountryChanged(int countryId) async {
     final vm = ref.read(analyticsViewModelProvider.notifier);
     final dateState = ref.read(dateViewModel);
 
-    switch (currentType) {
-      case AnalyticsType.all:
-        vm.getThisDayDataList(
-          targetDate: dateState.allDate,
-          pcName: pcName,
-        );
-        break;
-      case AnalyticsType.daily:
-        vm.getDaysDataList(
-          targetDate: dateState.dailyDate,
-          pcName: pcName,
-        );
-        break;
-      case AnalyticsType.monthly:
-        final monthDate = dateState.monthlyDate;
-        vm.getMonthDataList(
-          targetDate: monthDate,
-          pcName: pcName,
-        );
-        break;
-      case AnalyticsType.period:
-        final start = dateState.periodStart;
-        final end = dateState.periodEnd;
-        if (start != null && end != null) {
-          vm.getPeriodDataList(
-            startDate: start,
-            endDate: end,
-            pcName: pcName,
-          );
-        }
-        break;
+    // 전체 분석 기록
+    vm.getThisDayDataList(
+      targetDate: dateState.allDate,
+      countryTbId: countryId,
+    );
+    await Future.delayed(Duration(milliseconds: 500));
+    // 일별 기록
+    vm.getDaysDataList(
+      targetDate: dateState.dailyDate,
+      countryTbId: countryId,
+    );
+    await Future.delayed(Duration(milliseconds: 500));
+
+    // 월별 기록
+    vm.getMonthDataList(
+      targetDate: dateState.monthlyDate,
+      countryTbId: countryId,
+    );
+    await Future.delayed(Duration(milliseconds: 500));
+
+    // 기간별 기록: 시작과 종료가 모두 존재할 때만 호출
+    if (dateState.periodStart != null && dateState.periodEnd != null) {
+      vm.getPeriodDataList(
+        startDate: dateState.periodStart!,
+        endDate: dateState.periodEnd!,
+        countryTbId: countryId,
+      );
     }
   }
 
@@ -71,7 +73,8 @@ class _AnalyticsViewState extends ConsumerState<AnalyticsView> {
         const SizedBox(height: 40),
 
         // 1) 검색창 + 드롭다운
-        AnalyticsHeader(onSearch: _onSearch),
+        AnalyticsHeader(
+            onSearch: _onSearch, onCountryChanged: _onCountryChanged),
 
         // 2) 탭 버튼들 + 날짜 선택
         AnalyticsBody(

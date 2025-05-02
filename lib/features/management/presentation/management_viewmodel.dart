@@ -41,6 +41,17 @@ class ManagementViewModel
     }
   }
 
+  Future<void> getCountryStoreList({required int countryId}) async {
+    state = const AsyncLoading();
+    try {
+      final list =
+          await managementUseCase.getCountryStoreList(countryId: countryId);
+      state = AsyncValue.data(list);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
   Future<void> getStoreSearchName(String name) async {
     state = const AsyncLoading();
 

@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/features/analytics/presentation/analytics_view.dart';
 import 'package:ip_manager/features/base/presentation/widget/side_menu.dart';
+import 'package:ip_manager/features/country/presentation/country_list_provider.dart';
 import 'package:ip_manager/features/dash_board/presentation/dash_board_view.dart';
 import 'package:ip_manager/features/management/presentation/store_add_view.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
 import 'package:toastification/toastification.dart';
 
-import '../../../model/management_model.dart';
 import '../../../provider/user_session.dart';
 import '../../account/presentation/account_view.dart';
 import '../../management/presentation/management_view.dart';
@@ -61,16 +61,9 @@ class _BaseViewState extends ConsumerState<BaseView> {
     });
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      ref.read(selectedStoreProvider.notifier).state = ManagementModel.empty();
-      ref.read(baseViewIndexProvider.notifier).state = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    int selectedIndex = ref.watch(baseViewIndexProvider);
+    int selectedIndex = ref.watch(tabIndexProvider);
 
     return PopScope(
       canPop: false,
@@ -82,7 +75,7 @@ class _BaseViewState extends ConsumerState<BaseView> {
       },
       child: Scaffold(
         appBar: !Responsive.isDesktop(context) ? _appBar(selectedIndex) : null,
-        // drawer: SideMenu(selectedIndex: selectedIndex, onTap: _onItemTapped),
+        // drawer: SideMenu(selectedIndex: selectedIndex, onTap: (index) => ref.read(tabIndexProvider.notifier).select(index)),
         body: Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: double.infinity),
@@ -96,7 +89,8 @@ class _BaseViewState extends ConsumerState<BaseView> {
                     child: SideMenu(
                       role: ref.watch(userSessionProvider).role ?? '',
                       selectedIndex: selectedIndex,
-                      onTap: _onItemTapped,
+                      onTap: (index) =>
+                          ref.read(tabIndexProvider.notifier).select(index),
                     ),
                   ),
                 Expanded(
@@ -153,7 +147,9 @@ class _BaseViewState extends ConsumerState<BaseView> {
                         selectedIndex: selectedIndex,
                         onTap: (index) {
                           Navigator.pop(context); // 닫기
-                          _onItemTapped(index); // 이동
+                          ref
+                              .read(tabIndexProvider.notifier)
+                              .select(index); // 이동
                         },
                       ),
                     ),

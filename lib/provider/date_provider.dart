@@ -24,8 +24,8 @@ class DateState {
       allDate: now,
       dailyDate: now,
       monthlyDate: DateTime(now.year, now.month),
-      periodStart: null,
-      periodEnd: null,
+      periodStart: now.subtract(Duration(days: 1)),
+      periodEnd: now,
     );
   }
 
@@ -48,6 +48,10 @@ class DateState {
 
 class DateViewModel extends StateNotifier<DateState> {
   DateViewModel() : super(DateState.initial());
+
+  void initDate() {
+    state = DateState.initial();
+  }
 
   /// 전체/All 날짜 설정
   void updateAllDate(DateTime date) {

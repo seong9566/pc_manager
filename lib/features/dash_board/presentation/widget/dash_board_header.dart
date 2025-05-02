@@ -63,6 +63,7 @@ class _DashBoardHeaderState extends ConsumerState<DashBoardHeader> {
             subTitle: analyzeModel.topSalesStoreName,
           ),
         ),
+        SizedBox(width: 16),
         Expanded(
           child: _headerItem(
             context,
@@ -71,6 +72,7 @@ class _DashBoardHeaderState extends ConsumerState<DashBoardHeader> {
             subTitle: analyzeModel.topUsedRateStoreName,
           ),
         ),
+        SizedBox(width: 16),
         Expanded(
           child: _headerItem(
             context,
@@ -90,7 +92,6 @@ class _DashBoardHeaderState extends ConsumerState<DashBoardHeader> {
     required String subTitle,
   }) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16),
       padding: EdgeInsets.only(top: 40, left: 40, right: 40),
       height: Responsive.isDesktop(context) ? 200 : 160,
       decoration: BoxDecoration(
