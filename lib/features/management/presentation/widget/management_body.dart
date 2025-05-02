@@ -1,8 +1,11 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/app_colors.dart';
 import 'package:ip_manager/core/config/app_theme.dart';
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
+import 'package:ip_manager/features/management/presentation/widget/hover_button.dart';
 import 'package:ip_manager/features/management/presentation/widget/management_skeleton.dart';
 import 'package:ip_manager/model/management_model.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
@@ -87,13 +90,23 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
               ),
               // Text("선택된 옵션 : 서울시 관악구 조원로"),
               // Text("총 매장 수 : 2개"),
-              SimpleButton(
-                  onTap: () {
-                    setState(() {
-                      ref.read(tabIndexProvider.notifier).select(3);
-                    });
-                  },
-                  title: '매장 추가'),
+              HoverButton(
+                text: "매장 추가",
+                icon: Icons.add,
+                color: AppColors.purpleColor,
+                onTap: () {
+                  setState(() {
+                    ref.read(tabIndexProvider.notifier).select(3);
+                  });
+                },
+              ),
+              // SimpleButton(
+              //     onTap: () {
+              //       setState(() {
+              //         ref.read(tabIndexProvider.notifier).select(3);
+              //       });
+              //     },
+              //     title: '매장 추가'),
             ],
           ),
           SizedBox(height: 16),
@@ -176,50 +189,100 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
   Widget _bodyContentButtons(ManagementModel item) {
     return Column(
       children: [
-        _contentBtn('수정', AppColors.yellowColor, () {
-          ref.read(selectedStoreProvider.notifier).state = item;
-          ref.read(tabIndexProvider.notifier).select(3);
-        }),
-        SizedBox(height: 4),
-        _contentBtn('삭제', AppColors.redColor, () {
-          showDeleteDialog(context, item.name!, item.pId!);
-        }),
-        SizedBox(height: 4),
-        _contentBtn('분석', AppColors.purpleColor, () async {
-          if (item.pId == null) {
-            debugPrint("[Flutter] >> pId is null");
-          }
-          // 로딩 다이얼로그 먼저 띄우기
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (_) {
-              return const Center(child: CircularProgressIndicator());
-            },
-          );
-
-          // 데이터 요청
-          final data = await ref
-              .read(managementViewModelProvider.notifier)
-              .sendIpPing(pId: item.pId!);
-          // 로딩 다이얼로그 닫기
-          if (context.mounted) {
-            Navigator.of(context).pop();
-          }
-
-          if (data == null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('PING 데이터를 불러오지 못했습니다')),
+        HoverButton(
+          icon: Icons.edit,
+          text: '수정',
+          color: AppColors.yellowColor,
+          onTap: () {
+            ref.read(selectedStoreProvider.notifier).state = item;
+            ref.read(tabIndexProvider.notifier).select(3);
+          },
+        ),
+        const SizedBox(height: 4),
+        HoverButton(
+          icon: Icons.delete,
+          text: '삭제',
+          color: AppColors.redColor,
+          onTap: () {
+            showDeleteDialog(context, item.name!, item.pId!);
+          },
+        ),
+        const SizedBox(height: 4),
+        HoverButton(
+          text: '분석',
+          icon: Icons.analytics,
+          color: AppColors.purpleColor,
+          onTap: () async {
+            if (item.pId == null) return;
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (_) => const Center(child: CircularProgressIndicator()),
             );
-            return;
-          }
-
-          // 결과 다이얼로그 띄우기
-          showPingDialog(context, item.name ?? '', data);
-        }),
+            final data = await ref
+                .read(managementViewModelProvider.notifier)
+                .sendIpPing(pId: item.pId!);
+            if (context.mounted) Navigator.of(context).pop();
+            if (data == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('PING 데이터를 불러오지 못했습니다')),
+              );
+              return;
+            }
+            showPingDialog(context, item.name ?? '', data);
+          },
+        ),
       ],
     );
   }
+
+  // Widget _bodyContentButtons(ManagementModel item) {
+  //   return Column(
+  //     children: [
+  //       _contentBtn('수정', AppColors.yellowColor, () {
+  //         ref.read(selectedStoreProvider.notifier).state = item;
+  //         ref.read(tabIndexProvider.notifier).select(3);
+  //       }),
+  //       SizedBox(height: 4),
+  //       _contentBtn('삭제', AppColors.redColor, () {
+  //         showDeleteDialog(context, item.name!, item.pId!);
+  //       }),
+  //       SizedBox(height: 4),
+  //       _contentBtn('분석', AppColors.purpleColor, () async {
+  //         if (item.pId == null) {
+  //           debugPrint("[Flutter] >> pId is null");
+  //         }
+  //         // 로딩 다이얼로그 먼저 띄우기
+  //         showDialog(
+  //           context: context,
+  //           barrierDismissible: false,
+  //           builder: (_) {
+  //             return const Center(child: CircularProgressIndicator());
+  //           },
+  //         );
+  //
+  //         // 데이터 요청
+  //         final data = await ref
+  //             .read(managementViewModelProvider.notifier)
+  //             .sendIpPing(pId: item.pId!);
+  //         // 로딩 다이얼로그 닫기
+  //         if (context.mounted) {
+  //           Navigator.of(context).pop();
+  //         }
+  //
+  //         if (data == null) {
+  //           ScaffoldMessenger.of(context).showSnackBar(
+  //             const SnackBar(content: Text('PING 데이터를 불러오지 못했습니다')),
+  //           );
+  //           return;
+  //         }
+  //
+  //         // 결과 다이얼로그 띄우기
+  //         showPingDialog(context, item.name ?? '', data);
+  //       }),
+  //     ],
+  //   );
+  // }
 
   void showDeleteDialog(BuildContext context, String storeName, int pId) {
     showDialog(
@@ -317,28 +380,28 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
     );
   }
 
-  Widget _contentBtn(String text, Color color, Function onTap) {
-    return GestureDetector(
-      onTap: () {
-        onTap();
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _contentBtn(String text, Color color, Function onTap) {
+  //   return GestureDetector(
+  //     onTap: () {
+  //       onTap();
+  //     },
+  //     child: Container(
+  //       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+  //       decoration: BoxDecoration(
+  //         color: color,
+  //         borderRadius: BorderRadius.all(Radius.circular(8)),
+  //       ),
+  //       child: Text(
+  //         text,
+  //         style: TextStyle(
+  //           fontSize: 16,
+  //           fontWeight: FontWeight.bold,
+  //           color: Colors.white,
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   ///  본문 텍스트
   Widget _bodyContentText(String text, double width) {
