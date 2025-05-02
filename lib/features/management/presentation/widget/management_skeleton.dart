@@ -1,98 +1,67 @@
+// lib/features/management/presentation/widget/management_skeleton.dart
+
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-import 'management_body.dart';
-
 /// 관리 화면의 로딩 스켈레톤
 class ManagementSkeleton extends StatelessWidget {
-  const ManagementSkeleton({super.key});
+  const ManagementSkeleton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    const rowCount = 6;
-    final widths = [
-      nameWidth,
-      addressWidth,
-      ipWidth,
-      portWidth,
-      seatWidth,
-      priceWidth,
-      specificationWidth,
-      agencyWidth,
-      memoWidth,
-      actionWidth,
-    ];
+    const int rowCount = 10;
+    const int columnCount = 5;
 
-    return Container(
-      padding: const EdgeInsets.all(24),
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 8)],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Title skeleton
-          SizedBox(
-            width: 200,
-            height: 24,
-            child: Shimmer.fromColors(
-              baseColor: Colors.grey.shade300,
-              highlightColor: Colors.grey.shade100,
-              child: Container(color: Colors.grey.shade300),
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Content skeleton wrapped in horizontal scroll
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header row skeleton
-                Row(
-                  children: [
-                    for (int i = 0; i < widths.length; i++) ...[
-                      Container(
-                        width: widths[i],
-                        height: 16,
-                        child: Shimmer.fromColors(
-                          baseColor: Colors.grey.shade300,
-                          highlightColor: Colors.grey.shade100,
-                          child: Container(color: Colors.grey.shade300),
+    Widget shimmerBox({double? width, double height = 16.0}) {
+      return Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        child: Container(
+          width: width,
+          height: height,
+          color: Colors.grey.shade300,
+        ),
+      );
+    }
+
+    final availableHeight = MediaQuery.of(context).size.height * 0.7;
+
+    return SizedBox(
+      height: availableHeight,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 8)],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            shimmerBox(width: 200, height: 24),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ListView.separated(
+                physics: const BouncingScrollPhysics(),
+                itemCount: rowCount,
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (context, index) {
+                  return Row(
+                    children: List.generate(columnCount, (_) {
+                      return Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: shimmerBox(height: 20),
                         ),
-                      ),
-                      if (i < widths.length - 1) const SizedBox(width: 12),
-                    ],
-                  ],
-                ),
-                const SizedBox(height: 12),
-                // Data rows skeleton
-                for (int r = 0; r < rowCount; r++) ...[
-                  Row(
-                    children: [
-                      for (int i = 0; i < widths.length; i++) ...[
-                        Container(
-                          width: widths[i],
-                          height: 16,
-                          child: Shimmer.fromColors(
-                            baseColor: Colors.grey.shade300,
-                            highlightColor: Colors.grey.shade100,
-                            child: Container(color: Colors.grey.shade300),
-                          ),
-                        ),
-                        if (i < widths.length - 1) const SizedBox(width: 12),
-                      ],
-                    ],
-                  ),
-                  if (r < rowCount - 1) const SizedBox(height: 12),
-                ],
-              ],
+                      );
+                    }),
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

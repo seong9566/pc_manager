@@ -26,8 +26,9 @@ class ApiClient implements RemoteDataSource {
         /// 모든 에러 코드를 허용, 직접 컨트롤 하기 위함
         validateStatus: (status) => true,
         baseUrl: ApiEndPoints().baseUrl,
-        connectTimeout: const Duration(seconds: 3),
-        receiveTimeout: const Duration(seconds: 3),
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10),
+
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",

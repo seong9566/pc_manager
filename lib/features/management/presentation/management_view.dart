@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/features/management/presentation/widget/management_body.dart';
 import 'package:ip_manager/features/management/presentation/widget/management_header.dart';
 
+import '../../../core/config/screen_size.dart';
 import '../../country/presentation/country_list_provider.dart';
 
 class ManagementView extends ConsumerStatefulWidget {
@@ -24,7 +25,13 @@ class _ManagementViewState extends ConsumerState<ManagementView> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [SizedBox(height: 40), ManagementHeader(), ManagementBody()],
+      children: [
+        SizedBox(height: Responsive.isDesktop(context) ? 40 : 20),
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ManagementHeader()),
+        ManagementBody()
+      ],
     );
   }
 }

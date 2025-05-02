@@ -6,6 +6,7 @@ import 'package:ip_manager/widgets/default_button.dart';
 
 import '../../../../core/config/app_colors.dart';
 import '../dash_board_viewmodel.dart';
+import 'dash_board_body_skeleton.dart';
 
 class DashBoardBody extends ConsumerWidget {
   const DashBoardBody({super.key});
@@ -17,15 +18,16 @@ class DashBoardBody extends ConsumerWidget {
 
     if (state == null || storeState == null) {
       return Center(
-        child: SizedBox(
-          width: 200,
-          child: DefaultButton(
-            text: '새로 고침',
-            callback: () {
-              ref.read(dashBoardViewModelProvider.notifier).getDashBoardData();
-            },
-          ),
-        ),
+        child: DashBoardBodySkeleton(),
+        // child: SizedBox(
+        //   width: 200,
+        //   child: DefaultButton(
+        //     text: '새로 고침',
+        //     callback: () {
+        //       ref.read(dashBoardViewModelProvider.notifier).getDashBoardData();
+        //     },
+        //   ),
+        // ),
       );
     }
 

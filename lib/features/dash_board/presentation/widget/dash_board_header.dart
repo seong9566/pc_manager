@@ -7,6 +7,7 @@ import 'package:ip_manager/features/dash_board/presentation/dash_board_viewmodel
 import 'package:ip_manager/model/top_analyze_model.dart';
 
 import '../../../../core/config/app_colors.dart';
+import 'dash_board_header_skeleton.dart';
 
 class DashBoardHeader extends ConsumerStatefulWidget {
   const DashBoardHeader({super.key});
@@ -20,7 +21,7 @@ class _DashBoardHeaderState extends ConsumerState<DashBoardHeader> {
   Widget build(BuildContext context) {
     final analyzeModel = ref.watch(dashBoardViewModelProvider).topAnalyzeModel;
     if (analyzeModel == null) {
-      return Center(child: CircularProgressIndicator());
+      return const DashBoardHeaderSkeleton();
     }
     return Responsive.isDesktop(context)
         ? _deskTopHeader(context, analyzeModel)

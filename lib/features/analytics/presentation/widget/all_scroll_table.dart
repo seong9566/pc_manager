@@ -16,6 +16,15 @@ class _AllTableScreenState extends ConsumerState<AllTableScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(analyticsViewModelProvider).thisDayData;
+    final vmState = ref.watch(analyticsViewModelProvider);
+
+    if (vmState.isLoading) {
+      return SizedBox(
+        height: 400,
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     if (state.isEmpty) {
       return Center(
         child: Text(

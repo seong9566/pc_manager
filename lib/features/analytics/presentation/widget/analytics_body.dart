@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/app_colors.dart';
 import 'package:ip_manager/core/config/app_theme.dart';
+import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/core/extension/date_time_extension.dart';
 import 'package:ip_manager/features/analytics/presentation/analytics_viewmodel.dart';
 import 'package:ip_manager/features/analytics/presentation/widget/all_scroll_table.dart';
@@ -16,10 +17,10 @@ class AnalyticsBody extends ConsumerStatefulWidget {
   final void Function(AnalyticsType) onTypeChanged;
 
   const AnalyticsBody({
-    Key? key,
+    super.key,
     required this.currentType,
     required this.onTypeChanged,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<AnalyticsBody> createState() => _AnalyticsBodyState();
@@ -118,7 +119,7 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      margin: const EdgeInsets.only(left: 12, right: 12, top: 24, bottom: 24),
+      margin: EdgeInsets.only(top: 24, bottom: 24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -129,7 +130,15 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
         children: [
           _rowButtons(label),
           const SizedBox(height: 20),
-          SizedBox(height: 400, child: table),
+          Expanded(
+            child: SingleChildScrollView(
+              child: SizedBox(
+                // 원하는 최소 높이 지정 (화면에 꽉 차도록)
+                height: MediaQuery.of(context).size.height * 0.6,
+                child: table,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -141,27 +150,63 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
       final dateVm = ref.read(dateViewModel.notifier);
       final analyticsVm = ref.read(analyticsViewModelProvider.notifier);
 
-      final resetBtn = TextButton(
+      final resetBtn = OutlinedButton.icon(
         onPressed: () {
           dateVm.initDate();
           analyticsVm.searchPcName('');
           analyticsVm.init();
         },
-        style: TextButton.styleFrom(foregroundColor: AppColors.purpleColor),
-        child: const Text('초기화'),
+        icon: const Icon(
+          Icons.refresh, // 원하는 아이콘으로 바꿔도 됩니다
+          size: 20,
+          color: AppColors.purpleColor,
+        ),
+        label: const Text(
+          '초기화',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.normal,
+            color: AppColors.purpleColor,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(
+            color: AppColors.purpleColor,
+            width: 1,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          backgroundColor: Colors.white,
+          // 배경이 투명/흰색
+          foregroundColor: AppColors.purpleColor,
+        ),
       );
-      final isNarrow = constraints.maxWidth < 600;
+      final isNarrow = !Responsive.isDesktop(context);
 
       final tabs = AnalyticsType.values.map((type) {
         final selected = widget.currentType == type;
         return GestureDetector(
           onTap: () => widget.onTypeChanged(type),
-          child: Text(
-            _typeLabel(type),
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-              color: selected ? AppColors.purpleColor : Colors.grey,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: selected
+                  ? AppColors.purpleColor.withOpacity(0.1)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+            ),
+            child: Text(
+              _typeLabel(type),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+                color: selected ? AppColors.purpleColor : Colors.grey,
+              ),
             ),
           ),
         );
@@ -170,11 +215,17 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
       final dateBtn = ElevatedButton.icon(
         onPressed: _showDatePicker,
         icon: const Icon(Icons.calendar_today, size: 20),
-        label: Text(dateLabel, style: const TextStyle(fontSize: 16)),
+        label: Text(dateLabel,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
+              color: AppColors.purpleColor,
+            )),
         style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           backgroundColor: Colors.white,
           foregroundColor: AppColors.purpleColor,
-          side: BorderSide(color: AppColors.purpleColor, width: 1.5),
+          side: BorderSide(color: AppColors.purpleColor, width: 1),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       );
@@ -183,8 +234,22 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Wrap(alignment: WrapAlignment.center, spacing: 16, children: tabs),
+            // 1) 가로 스크롤 가능한 탭 바
+            SizedBox(
+              height: 40,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    const SizedBox(width: 8),
+                    ...tabs.map((tab) => tab),
+                    const SizedBox(width: 8),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(height: 12),
+            // 2) 날짜선택 + 초기화 버튼
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [

@@ -1,15 +1,19 @@
+// lib/features/analytics/presentation/analytics_viewmodel.dart
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/extension/date_time_extension.dart';
 import 'package:ip_manager/features/analytics/domain/analytics_use_case.dart';
 import 'package:ip_manager/model/time_count_model.dart';
 
 class AnalyticsState {
+  final bool isLoading; // 로딩 상태
   final List<PcRoomAnalytics> thisDayData;
   final List<PcStatModel> daysData;
   final List<PcStatModel> monthData;
   final List<PcStatModel> periodData;
 
   AnalyticsState({
+    this.isLoading = false,
     required this.thisDayData,
     required this.daysData,
     required this.monthData,
@@ -17,6 +21,7 @@ class AnalyticsState {
   });
 
   factory AnalyticsState.initial() => AnalyticsState(
+        isLoading: false,
         thisDayData: [],
         daysData: [],
         monthData: [],
@@ -24,12 +29,14 @@ class AnalyticsState {
       );
 
   AnalyticsState copyWith({
+    bool? isLoading,
     List<PcRoomAnalytics>? thisDayData,
     List<PcStatModel>? daysData,
     List<PcStatModel>? monthData,
     List<PcStatModel>? periodData,
   }) =>
       AnalyticsState(
+        isLoading: isLoading ?? this.isLoading,
         thisDayData: thisDayData ?? this.thisDayData,
         daysData: daysData ?? this.daysData,
         monthData: monthData ?? this.monthData,
@@ -52,27 +59,27 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
 
   String _searchPcName = '';
 
-  // 초기엔 모두 오늘 날
+  /// 초기 데이터 로드
   Future<void> init() async {
-    await Future.delayed(Duration(seconds: 1));
-    final DateTime now = DateTime.now();
-    final DateTime dayDate = DateTime(now.year, now.month, now.day);
-    getThisDayDataList(targetDate: now.toDateOnlyForDateTime());
-
-    await Future.delayed(Duration(seconds: 1));
-    final DateTime startDate = now.toDateOnlyForDateTime();
-    final DateTime endDate = startDate.add(const Duration(days: 1));
-    getPeriodDataList(startDate: startDate, endDate: endDate);
-
-    await Future.delayed(Duration(seconds: 1));
-    final DateTime monthDate = DateTime(now.year, now.month);
-    getMonthDataList(targetDate: monthDate);
-
-    await Future.delayed(Duration(seconds: 1));
-    getDaysDataList(targetDate: dayDate);
+    // 첫 화면 진입 시에도 로딩 토글
+    // 최초에는 전체 분석 기록만 -> 탭 선택 시 마다 각 데이터 가져오기.
+    state = state.copyWith(isLoading: true);
+    try {
+      final now = DateTime.now().toDateOnlyForDateTime();
+      await getThisDayDataList(targetDate: now);
+      // final dayDate = DateTime(now.year, now.month, now.day);
+      // final startDate = now;
+      // final endDate = now.add(const Duration(days: 1));
+      // await getPeriodDataList(startDate: startDate, endDate: endDate);
+      // final monthDate = DateTime(now.year, now.month);
+      // await getMonthDataList(targetDate: monthDate);
+      // await getDaysDataList(targetDate: dayDate);
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
   }
 
-  /// 전체 분석 록록
+  /// 전체 분석 기록
   Future<void> getThisDayDataList({
     required DateTime targetDate,
     String? pcName,
@@ -80,18 +87,23 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     int? townTbId,
     int? cityTbId,
   }) async {
-    final data = await analyticsUseCase.getThisDayData(
-      targetDate: targetDate,
-      pcName: pcName,
-      countryTbId: countryTbId,
-      townTbId: townTbId,
-      cityTbId: cityTbId,
-    );
-
-    _allThisDayData = data ?? [];
-    _applyFilters();
+    state = state.copyWith(isLoading: true);
+    try {
+      final data = await analyticsUseCase.getThisDayData(
+        targetDate: targetDate,
+        pcName: pcName,
+        countryTbId: countryTbId,
+        townTbId: townTbId,
+        cityTbId: cityTbId,
+      );
+      _allThisDayData = data ?? [];
+      _applyFilters();
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
   }
 
+  /// 일별 분석 기록
   Future<void> getDaysDataList({
     required DateTime targetDate,
     String? pcName,
@@ -99,18 +111,23 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     int? townTbId,
     int? cityTbId,
   }) async {
-    final data = await analyticsUseCase.getDaysData(
-      targetDate: targetDate,
-      pcName: pcName,
-      countryTbId: countryTbId,
-      townTbId: townTbId,
-      cityTbId: cityTbId,
-    );
-
-    _allDaysData = data ?? [];
-    _applyFilters();
+    state = state.copyWith(isLoading: true);
+    try {
+      final data = await analyticsUseCase.getDaysData(
+        targetDate: targetDate,
+        pcName: pcName,
+        countryTbId: countryTbId,
+        townTbId: townTbId,
+        cityTbId: cityTbId,
+      );
+      _allDaysData = data ?? [];
+      _applyFilters();
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
   }
 
+  /// 월별 분석 기록
   Future<void> getMonthDataList({
     required DateTime targetDate,
     String? pcName,
@@ -118,18 +135,23 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     int? townTbId,
     int? cityTbId,
   }) async {
-    final data = await analyticsUseCase.getMonthData(
-      targetDate: targetDate,
-      pcName: pcName,
-      countryTbId: countryTbId,
-      townTbId: townTbId,
-      cityTbId: cityTbId,
-    );
-
-    _allMonthData = data ?? [];
-    _applyFilters();
+    state = state.copyWith(isLoading: true);
+    try {
+      final data = await analyticsUseCase.getMonthData(
+        targetDate: targetDate,
+        pcName: pcName,
+        countryTbId: countryTbId,
+        townTbId: townTbId,
+        cityTbId: cityTbId,
+      );
+      _allMonthData = data ?? [];
+      _applyFilters();
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
   }
 
+  /// 기간별 분석 기록
   Future<void> getPeriodDataList({
     required DateTime startDate,
     required DateTime endDate,
@@ -138,17 +160,21 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     int? townTbId,
     int? cityTbId,
   }) async {
-    final data = await analyticsUseCase.getPeriodData(
-      startDate: startDate,
-      endDate: endDate,
-      pcName: pcName,
-      countryTbId: countryTbId,
-      townTbId: townTbId,
-      cityTbId: cityTbId,
-    );
-
-    _allPeriodData = data ?? [];
-    _applyFilters();
+    state = state.copyWith(isLoading: true);
+    try {
+      final data = await analyticsUseCase.getPeriodData(
+        startDate: startDate,
+        endDate: endDate,
+        pcName: pcName,
+        countryTbId: countryTbId,
+        townTbId: townTbId,
+        cityTbId: cityTbId,
+      );
+      _allPeriodData = data ?? [];
+      _applyFilters();
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
   }
 
   /// 검색어 세팅
@@ -157,8 +183,7 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     _applyFilters();
   }
 
-  /// Apply current search term to all data sets
-  /// 현재 _searchTerm 기준으로 모두 필터링
+  /// 필터 적용 함수(검색어만)
   void _applyFilters() {
     final t = _searchPcName;
     final fThisDay = t.isEmpty
@@ -182,24 +207,34 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     );
   }
 
-  /// countryTbId 가 바뀌었을 때, 모든 탭(전체/일/월/기간)을 순차 호출
+  /// countryTbId 변경
   Future<void> changeCountry(
-      int countryTbId,
-      DateTime allDate,
-      DateTime dailyDate,
-      DateTime monthlyDate,
-      DateTime? periodStart,
-      DateTime? periodEnd) async {
-    // 전체
-    await getThisDayDataList(targetDate: allDate, countryTbId: countryTbId);
-    // 일별
-    await getDaysDataList(targetDate: dailyDate, countryTbId: countryTbId);
-    // 월별
-    await getMonthDataList(targetDate: monthlyDate, countryTbId: countryTbId);
-    // 기간별
+    int countryTbId,
+    DateTime allDate,
+    DateTime dailyDate,
+    DateTime monthlyDate,
+    DateTime? periodStart,
+    DateTime? periodEnd,
+  ) async {
+    // 전체 탭부터 순차 호출
+    await getThisDayDataList(
+      targetDate: allDate,
+      countryTbId: countryTbId,
+    );
+    await getDaysDataList(
+      targetDate: dailyDate,
+      countryTbId: countryTbId,
+    );
+    await getMonthDataList(
+      targetDate: monthlyDate,
+      countryTbId: countryTbId,
+    );
     if (periodStart != null && periodEnd != null) {
       await getPeriodDataList(
-          startDate: periodStart, endDate: periodEnd, countryTbId: countryTbId);
+        startDate: periodStart,
+        endDate: periodEnd,
+        countryTbId: countryTbId,
+      );
     }
   }
 }

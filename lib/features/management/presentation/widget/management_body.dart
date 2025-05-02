@@ -4,11 +4,11 @@ import 'package:ip_manager/core/config/app_colors.dart';
 import 'package:ip_manager/core/config/app_theme.dart';
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
 import 'package:ip_manager/features/management/presentation/widget/hover_button.dart';
-import 'package:ip_manager/features/management/presentation/widget/management_skeleton.dart';
 import 'package:ip_manager/model/management_model.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
 
 import '../../../../model/ping_model.dart';
+import 'management_skeleton.dart';
 
 const double nameWidth = 180;
 const double addressWidth = 200;
@@ -43,6 +43,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(managementViewModelProvider);
+    // return Center(child: ManagementSkeleton());
     return state.when(
         data: (management) {
           return Expanded(child: _body(management));
@@ -58,7 +59,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
   Widget _body(List<ManagementModel> item) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      margin: EdgeInsets.only(left: 12, right: 12, top: 24, bottom: 24),
+      margin: EdgeInsets.only(left: 16, right: 16, top: 24, bottom: 24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: AppTheme.mainBorder,
@@ -85,8 +86,6 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                   color: Colors.black,
                 ),
               ),
-              // Text("선택된 옵션 : 서울시 관악구 조원로"),
-              // Text("총 매장 수 : 2개"),
               HoverButton(
                 text: "매장 추가",
                 icon: Icons.add,
@@ -97,66 +96,61 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                   });
                 },
               ),
-              // SimpleButton(
-              //     onTap: () {
-              //       setState(() {
-              //         ref.read(tabIndexProvider.notifier).select(3);
-              //       });
-              //     },
-              //     title: '매장 추가'),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
-          /// 가로 스크롤 적용
+          /// 가로 스크롤 + 고정 헤더 + 세로 스크롤
           Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SizedBox(
-                width: totalWidth,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ///  테이블 헤더
-                      Row(
-                        children: [
-                          _bodyTitleText('이름', nameWidth),
-                          _bodyTitleText('주소', addressWidth),
-                          _bodyTitleText('IP', ipWidth),
-                          _bodyTitleText('포트', portWidth),
-                          _bodyTitleText('좌석수', seatWidth),
-                          _bodyTitleText('요금제 가격', priceWidth),
-                          _bodyTitleText('PC 사양', specificationWidth),
-                          _bodyTitleText('통신사', agencyWidth),
-                          _bodyTitleText('메모', memoWidth),
-                          _bodyTitleText('액션', actionWidth),
-                        ],
-                      ),
-                      SizedBox(height: 8),
-                      Divider(height: 1, color: AppColors.dividerColor),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: SizedBox(
+                    width: totalWidth,
+                    // 이 높이가 곧 ListView 의 maxHeight 가 됨
+                    height: constraints.maxHeight,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // ─── 테이블 헤더 (고정) ─────────────────────
+                        Row(
+                          children: [
+                            _bodyTitleText('이름', nameWidth),
+                            _bodyTitleText('주소', addressWidth),
+                            _bodyTitleText('IP', ipWidth),
+                            _bodyTitleText('포트', portWidth),
+                            _bodyTitleText('좌석수', seatWidth),
+                            _bodyTitleText('요금제 가격', priceWidth),
+                            _bodyTitleText('PC 사양', specificationWidth),
+                            _bodyTitleText('통신사', agencyWidth),
+                            _bodyTitleText('메모', memoWidth),
+                            _bodyTitleText('액션', actionWidth),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        const Divider(height: 1, color: AppColors.dividerColor),
 
-                      ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        // scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemCount: item.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Column(
-                            children: [
-                              SizedBox(height: 6),
-                              _contentItem(item[index]),
-                              SizedBox(height: 6),
-                              Divider(height: 1, color: AppColors.dividerColor),
-                            ],
-                          );
-                        },
-                      ),
-                    ],
+                        // ─── 데이터 리스트 (스크롤 가능) ─────────────────────
+                        Expanded(
+                          child: ListView.separated(
+                            itemCount: item.length,
+                            separatorBuilder: (_, __) => const Divider(
+                                height: 1, color: AppColors.dividerColor),
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 6),
+                                child: _contentItem(item[index]),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
         ],

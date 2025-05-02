@@ -20,7 +20,6 @@ class CountryListNotifier extends StateNotifier<List<CountryInfoModel>> {
     try {
       final list = await _useCase.getCountryList();
       state = list;
-      debugPrint("[Flutter] >> list : $list");
     } catch (e) {
       state = [];
     }

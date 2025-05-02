@@ -89,7 +89,7 @@ class _SideMenuState extends ConsumerState<SideMenu> {
             Text(
               title,
               style: TextStyle(
-                fontSize: 18,
+                fontSize: Responsive.isDesktop(context) ? 18 : 14,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 color: isSelected ? AppColors.purpleColor : Colors.black,
               ),

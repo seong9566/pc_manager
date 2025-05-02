@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_expandable_table/flutter_expandable_table.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../model/time_count_model.dart';
+import '../analytics_viewmodel.dart';
 
-class SelectedScrollTable extends StatefulWidget {
+class SelectedScrollTable extends ConsumerStatefulWidget {
   final List<PcStatModel> tableData;
 
   const SelectedScrollTable({required this.tableData, super.key});
 
   @override
-  State<SelectedScrollTable> createState() => _SelectedScrollTableState();
+  ConsumerState<SelectedScrollTable> createState() =>
+      _SelectedScrollTableState();
 }
 
-class _SelectedScrollTableState extends State<SelectedScrollTable> {
+class _SelectedScrollTableState extends ConsumerState<SelectedScrollTable> {
   final int columnsCount = 6;
 
   @override
@@ -23,6 +26,15 @@ class _SelectedScrollTableState extends State<SelectedScrollTable> {
 
   @override
   Widget build(BuildContext context) {
+    final vmState = ref.watch(analyticsViewModelProvider);
+
+    if (vmState.isLoading) {
+      return SizedBox(
+        height: 400,
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     if (widget.tableData.isEmpty) {
       return Center(
         child: Text(
