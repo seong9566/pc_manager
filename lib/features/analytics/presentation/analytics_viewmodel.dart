@@ -184,6 +184,27 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
       periodData: filteredPeriod,
     );
   }
+
+  /// countryTbId 가 바뀌었을 때, 모든 탭(전체/일/월/기간)을 순차 호출
+  Future<void> changeCountry(
+      int countryTbId,
+      DateTime allDate,
+      DateTime dailyDate,
+      DateTime monthlyDate,
+      DateTime? periodStart,
+      DateTime? periodEnd) async {
+    // 전체
+    await getThisDayDataList(targetDate: allDate, countryTbId: countryTbId);
+    // 일별
+    await getDaysDataList(targetDate: dailyDate, countryTbId: countryTbId);
+    // 월별
+    await getMonthDataList(targetDate: monthlyDate, countryTbId: countryTbId);
+    // 기간별
+    if (periodStart != null && periodEnd != null) {
+      await getPeriodDataList(
+          startDate: periodStart, endDate: periodEnd, countryTbId: countryTbId);
+    }
+  }
 }
 
 final analyticsViewModelProvider =
