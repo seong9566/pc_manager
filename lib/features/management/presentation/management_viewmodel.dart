@@ -77,15 +77,18 @@ class ManagementViewModel
   // }
 
   Future<PingModel?> sendIpPing({required int pId}) async {
-    final result = await managementUseCase.sendIpPing(pId: pId);
-    if (result.code != 200) {
-      debugPrint("[Flutter] >> Store Update Failed Server Error!");
-      // result.message = "실패 했습니다, 권한을 확인 해보세요";
+    try {
+      final result = await managementUseCase.sendIpPing(pId: pId);
+      if (result.code != 200) {
+        debugPrint(
+            "[Flutter] >> sendIpPing failed, server returned code ${result.code}");
+        return null;
+      }
+      return PingModel(used: result.data.used, unUsed: result.data.unUsed);
+    } catch (e, st) {
+      debugPrint("[Flutter] >> sendIpPing exception: $e\n$st");
       return null;
     }
-    final data = PingModel(used: result.data.used, unUsed: result.data.unUsed);
-
-    return data;
   }
 
   /// 권한 : Master

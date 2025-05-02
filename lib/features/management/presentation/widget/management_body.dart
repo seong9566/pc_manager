@@ -6,6 +6,7 @@ import 'package:ip_manager/features/management/presentation/management_viewmodel
 import 'package:ip_manager/features/management/presentation/widget/hover_button.dart';
 import 'package:ip_manager/model/management_model.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
+import 'package:toastification/toastification.dart';
 
 import '../../../../model/ping_model.dart';
 import 'management_skeleton.dart';
@@ -205,22 +206,58 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
           color: AppColors.purpleColor,
           onTap: () async {
             if (item.pId == null) return;
+
+            // 1) 로딩 다이얼로그 띄우기
             showDialog(
               context: context,
               barrierDismissible: false,
               builder: (_) => const Center(child: CircularProgressIndicator()),
             );
-            final data = await ref
-                .read(managementViewModelProvider.notifier)
-                .sendIpPing(pId: item.pId!);
-            if (context.mounted) Navigator.of(context).pop();
-            if (data == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('PING 데이터를 불러오지 못했습니다')),
+
+            try {
+              final data = await ref
+                  .read(managementViewModelProvider.notifier)
+                  .sendIpPing(pId: item.pId!);
+
+              // 2) 다이얼로그 닫기 (팝이 가능할 때만)
+              if (context.mounted && Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              }
+
+              // 3) 데이터 유무 체크
+              if (data == null) {
+                throw Exception("no data");
+              }
+
+              // 4) 정상 로직
+              showPingDialog(context, item.name ?? '', data);
+            } catch (_) {
+              // 에러가 났어도 다이얼로그가 남아있으면 닫고
+              if (context.mounted && Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              }
+
+              toastification.show(
+                context: context,
+                showIcon: true,
+                icon: Icon(
+                  Icons.error_outline,
+                  color: Colors.white,
+                  size: 28,
+                ),
+                backgroundColor: Colors.redAccent,
+                autoCloseDuration: const Duration(milliseconds: 2000),
+                title: Text(
+                  "분석에 실패했습니다.",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                alignment: Alignment.topCenter,
               );
-              return;
             }
-            showPingDialog(context, item.name ?? '', data);
           },
         ),
       ],
