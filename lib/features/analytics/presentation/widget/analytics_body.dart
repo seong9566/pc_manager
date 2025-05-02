@@ -189,7 +189,7 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
         final selected = widget.currentType == type;
         return GestureDetector(
           onTap: () => widget.onTypeChanged(type),
-          child: Container(d
+          child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: selected
