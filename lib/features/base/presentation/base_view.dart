@@ -139,7 +139,7 @@ class _BaseViewState extends ConsumerState<BaseView> {
                   return Align(
                     alignment: Alignment.centerRight,
                     child: Container(
-                      width: MediaQuery.of(context).size.width * 0.6,
+                      width: MediaQuery.of(context).size.width * 0.4,
                       height: double.infinity,
                       color: Colors.white,
                       child: SideMenu(

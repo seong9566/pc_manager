@@ -6,6 +6,8 @@ import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/features/dash_board/presentation/dash_board_viewmodel.dart';
 import 'package:ip_manager/model/top_analyze_model.dart';
 
+import '../../../../core/config/app_colors.dart';
+
 class DashBoardHeader extends ConsumerStatefulWidget {
   const DashBoardHeader({super.key});
 
@@ -109,7 +111,10 @@ class _DashBoardHeaderState extends ConsumerState<DashBoardHeader> {
             children: [
               Text(
                 title,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.mainTextColor),
               ),
               Icon(icon),
             ],
@@ -117,7 +122,11 @@ class _DashBoardHeaderState extends ConsumerState<DashBoardHeader> {
           SizedBox(height: 20),
 
           /// SubTitle
-          Text(subTitle, style: TextStyle(fontSize: 18)),
+          Text(subTitle,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+              )),
         ],
       ),
     );

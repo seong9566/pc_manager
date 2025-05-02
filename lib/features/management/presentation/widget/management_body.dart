@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/app_colors.dart';
+import 'package:ip_manager/core/config/app_theme.dart';
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
 import 'package:ip_manager/features/management/presentation/widget/management_skeleton.dart';
 import 'package:ip_manager/model/management_model.dart';
@@ -60,7 +61,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
       margin: EdgeInsets.only(left: 12, right: 12, top: 24, bottom: 24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderRadius: AppTheme.mainBorder,
         boxShadow: [
           BoxShadow(
             color: Colors.grey.shade400,
@@ -124,7 +125,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                         ],
                       ),
                       SizedBox(height: 8),
-                      Divider(height: 1, color: Colors.black),
+                      Divider(height: 1, color: AppColors.borderColor),
 
                       ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
@@ -137,7 +138,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                               SizedBox(height: 6),
                               _contentItem(item[index]),
                               SizedBox(height: 6),
-                              Divider(height: 1, color: Colors.grey),
+                              Divider(height: 1, color: AppColors.borderColor),
                             ],
                           );
                         },

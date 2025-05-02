@@ -4,6 +4,7 @@ import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
 import 'package:ip_manager/widgets/default_button.dart';
 
+import '../../../../core/config/app_colors.dart';
 import '../dash_board_viewmodel.dart';
 
 class DashBoardBody extends ConsumerWidget {
@@ -108,13 +109,15 @@ class DashBoardBody extends ConsumerWidget {
         children: [
           // 제목
           Text(title,
-              style:
-                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.mainTextColor)),
           const SizedBox(height: 12),
 
           // 고정 높이 박스 안에서만 스크롤
           SizedBox(
-            height: 300, // 원하는 높이
+            height: 400, // 원하는 높이
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: SizedBox(
@@ -130,14 +133,14 @@ class DashBoardBody extends ConsumerWidget {
                         );
                       }),
                     ),
-                    const Divider(color: Colors.grey),
+                    const Divider(color: AppColors.borderColor),
 
                     // 내용
                     Expanded(
                       child: ListView.separated(
                         itemCount: rows.length,
                         separatorBuilder: (_, __) =>
-                            const Divider(color: Colors.grey),
+                            const Divider(color: AppColors.borderColor),
                         itemBuilder: (context, idx) {
                           final cells = rows[idx];
                           return Padding(

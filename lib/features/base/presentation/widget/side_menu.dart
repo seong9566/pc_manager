@@ -38,10 +38,9 @@ class _SideMenuState extends ConsumerState<SideMenu> {
             Expanded(
               child: SingleChildScrollView(
                 padding: Responsive.isDesktop(context)
-                    ? EdgeInsets.only(top: 20, left: 24, right: 80)
+                    ? EdgeInsets.only(top: 20, left: 24, right: 20)
                     : EdgeInsets.only(top: 10, left: 10, right: 10),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (Responsive.isDesktop(context)) _title(),
                     SizedBox(height: 80),
@@ -72,31 +71,37 @@ class _SideMenuState extends ConsumerState<SideMenu> {
   }
 
   Widget _drawerItem(int index, String title, IconData icon) {
-    bool isSelected = widget.selectedIndex == index;
+    final bool isSelected = widget.selectedIndex == index;
+
     return GestureDetector(
       onTap: () => widget.onTap(index),
       child: Container(
-        color: Colors.transparent,
-        child: Padding(
-          padding: const EdgeInsets.all(6),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: isSelected ? AppColors.purpleColor : Colors.black,
-                ),
-              ),
-              Icon(
-                icon,
-                size: 18,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.purpleColor.withOpacity(0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 color: isSelected ? AppColors.purpleColor : Colors.black,
               ),
-            ],
-          ),
+            ),
+            Icon(
+              icon,
+              size: 18,
+              color: isSelected ? AppColors.purpleColor : Colors.black,
+            ),
+          ],
         ),
       ),
     );
@@ -108,7 +113,7 @@ class _SideMenuState extends ConsumerState<SideMenu> {
       style: TextStyle(
         fontSize: 28,
         fontWeight: FontWeight.w600,
-        color: Color(0xff6E79A5),
+        color: AppColors.textPrimary,
       ),
     );
   }

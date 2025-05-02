@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ip_manager/core/config/app_theme.dart';
 import 'package:ip_manager/features/country/presentation/country_list_provider.dart';
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
 import 'package:ip_manager/widgets/search_text_field.dart';
@@ -23,7 +24,7 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
     final countryList = ref.watch(countryListProvider);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      padding: AppTheme.hPadding16,
       child: Row(
         children: [
           // 1) 검색창
@@ -41,7 +42,6 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
           ),
           const SizedBox(width: 16),
 
-          // 2) 국가 드롭다운
           Expanded(
             flex: 1,
             child: DropdownButtonHideUnderline(
@@ -67,12 +67,12 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
                   }
                 },
                 buttonStyleData: ButtonStyleData(
-                  height: 40,
+                  height: 46,
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: AppTheme.mainBorder,
+                    border: Border.all(color: Colors.grey.shade400),
                     color: Colors.white,
                   ),
                   elevation: 0,

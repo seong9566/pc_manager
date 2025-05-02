@@ -3,7 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:ip_manager/core/config/app_colors.dart';
 
-class SearchTextField extends StatelessWidget {
+import '../core/config/app_theme.dart';
+
+class SearchTextField extends StatefulWidget {
   final String hintText;
   final TextEditingController controller;
   final VoidCallback onComplete;
@@ -16,22 +18,51 @@ class SearchTextField extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _SearchTextFieldState createState() => _SearchTextFieldState();
+}
+
+class _SearchTextFieldState extends State<SearchTextField> {
+  late FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode()
+      ..addListener(() {
+        // 포커스 여부 바뀔 때마다 rebuild
+        setState(() {});
+      });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isFocused = _focusNode.hasFocus;
     return TextField(
-      controller: controller,
-      onEditingComplete: onComplete,
+      focusNode: _focusNode,
+      controller: widget.controller,
+      onEditingComplete: widget.onComplete,
       decoration: InputDecoration(
-        hintText: hintText,
+        hintText: widget.hintText,
         hintStyle: const TextStyle(
           color: Colors.grey,
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
 
-        // 검색 아이콘을 왼쪽에 배치
-        prefixIcon: const Padding(
-          padding: EdgeInsets.only(left: 16, right: 8),
-          child: Icon(Icons.search, color: Colors.grey),
+        // 검색 아이콘을 왼쪽에 배치, 포커스 시 보라색으로 변경
+        prefixIcon: Padding(
+          padding: const EdgeInsets.only(left: 16, right: 8),
+          child: Icon(
+            size: 24,
+            Icons.search,
+            color: isFocused ? AppColors.purpleColor : Colors.grey,
+          ),
         ),
         prefixIconConstraints:
             const BoxConstraints(minWidth: 40, minHeight: 40),
@@ -45,15 +76,15 @@ class SearchTextField extends StatelessWidget {
 
         // 모서리 둥글게, 테두리 색상 동일
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderRadius: AppTheme.mainBorder,
+          borderSide: BorderSide(color: Colors.grey.shade400),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderRadius: AppTheme.mainBorder,
+          borderSide: BorderSide(color: Colors.grey.shade400),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: AppTheme.mainBorder,
           borderSide: BorderSide(color: AppColors.purpleColor),
         ),
 
