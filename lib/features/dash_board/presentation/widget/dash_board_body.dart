@@ -133,14 +133,14 @@ class DashBoardBody extends ConsumerWidget {
                         );
                       }),
                     ),
-                    const Divider(color: AppColors.borderColor),
+                    const Divider(color: AppColors.dividerColor),
 
                     // 내용
                     Expanded(
                       child: ListView.separated(
                         itemCount: rows.length,
                         separatorBuilder: (_, __) =>
-                            const Divider(color: AppColors.borderColor),
+                            const Divider(color: AppColors.dividerColor),
                         itemBuilder: (context, idx) {
                           final cells = rows[idx];
                           return Padding(

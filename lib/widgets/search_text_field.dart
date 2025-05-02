@@ -9,12 +9,14 @@ class SearchTextField extends StatefulWidget {
   final String hintText;
   final TextEditingController controller;
   final VoidCallback onComplete;
+  final ValueChanged<String>? onChanged;
 
   const SearchTextField({
     Key? key,
     required this.hintText,
     required this.controller,
     required this.onComplete,
+    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -46,6 +48,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
     return TextField(
       focusNode: _focusNode,
       controller: widget.controller,
+      onChanged: widget.onChanged,
       onEditingComplete: widget.onComplete,
       decoration: InputDecoration(
         hintText: widget.hintText,

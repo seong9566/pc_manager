@@ -33,11 +33,23 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
             child: SearchTextField(
               hintText: 'PC방 이름으로 검색',
               controller: _controller,
-              onComplete: () {
+              onChanged: (text) {
+                // 입력이 바뀔 때마다 바로 필터
                 ref
                     .read(managementViewModelProvider.notifier)
-                    .getStoreList(pcName: _controller.text.trim());
+                    .searchStoreName(name: text.trim());
               },
+              onComplete: () {
+                // 키보드 엔터 눌렀을 때도 동일 동작 (선택사항)
+                ref
+                    .read(managementViewModelProvider.notifier)
+                    .searchStoreName(name: _controller.text.trim());
+              },
+              // onComplete: () {
+              //   ref
+              //       .read(managementViewModelProvider.notifier)
+              //       .searchStoreName(name: _controller.text.trim());
+              // },
             ),
           ),
           const SizedBox(width: 16),

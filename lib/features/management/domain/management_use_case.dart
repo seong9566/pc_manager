@@ -8,6 +8,7 @@ import '../data/management_repository_interface.dart';
 
 /**
  * UseCase의 역할 : 비즈니스 규칙(예: 필터링, 조건 판단 등)을 담당
+ * Server API 요청이 필요할 경우 UseCase에 로직을 둔다.
  */
 
 /// 의존 역전 원칙에 의해 UseCase는 Interface만 알고 있음
@@ -25,9 +26,9 @@ class ManagementUseCase {
     return await managementRepository.getStoreList(pcName);
   }
 
-  Future<List<ManagementModel>> searchStoreByName(String name) async {
-    return await managementRepository.searchStoreByName(name);
-  }
+  // Future<List<ManagementModel>> searchStoreByName(String name) async {
+  //   return await managementRepository.searchStoreByName(name);
+  // }
 
   Future<ResponseModel<PingModel>> sendIpPing({required int pId}) async {
     return await managementRepository.sendIpPing(pId: pId);

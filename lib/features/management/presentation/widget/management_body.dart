@@ -125,7 +125,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                         ],
                       ),
                       SizedBox(height: 8),
-                      Divider(height: 1, color: AppColors.borderColor),
+                      Divider(height: 1, color: AppColors.dividerColor),
 
                       ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
@@ -138,7 +138,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                               SizedBox(height: 6),
                               _contentItem(item[index]),
                               SizedBox(height: 6),
-                              Divider(height: 1, color: AppColors.borderColor),
+                              Divider(height: 1, color: AppColors.dividerColor),
                             ],
                           );
                         },

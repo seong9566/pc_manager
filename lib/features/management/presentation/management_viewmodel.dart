@@ -14,10 +14,6 @@ import '../../../model/ping_model.dart';
  * loading, success, error를 하나의 타입으로 관리가 가능 하기 때문.
  *
  */
-final managementViewModelProvider = StateNotifierProvider<ManagementViewModel,
-    AsyncValue<List<ManagementModel>>>((ref) {
-  return ManagementViewModel(ref.read(managementUseCaseProvider));
-});
 
 class ManagementViewModel
     extends StateNotifier<AsyncValue<List<ManagementModel>>> {
@@ -27,41 +23,58 @@ class ManagementViewModel
     getStoreList();
   }
 
+  // 원본을 보관할 내부 변수
+  List<ManagementModel> _allStores = [];
+
   Future<void> getStoreList({String? pcName}) async {
     try {
-      List<ManagementModel> result;
       // result = await managementUseCase.getStoreList(pcName);
       // state = AsyncValue.data(result);
       Future.delayed(Duration(milliseconds: 1000)).then((_) async {
-        result = await managementUseCase.getStoreList(pcName);
-        state = AsyncValue.data(result);
+        _allStores = await managementUseCase.getStoreList(pcName);
+        state = AsyncValue.data(_allStores);
       });
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
   }
 
+  /// Local State 에서 검색
+  /// PC 이름으로 검색
+  /// 키 입력마다 바로 호출: 빈 문자열이면 _allStores 전체, 아니면 contains 필터
+  void searchStoreName({required String name}) {
+    state = AsyncValue.loading();
+
+    final filtered = name.isEmpty
+        ? _allStores
+        : _allStores.where((m) => m.name!.contains(name)).toList();
+
+    // Future.delayed(Duration(milliseconds: 1000));
+    state = AsyncValue.data(filtered);
+  }
+
   Future<void> getCountryStoreList({required int countryId}) async {
     state = const AsyncLoading();
     try {
-      final list =
+      final _allStores =
           await managementUseCase.getCountryStoreList(countryId: countryId);
-      state = AsyncValue.data(list);
+      state = AsyncValue.data(_allStores);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
   }
 
-  Future<void> getStoreSearchName(String name) async {
-    state = const AsyncLoading();
-
-    try {
-      final result = await managementUseCase.searchStoreByName(name);
-      state = AsyncValue.data(result);
-    } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
-    }
-  }
+  /// API 요청
+  // Future<void> getStoreSearchName(String name) async {
+  //   state = const AsyncLoading();
+  //
+  //   try {
+  //     final result = await managementUseCase.searchStoreByName(name);
+  //     state = AsyncValue.data(result);
+  //   } catch (e, stack) {
+  //     state = AsyncValue.error(e, stack);
+  //   }
+  // }
 
   Future<PingModel?> sendIpPing({required int pId}) async {
     final result = await managementUseCase.sendIpPing(pId: pId);
@@ -156,3 +169,8 @@ class ManagementViewModel
     return result;
   }
 }
+
+final managementViewModelProvider = StateNotifierProvider<ManagementViewModel,
+    AsyncValue<List<ManagementModel>>>((ref) {
+  return ManagementViewModel(ref.read(managementUseCaseProvider));
+});

@@ -6,27 +6,39 @@ class SimpleButton extends StatelessWidget {
   final VoidCallback onTap;
   final String title;
 
-  const SimpleButton({super.key, required this.onTap, required this.title});
+  const SimpleButton({
+    super.key,
+    required this.onTap,
+    required this.title,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color: AppColors.purpleColor,
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-        ),
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            border: Border.all(
+              color: AppColors.purpleColor, // 테두리 선명 보라
+              width: 1.5,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            title,
+            style: TextStyle(
+              color: AppColors.purpleColor,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),
+      onEnter: (_) {},
     );
   }
 }
