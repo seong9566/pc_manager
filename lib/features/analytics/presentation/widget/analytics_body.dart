@@ -6,8 +6,8 @@ import 'package:ip_manager/core/config/app_colors.dart';
 import 'package:ip_manager/core/config/app_theme.dart';
 import 'package:ip_manager/core/extension/date_time_extension.dart';
 import 'package:ip_manager/features/analytics/presentation/analytics_viewmodel.dart';
-import 'package:ip_manager/features/analytics/presentation/widget/selected_scroll_table.dart';
 import 'package:ip_manager/features/analytics/presentation/widget/all_scroll_table.dart';
+import 'package:ip_manager/features/analytics/presentation/widget/selected_scroll_table.dart';
 import 'package:ip_manager/provider/date_provider.dart';
 import 'package:ip_manager/widgets/dot_dialog.dart';
 
@@ -88,7 +88,6 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
         label = dateState.dailyDate.toDateOnlyForString();
         break;
       case AnalyticsType.all:
-      default:
         label = dateState.allDate.toDateOnlyForString();
     }
 

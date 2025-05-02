@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../features/account/presentation/account_viewmodel.dart';
-import '../features/dash_board/presentation/dash_board_viewmodel.dart';
 import '../model/management_model.dart';
 
 /// 선택된 매장 상태

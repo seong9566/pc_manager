@@ -4,8 +4,6 @@ import 'package:ip_manager/core/config/app_colors.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
 
-import '../../../account/presentation/account_viewmodel.dart';
-
 class SideMenu extends ConsumerStatefulWidget {
   final Function(int index) onTap;
   final int selectedIndex;
