@@ -146,7 +146,6 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
 
   Widget _rowButtons(String dateLabel) {
     return LayoutBuilder(builder: (context, constraints) {
-      // Reset button setup
       final dateVm = ref.read(dateViewModel.notifier);
       final analyticsVm = ref.read(analyticsViewModelProvider.notifier);
 
@@ -156,49 +155,47 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
           analyticsVm.searchPcName('');
           analyticsVm.init();
         },
+        icon: const Icon(Icons.refresh, size: 20, color: AppColors.purpleColor),
+        label: const Text(
+          '초기화',
+          style: TextStyle(fontSize: 16, color: AppColors.purpleColor),
+        ),
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: AppColors.purpleColor, width: 1),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          backgroundColor: Colors.white,
+        ),
+      );
+
+      final dateBtn = ElevatedButton.icon(
+        onPressed: _showDatePicker,
         icon: const Icon(
-          Icons.refresh, // 원하는 아이콘으로 바꿔도 됩니다
+          Icons.calendar_today,
           size: 20,
           color: AppColors.purpleColor,
         ),
-        label: const Text(
-          '초기화',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.normal,
-            color: AppColors.purpleColor,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(
-            color: AppColors.purpleColor,
-            width: 1,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        label: Text(dateLabel,
+            style: const TextStyle(fontSize: 16, color: AppColors.purpleColor)),
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           backgroundColor: Colors.white,
-          // 배경이 투명/흰색
-          foregroundColor: AppColors.purpleColor,
+          side: BorderSide(color: AppColors.purpleColor, width: 1),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       );
-      final isNarrow = !Responsive.isDesktop(context);
 
       final tabs = AnalyticsType.values.map((type) {
         final selected = widget.currentType == type;
         return GestureDetector(
           onTap: () => widget.onTypeChanged(type),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Container(d
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: selected
                   ? AppColors.purpleColor.withOpacity(0.1)
                   : Colors.transparent,
-              borderRadius: BorderRadius.all(
-                Radius.circular(8),
-              ),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               _typeLabel(type),
@@ -212,29 +209,13 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
         );
       }).toList();
 
-      final dateBtn = ElevatedButton.icon(
-        onPressed: _showDatePicker,
-        icon: const Icon(Icons.calendar_today, size: 20),
-        label: Text(dateLabel,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.normal,
-              color: AppColors.purpleColor,
-            )),
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          backgroundColor: Colors.white,
-          foregroundColor: AppColors.purpleColor,
-          side: BorderSide(color: AppColors.purpleColor, width: 1),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-      );
+      final isNarrow = !Responsive.isDesktop(context);
 
       if (isNarrow) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 1) 가로 스크롤 가능한 탭 바
+            // 1) 탭 바 (이미 가로 스크롤)
             SizedBox(
               height: 40,
               child: SingleChildScrollView(
@@ -242,28 +223,36 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
                 child: Row(
                   children: [
                     const SizedBox(width: 8),
-                    ...tabs.map((tab) => tab),
+                    ...tabs,
                     const SizedBox(width: 8),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 12),
-            // 2) 날짜선택 + 초기화 버튼
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                dateBtn,
-                const SizedBox(width: 8),
-                resetBtn,
-              ],
+            // 2) 날짜/초기화 버튼을 가로 스크롤 가능하게
+            SizedBox(
+              height: 60, // 버튼 높이에 맞게
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(left: 8),
+                child: Row(
+                  children: [
+                    dateBtn,
+                    const SizedBox(width: 8),
+                    resetBtn,
+                    const SizedBox(width: 8), // 오른쪽 여유
+                  ],
+                ),
+              ),
             ),
           ],
         );
       } else {
+        // 데스크탑일 땐 기존 Row
         return Row(
           children: [
-            ...tabs.expand((w) => [w, const SizedBox(width: 24)]).toList(),
+            ...tabs.expand((w) => [w, const SizedBox(width: 24)]),
             const Spacer(),
             dateBtn,
             const SizedBox(width: 8),
