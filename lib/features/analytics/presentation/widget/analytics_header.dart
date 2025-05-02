@@ -40,9 +40,11 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
             child: SearchTextField(
               hintText: 'PC방 이름으로 검색',
               controller: _controller,
+              onChanged: (text) {
+                widget.onSearch(text.trim());
+              },
               onComplete: () {
                 widget.onSearch(_controller.text.trim());
-                _controller.clear();
               },
             ),
           ),

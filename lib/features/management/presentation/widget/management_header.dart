@@ -42,11 +42,6 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
                     .read(managementViewModelProvider.notifier)
                     .searchStoreName(name: _controller.text.trim());
               },
-              // onComplete: () {
-              //   ref
-              //       .read(managementViewModelProvider.notifier)
-              //       .searchStoreName(name: _controller.text.trim());
-              // },
             ),
           ),
           const SizedBox(width: 16),

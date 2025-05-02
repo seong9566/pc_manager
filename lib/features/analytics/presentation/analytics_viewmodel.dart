@@ -44,13 +44,12 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     init();
   }
 
-  // Store full data lists for local filtering
+  // 원본 데이터 보관용
   List<PcRoomAnalytics> _allThisDayData = [];
   List<PcStatModel> _allDaysData = [];
   List<PcStatModel> _allMonthData = [];
   List<PcStatModel> _allPeriodData = [];
 
-  // Current search term
   String _searchPcName = '';
 
   // 초기엔 모두 오늘 날
@@ -90,7 +89,7 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     );
 
     _allThisDayData = data ?? [];
-    _updateState();
+    _applyFilters();
   }
 
   Future<void> getDaysDataList({
@@ -109,7 +108,7 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     );
 
     _allDaysData = data ?? [];
-    _updateState();
+    _applyFilters();
   }
 
   Future<void> getMonthDataList({
@@ -128,7 +127,7 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     );
 
     _allMonthData = data ?? [];
-    _updateState();
+    _applyFilters();
   }
 
   Future<void> getPeriodDataList({
@@ -149,39 +148,37 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     );
 
     _allPeriodData = data ?? [];
-    _updateState();
+    _applyFilters();
   }
 
-  /// Set search term and filter all lists
+  /// 검색어 세팅
   void searchPcName(String pcName) {
     _searchPcName = pcName;
-    _updateState();
+    _applyFilters();
   }
 
   /// Apply current search term to all data sets
-  void _updateState() {
-    final filteredThisDay = _searchPcName.isEmpty
+  /// 현재 _searchTerm 기준으로 모두 필터링
+  void _applyFilters() {
+    final t = _searchPcName;
+    final fThisDay = t.isEmpty
         ? _allThisDayData
-        : _allThisDayData
-            .where((e) => e.pcRoomName.contains(_searchPcName))
-            .toList();
-    final filteredDays = _searchPcName.isEmpty
+        : _allThisDayData.where((e) => e.pcRoomName.contains(t)).toList();
+    final fDays = t.isEmpty
         ? _allDaysData
-        : _allDaysData.where((e) => e.pcName.contains(_searchPcName)).toList();
-    final filteredMonth = _searchPcName.isEmpty
+        : _allDaysData.where((e) => e.pcName.contains(t)).toList();
+    final fMonth = t.isEmpty
         ? _allMonthData
-        : _allMonthData.where((e) => e.pcName.contains(_searchPcName)).toList();
-    final filteredPeriod = _searchPcName.isEmpty
+        : _allMonthData.where((e) => e.pcName.contains(t)).toList();
+    final fPeriod = t.isEmpty
         ? _allPeriodData
-        : _allPeriodData
-            .where((e) => e.pcName.contains(_searchPcName))
-            .toList();
+        : _allPeriodData.where((e) => e.pcName.contains(t)).toList();
 
     state = state.copyWith(
-      thisDayData: filteredThisDay,
-      daysData: filteredDays,
-      monthData: filteredMonth,
-      periodData: filteredPeriod,
+      thisDayData: fThisDay,
+      daysData: fDays,
+      monthData: fMonth,
+      periodData: fPeriod,
     );
   }
 
