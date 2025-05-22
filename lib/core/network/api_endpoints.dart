@@ -3,7 +3,7 @@ class ApiEndPoints {
   //
   // final baseUrl = "http://192.0.0.2:7777/api/";
 
-  final baseUrl = "http://210.98.189.99:7777/api/";
+  final baseUrl = "http://172.30.1.14:7777/api/";
 
   // final baseUrl = "http://210.98.189.99:5001/api/";
 

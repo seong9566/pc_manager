@@ -248,12 +248,15 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                 backgroundColor: Colors.redAccent,
                 autoCloseDuration: const Duration(milliseconds: 2000),
                 title: Text(
-                  "분석에 실패했습니다.",
+                  "네트워크 상태가 불안정합니다.\n다시 시도하거나 ${item.name}의 연결을 확인해주세요.",
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
+                  softWrap: true,
+                  maxLines: 3,
+                  overflow: TextOverflow.visible,
                 ),
                 alignment: Alignment.topCenter,
               );
