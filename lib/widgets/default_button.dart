@@ -10,19 +10,23 @@ class DefaultButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: callback,
-      child: Container(
-        width: double.infinity,
-        height: 50,
-        decoration: BoxDecoration(
-          color: AppColors.purpleColor,
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-        ),
-        child: Center(
+    return Material(
+      color: AppColors.purpleColor,
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        onTap: callback,
+        // hover 시 배경색 변경 (웹/데스크탑)
+        hoverColor: AppColors.purpleColor.withOpacity(0.8),
+        // ripple splash
+        splashColor: Colors.white24,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          width: double.infinity,
+          height: 50,
+          alignment: Alignment.center,
           child: Text(
             text,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w700,
               color: Colors.white,
