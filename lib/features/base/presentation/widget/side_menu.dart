@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ip_manager/core/config/app_colors.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
+import 'package:ip_manager/core/database/prefs.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
 
 class SideMenu extends ConsumerStatefulWidget {
@@ -52,14 +54,31 @@ class _SideMenuState extends ConsumerState<SideMenu> {
               ),
             ),
             if (widget.role == "Master")
-              GestureDetector(
-                onTap: () {
-                  ref.read(tabIndexProvider.notifier).select(4); // 이동
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 24),
-                  child: Image.asset("assets/icon/setting.png"),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      ref.read(tabIndexProvider.notifier).select(4); // 이동
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 24),
+                      child: Image.asset("assets/icon/setting.png"),
+                    ),
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        Prefs().clear();
+                        context.go('/');
+                      },
+                      child: Text(
+                        "로그아웃",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black),
+                      )),
+                ],
               ),
             SizedBox(height: 20),
           ],

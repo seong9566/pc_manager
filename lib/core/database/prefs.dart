@@ -24,4 +24,6 @@ class Prefs {
 
   Future setIsAutoLogin(bool isAutoLogin) =>
       PreferencesHelper().setBool('autoLogin', isAutoLogin);
+
+  Future clear() => PreferencesHelper().clearPrefs();
 }

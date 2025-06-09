@@ -167,22 +167,25 @@ class _LoginScreenState extends ConsumerState<LoginView>
                   SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
-                    height: 40,
+                    // height: 40,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.purpleColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                       onPressed: () => context.pop(),
-                      child: const Text(
-                        '확인',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4),
+                        child: const Text(
+                          '확인',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white),
+                        ),
                       ),
                     ),
                   ),

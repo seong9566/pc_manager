@@ -27,17 +27,38 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
       _portController,
       _seatController,
       _priceController,
-      _rateOfPlanController,
+      _pricePercentController,
       _specController,
       _agencyController,
       _memoController;
 
   late String address;
 
+  late FocusNode _pricePercentFocusNode;
+
   @override
   void initState() {
     super.initState();
     _initializeControllers(null);
+    _pricePercentFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _cityController.dispose();
+    _townController.dispose();
+    _countryController.dispose();
+    _ipController.dispose();
+    _portController.dispose();
+    _seatController.dispose();
+    _priceController.dispose();
+    _pricePercentController.dispose();
+    _specController.dispose();
+    _agencyController.dispose();
+    _memoController.dispose();
+    _pricePercentFocusNode.dispose();
+    super.dispose();
   }
 
   void _initializeControllers(ManagementModel? item) {
@@ -53,7 +74,7 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
         TextEditingController(text: item?.seatNumber?.toString() ?? '');
     _priceController =
         TextEditingController(text: item?.price?.toString() ?? '');
-    _rateOfPlanController =
+    _pricePercentController =
         TextEditingController(text: item?.pricePercent?.toString() ?? '');
     _specController = TextEditingController(text: item?.pcSpec);
     _agencyController = TextEditingController(text: item?.telecom);
@@ -107,16 +128,33 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
   }
 
   void addStore() {
+    final percentText = _pricePercentController.text.trim();
+    if (percentText.isEmpty) {
+      // 비어 있으면 에러 메시지 출력 후 리턴
+      _pricePercentFocusNode.requestFocus();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('PC 요금제 비율을 입력해주세요.')),
+      );
+      return;
+    }
+    final pricePercent = double.tryParse(percentText);
+    if (pricePercent == null) {
+      // 숫자로 파싱되지 않으면 에러
+      _pricePercentFocusNode.requestFocus();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('올바른 숫자 형식으로 입력해주세요.')),
+      );
+      return;
+    }
+
+    _pricePercentFocusNode.unfocus();
     final selectedStore = ref.read(selectedStoreProvider);
     final isEdit = selectedStore != null && !selectedStore.isEmpty;
-
     final ip = _ipController.text.trim();
     final port = int.tryParse(_portController.text.trim()) ?? 0;
     final name = _nameController.text.trim();
     final seatNumber = int.tryParse(_seatController.text.trim()) ?? 0;
     final price = double.tryParse(_priceController.text.trim()) ?? 0;
-    final pricePercent =
-        double.tryParse(_rateOfPlanController.text.trim()) ?? 0;
     final pcSpec = _specController.text.trim();
     final telecom = _agencyController.text.trim();
     final memo = _memoController.text.trim();
@@ -298,8 +336,9 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
                   const SizedBox(height: 20),
                   CustomTextField(
                     hintText: 'PC 요금제 비율',
-                    controller: _rateOfPlanController,
+                    controller: _pricePercentController,
                     useExpanded: false,
+                    focusNode: primaryFocus,
                   ),
                   const SizedBox(height: 20),
                   CustomTextField(

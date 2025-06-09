@@ -17,6 +17,7 @@ const double ipWidth = 160;
 const double portWidth = 80;
 const double seatWidth = 100;
 const double priceWidth = 120;
+const double pricePercent = 120;
 const double specificationWidth = 200;
 const double agencyWidth = 100;
 const double memoWidth = 200;
@@ -123,6 +124,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                             _bodyTitleText('포트', portWidth),
                             _bodyTitleText('좌석수', seatWidth),
                             _bodyTitleText('요금제 가격', priceWidth),
+                            _bodyTitleText('요금제 비율', pricePercent),
                             _bodyTitleText('PC 사양', specificationWidth),
                             _bodyTitleText('통신사', agencyWidth),
                             _bodyTitleText('메모', memoWidth),
@@ -169,6 +171,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
         _bodyContentText(item.port.toString(), portWidth),
         _bodyContentText(item.seatNumber.toString(), seatWidth),
         _bodyContentText(item.price.toString(), priceWidth),
+        _bodyContentText(item.pricePercent.toString(), pricePercent),
         _bodyContentText(item.pcSpec!, specificationWidth),
         _bodyContentText(item.telecom!, agencyWidth),
         _bodyContentText(item.memo!, memoWidth),

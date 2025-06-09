@@ -1,9 +1,10 @@
 class ApiEndPoints {
   // final baseUrl = "http://127.0.0.1:7777/api/";
   //
-  // final baseUrl = "http://192.0.0.2:7777/api/";
+  // final baseUrl = "http://127.30.1.14:7777/api/";
+  final baseUrl = "https://www.cymaip.kr/api/";
 
-  final baseUrl = "http://172.30.1.14:7777/api/";
+  // final baseUrl = "https://cymaip.iptime.org:7778/api/";
 
   // final baseUrl = "http://210.98.189.99:5001/api/";
 
