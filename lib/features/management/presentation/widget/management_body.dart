@@ -29,6 +29,7 @@ const double totalWidth = nameWidth +
     portWidth +
     seatWidth +
     priceWidth +
+    pricePercent +
     specificationWidth +
     agencyWidth +
     memoWidth +

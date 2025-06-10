@@ -6,7 +6,6 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final bool? isEdit;
   final bool useExpanded;
-  final FocusNode? focusNode;
 
   const CustomTextField({
     super.key,
@@ -15,7 +14,6 @@ class CustomTextField extends StatelessWidget {
     this.isSubAddress = false,
     this.isEdit = false,
     this.useExpanded = true,
-    this.focusNode,
   });
 
   @override
@@ -28,7 +26,6 @@ class CustomTextField extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
-        focusNode: focusNode,
         readOnly: isEdit!,
         style: TextStyle(
           color: isEdit! ? Colors.grey : Colors.black,

@@ -5,6 +5,7 @@ import 'package:ip_manager/features/analytics/presentation/analytics_viewmodel.d
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
 import 'package:kpostal_web/kpostal_web.dart';
+import 'package:toastification/toastification.dart';
 
 import '../../../core/config/app_colors.dart';
 import '../../../core/config/screen_size.dart';
@@ -34,13 +35,10 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
 
   late String address;
 
-  late FocusNode _pricePercentFocusNode;
-
   @override
   void initState() {
     super.initState();
     _initializeControllers(null);
-    _pricePercentFocusNode = FocusNode();
   }
 
   @override
@@ -57,7 +55,6 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
     _specController.dispose();
     _agencyController.dispose();
     _memoController.dispose();
-    _pricePercentFocusNode.dispose();
     super.dispose();
   }
 
@@ -127,27 +124,47 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
     );
   }
 
+  void showToast(String text) {
+    toastification.show(
+      context: context,
+      showIcon: true,
+      icon: Icon(
+        Icons.error_outline,
+        color: Colors.white,
+        size: 28,
+      ),
+      backgroundColor: Colors.redAccent,
+      autoCloseDuration: const Duration(milliseconds: 2000),
+      title: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        softWrap: true,
+        maxLines: 3,
+        overflow: TextOverflow.visible,
+      ),
+      alignment: Alignment.topCenter,
+    );
+  }
+
   void addStore() {
     final percentText = _pricePercentController.text.trim();
     if (percentText.isEmpty) {
       // 비어 있으면 에러 메시지 출력 후 리턴
-      _pricePercentFocusNode.requestFocus();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('PC 요금제 비율을 입력해주세요.')),
-      );
+
+      showToast("PC 요금제 비율을 입력해주세요.");
       return;
     }
     final pricePercent = double.tryParse(percentText);
     if (pricePercent == null) {
       // 숫자로 파싱되지 않으면 에러
-      _pricePercentFocusNode.requestFocus();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('올바른 숫자 형식으로 입력해주세요.')),
-      );
+      showToast("올바른 숫자 형식으로 입력해주세요.");
       return;
     }
 
-    _pricePercentFocusNode.unfocus();
     final selectedStore = ref.read(selectedStoreProvider);
     final isEdit = selectedStore != null && !selectedStore.isEmpty;
     final ip = _ipController.text.trim();
@@ -338,7 +355,6 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
                     hintText: 'PC 요금제 비율',
                     controller: _pricePercentController,
                     useExpanded: false,
-                    focusNode: primaryFocus,
                   ),
                   const SizedBox(height: 20),
                   CustomTextField(
@@ -368,7 +384,7 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
                             onPressed: addStore,
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.purpleColor),
-                            child: const Text('추가',
+                            child: const Text('완료',
                                 style: TextStyle(color: Colors.white)),
                           ),
                         ),

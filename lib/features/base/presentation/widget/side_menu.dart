@@ -4,7 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:ip_manager/core/config/app_colors.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/core/database/prefs.dart';
+import 'package:ip_manager/features/auth/presentation/login_view.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
+
+import '../../../../provider/user_session.dart';
 
 class SideMenu extends ConsumerStatefulWidget {
   final Function(int index) onTap;
@@ -54,31 +57,70 @@ class _SideMenuState extends ConsumerState<SideMenu> {
               ),
             ),
             if (widget.role == "Master")
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      ref.read(tabIndexProvider.notifier).select(4); // 이동
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 24),
-                      child: Image.asset("assets/icon/setting.png"),
-                    ),
-                  ),
-                  TextButton(
-                      onPressed: () {
-                        Prefs().clear();
-                        context.go('/');
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        ref.read(tabIndexProvider.notifier).select(4); // 이동
                       },
-                      child: Text(
-                        "로그아웃",
+                      child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: Image.asset("assets/icon/setting.png")),
+                    ),
+                    // 로그아웃 버튼
+                    TextButton.icon(
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        minimumSize: const Size(0, 0),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      onPressed: () async {
+                        // 세션 클리어
+                        ref.read(userSessionProvider.notifier).clearSession();
+                        await Prefs().clear();
+                        // 로그인 페이지로 이동
+                        context.goNamed('login');
+                      },
+                      icon: const Icon(
+                        Icons.logout,
+                        size: 20,
+                        color: Colors.black87,
+                      ),
+                      label: const Text(
+                        '로그아웃',
                         style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black),
-                      )),
-                ],
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    // TextButton(
+                    //     onPressed: () async {
+                    //       /// 안해주면 리다이렉션에 걸림
+                    //       ref.read(userSessionProvider.notifier).clearSession();
+                    //       await Prefs().clear().then((_) {
+                    //         context.pushNamed('login');
+                    //       });
+                    //     },
+                    //     child: Text(
+                    //       "로그아웃",
+                    //       style: TextStyle(
+                    //           fontSize: 12,
+                    //           fontWeight: FontWeight.normal,
+                    //           color: Colors.black),
+                    //     )),
+                  ],
+                ),
               ),
             SizedBox(height: 20),
           ],

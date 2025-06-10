@@ -7,6 +7,7 @@ import 'package:ip_manager/features/base/presentation/base_view.dart';
 import 'package:ip_manager/provider/user_session.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
@@ -34,7 +35,9 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/',
       name: 'login',
-      builder: (_, __) => const LoginView(),
+      parentNavigatorKey: _rootNavigatorKey,
+      // builder: (_, __) => const LoginView(),
+      pageBuilder: (_, __) => NoTransitionPage(child: LoginView()),
     ),
     GoRoute(
       path: '/base',
