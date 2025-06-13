@@ -20,7 +20,7 @@ class _AllTableScreenState extends ConsumerState<AllTableScreen> {
 
     if (vmState.isLoading) {
       return SizedBox(
-        height: 400,
+        height: 600,
         child: const Center(child: CircularProgressIndicator()),
       );
     }
@@ -44,7 +44,7 @@ class _AllTableScreenState extends ConsumerState<AllTableScreen> {
   }
 
   /// 테이블 데이터 생성
-  ExpandableTable _buildFixedTable(
+  Widget _buildFixedTable(
       List<PcRoomAnalytics> data, int pcLength, int timeLength) {
     // 컬럼 헤더 생성
     final List<ExpandableTableHeader> headers = List.generate(

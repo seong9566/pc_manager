@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/features/analytics/presentation/analytics_view.dart';
 import 'package:ip_manager/features/base/presentation/widget/side_menu.dart';
@@ -7,6 +8,7 @@ import 'package:ip_manager/features/dash_board/presentation/dash_board_view.dart
 import 'package:ip_manager/features/management/presentation/store_add_view.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
 import 'package:toastification/toastification.dart';
+import 'package:ip_manager/core/utils/cache_manager.dart';
 
 import '../../../provider/user_session.dart';
 import '../../account/presentation/account_view.dart';
@@ -36,6 +38,7 @@ class _BaseViewState extends ConsumerState<BaseView> {
     ];
     // 화면 렌더링 후 배너 띄우기
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await CacheManager.checkCacheValidity();
       final session = ref.read(userSessionProvider);
       final role = session.role ?? '';
       if (mounted) {

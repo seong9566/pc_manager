@@ -1,13 +1,10 @@
+import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ip_manager/core/config/app_colors.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
-import 'package:ip_manager/core/database/prefs.dart';
-import 'package:ip_manager/features/auth/presentation/login_view.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
-
-import '../../../../provider/user_session.dart';
+import 'package:ip_manager/provider/user_session.dart';
 
 class SideMenu extends ConsumerStatefulWidget {
   final Function(int index) onTap;
@@ -42,7 +39,7 @@ class _SideMenuState extends ConsumerState<SideMenu> {
               child: SingleChildScrollView(
                 padding: Responsive.isDesktop(context)
                     ? EdgeInsets.only(top: 20, left: 24, right: 20)
-                    : EdgeInsets.only(top: 10, left: 10, right: 10),
+                    : EdgeInsets.only(top: 10, left: 8, right: 8),
                 child: Column(
                   children: [
                     if (Responsive.isDesktop(context)) _title(),
@@ -56,14 +53,14 @@ class _SideMenuState extends ConsumerState<SideMenu> {
                 ),
               ),
             ),
-            if (widget.role == "Master")
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 18,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (widget.role == "Master")
                     GestureDetector(
                       onTap: () {
                         ref.read(tabIndexProvider.notifier).select(4); // 이동
@@ -73,55 +70,58 @@ class _SideMenuState extends ConsumerState<SideMenu> {
                           height: 24,
                           child: Image.asset("assets/icon/setting.png")),
                     ),
-                    // 로그아웃 버튼
-                    TextButton.icon(
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        minimumSize: const Size(0, 0),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: () async {
-                        // 세션 클리어
-                        ref.read(userSessionProvider.notifier).clearSession();
-                        await Prefs().clear();
-                        // 로그인 페이지로 이동
-                        context.goNamed('login');
-                      },
-                      icon: const Icon(
-                        Icons.logout,
-                        size: 20,
+                  // 로그아웃 버튼
+                  TextButton.icon(
+                    style: TextButton.styleFrom(
+                      padding: Responsive.isDesktop(context)
+                          ? const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8)
+                          : const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 4),
+                      minimumSize: const Size(0, 0),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    onPressed: () async {
+                      // 세션 클리어 (내부적으로 Prefs().clear()도 호출함)
+                      await ref
+                          .read(userSessionProvider.notifier)
+                          .clearSession();
+
+                      html.window.location.reload();
+                    },
+                    icon: Icon(
+                      Icons.logout,
+                      size: Responsive.isDesktop(context) ? 20 : 16,
+                      color: Colors.black87,
+                    ),
+                    label: Text(
+                      Responsive.isDesktop(context) ? '로그아웃' : '로그아웃',
+                      style: TextStyle(
+                        fontSize: Responsive.isDesktop(context) ? 16 : 12,
+                        fontWeight: FontWeight.w400,
                         color: Colors.black87,
                       ),
-                      label: const Text(
-                        '로그아웃',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black87,
-                        ),
-                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    // TextButton(
-                    //     onPressed: () async {
-                    //       /// 안해주면 리다이렉션에 걸림
-                    //       ref.read(userSessionProvider.notifier).clearSession();
-                    //       await Prefs().clear().then((_) {
-                    //         context.pushNamed('login');
-                    //       });
-                    //     },
-                    //     child: Text(
-                    //       "로그아웃",
-                    //       style: TextStyle(
-                    //           fontSize: 12,
-                    //           fontWeight: FontWeight.normal,
-                    //           color: Colors.black),
-                    //     )),
-                  ],
-                ),
+                  ),
+                  // TextButton(
+                  //     onPressed: () async {
+                  //       /// 안해주면 리다이렉션에 걸림
+                  //       ref.read(userSessionProvider.notifier).clearSession();
+                  //       await Prefs().clear().then((_) {
+                  //         context.pushNamed('login');
+                  //       });
+                  //     },
+                  //     child: Text(
+                  //       "로그아웃",
+                  //       style: TextStyle(
+                  //           fontSize: 12,
+                  //           fontWeight: FontWeight.normal,
+                  //           color: Colors.black),
+                  //     )),
+                ],
               ),
+            ),
             SizedBox(height: 20),
           ],
         ),
@@ -144,20 +144,23 @@ class _SideMenuState extends ConsumerState<SideMenu> {
         ),
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: Responsive.isDesktop(context) ? 18 : 14,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? AppColors.purpleColor : Colors.black,
+            Flexible(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: Responsive.isDesktop(context) ? 18 : 14,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isSelected ? AppColors.purpleColor : Colors.black,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+            SizedBox(width: Responsive.isDesktop(context) ? 12 : 8),
             Icon(
               icon,
-              size: 18,
+              size: Responsive.isDesktop(context) ? 18 : 16,
               color: isSelected ? AppColors.purpleColor : Colors.black,
             ),
           ],

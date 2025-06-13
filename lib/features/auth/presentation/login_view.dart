@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/foundation.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/core/database/prefs.dart';
 import 'package:ip_manager/features/auth/presentation/widget/auth_text_field.dart';
 import 'package:ip_manager/provider/user_session.dart';
 import 'package:ip_manager/widgets/default_button.dart';
+import 'package:ip_manager/core/utils/cache_manager.dart';
 
 import '../../../core/config/app_colors.dart';
 import 'login_viewmodel.dart';
@@ -36,6 +38,14 @@ class _LoginScreenState extends ConsumerState<LoginView>
   @override
   void initState() {
     super.initState();
+
+    // 웹 플랫폼에서만 캐시 유효성 검사 수행
+    if (kIsWeb) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // 로그인 화면에서 캐시 체크 수행
+        CacheManager.checkCacheValidity();
+      });
+    }
   }
 
   void _login() async {

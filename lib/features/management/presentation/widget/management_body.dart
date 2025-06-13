@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/app_colors.dart';
 import 'package:ip_manager/core/config/app_theme.dart';
+import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
 import 'package:ip_manager/features/management/presentation/widget/hover_button.dart';
 import 'package:ip_manager/model/management_model.dart';
@@ -43,6 +44,8 @@ class ManagementBody extends ConsumerStatefulWidget {
 }
 
 class _ManagementBodyState extends ConsumerState<ManagementBody> {
+  final scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(managementViewModelProvider);
@@ -78,79 +81,116 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ///  Title & Button
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '분석중인 매장들',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+          if (Responsive.isDesktop(context))
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '분석중인 매장들',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-              HoverButton(
-                text: "매장 추가",
-                icon: Icons.add,
-                color: AppColors.purpleColor,
-                onTap: () {
-                  setState(() {
-                    ref.read(tabIndexProvider.notifier).select(3);
-                  });
-                },
-              ),
-            ],
-          ),
+                HoverButton(
+                  text: "매장 추가",
+                  icon: Icons.add,
+                  color: AppColors.purpleColor,
+                  onTap: () {
+                    setState(() {
+                      ref.read(tabIndexProvider.notifier).select(3);
+                    });
+                  },
+                ),
+              ],
+            ),
+          if (Responsive.isMobile(context))
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '분석중인 매장들',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                SizedBox(height: 8),
+                SizedBox(
+                  height: 30,
+                  child: HoverButton(
+                    text: "매장 추가",
+                    icon: Icons.add,
+                    color: AppColors.purpleColor,
+                    onTap: () {
+                      setState(() {
+                        ref.read(tabIndexProvider.notifier).select(3);
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
           const SizedBox(height: 16),
 
           /// 가로 스크롤 + 고정 헤더 + 세로 스크롤
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: SizedBox(
-                    width: totalWidth,
-                    // 이 높이가 곧 ListView 의 maxHeight 가 됨
-                    height: constraints.maxHeight,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // ─── 테이블 헤더 (고정) ─────────────────────
-                        Row(
-                          children: [
-                            _bodyTitleText('이름', nameWidth),
-                            _bodyTitleText('주소', addressWidth),
-                            _bodyTitleText('IP', ipWidth),
-                            _bodyTitleText('포트', portWidth),
-                            _bodyTitleText('좌석수', seatWidth),
-                            _bodyTitleText('요금제 가격', priceWidth),
-                            _bodyTitleText('요금제 비율', pricePercent),
-                            _bodyTitleText('PC 사양', specificationWidth),
-                            _bodyTitleText('통신사', agencyWidth),
-                            _bodyTitleText('메모', memoWidth),
-                            _bodyTitleText('액션', actionWidth),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        const Divider(height: 1, color: AppColors.dividerColor),
-
-                        // ─── 데이터 리스트 (스크롤 가능) ─────────────────────
-                        Expanded(
-                          child: ListView.separated(
-                            itemCount: item.length,
-                            separatorBuilder: (_, __) => const Divider(
-                                height: 1, color: AppColors.dividerColor),
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 6),
-                                child: _contentItem(item[index]),
-                              );
-                            },
+                return Scrollbar(
+                  controller: scrollController,
+                  thumbVisibility: true,
+                  thickness: 6.0,
+                  radius: const Radius.circular(10.0),
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    scrollDirection: Axis.horizontal,
+                    child: SizedBox(
+                      width: totalWidth,
+                      // 이 높이가 곧 ListView 의 maxHeight 가 됨
+                      height: constraints.maxHeight,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // ─── 테이블 헤더 (고정) ─────────────────────
+                          Row(
+                            children: [
+                              _bodyTitleText('이름', nameWidth),
+                              _bodyTitleText('주소', addressWidth),
+                              _bodyTitleText('IP', ipWidth),
+                              _bodyTitleText('포트', portWidth),
+                              _bodyTitleText('좌석수', seatWidth),
+                              _bodyTitleText('요금제 가격', priceWidth),
+                              _bodyTitleText('요금제 비율', pricePercent),
+                              _bodyTitleText('PC 사양', specificationWidth),
+                              _bodyTitleText('통신사', agencyWidth),
+                              _bodyTitleText('메모', memoWidth),
+                              _bodyTitleText('액션', actionWidth),
+                            ],
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 8),
+                          const Divider(
+                              height: 1, color: AppColors.dividerColor),
+
+                          // ─── 데이터 리스트 (스크롤 가능) ─────────────────────
+                          Expanded(
+                            child: ListView.separated(
+                              itemCount: item.length,
+                              separatorBuilder: (_, __) => const Divider(
+                                  height: 1, color: AppColors.dividerColor),
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 6),
+                                  child: _contentItem(item[index]),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );

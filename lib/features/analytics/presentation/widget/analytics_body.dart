@@ -131,14 +131,9 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
           _rowButtons(label),
           const SizedBox(height: 20),
           Expanded(
-            child: SingleChildScrollView(
-              child: SizedBox(
-                // 원하는 최소 높이 지정 (화면에 꽉 차도록)
-                height: MediaQuery.of(context).size.height * 0.6,
-                child: table,
-              ),
-            ),
+            child: table,
           ),
+          const SizedBox(height: 20),
         ],
       ),
     );

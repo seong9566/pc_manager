@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/features/account/presentation/account_viewmodel.dart';
 
 import '../../../../widgets/dot_dialog.dart';
@@ -21,7 +22,9 @@ class _AccountHeaderState extends ConsumerState<AccountHeader> {
         Text(
           "이용중인 계정",
           style: TextStyle(
-              fontSize: 24, fontWeight: FontWeight.w700, color: Colors.black),
+              fontSize: Responsive.isDesktop(context) ? 24 : 18,
+              fontWeight: FontWeight.w700,
+              color: Colors.black),
         ),
         SimpleButton(
             onTap: () {
