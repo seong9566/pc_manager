@@ -11,6 +11,7 @@ import '../../../core/config/app_colors.dart';
 import '../../../core/config/screen_size.dart';
 import '../../../model/management_model.dart';
 import '../../../widgets/custom_text_field.dart';
+import '../../../widgets/ip_address_field.dart';
 
 class StoreAddView extends ConsumerStatefulWidget {
   const StoreAddView({super.key});
@@ -327,14 +328,14 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  CustomTextField(
-                    hintText: 'IP',
+                  IPAddressField(
                     controller: _ipController,
-                    useExpanded: false,
+                    isReadOnly: isEdit,
+                    hintText: 'IP',
                   ),
                   const SizedBox(height: 20),
                   CustomTextField(
-                    hintText: 'Port',
+                    hintText: '포트',
                     controller: _portController,
                     useExpanded: false,
                   ),

@@ -7,7 +7,7 @@ class AppVersion {
   static final bool isWeb = kIsWeb;
 
   /// 앱 버전 - 수동으로 업데이트
-  static const String version = '1.3.0';
+  static const String version = '1.4.0';
 
   /// 캐시 무효화를 위한 고유 키
   /// 빌드 타임스탬프와 버전을 조합하여 생성

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ip_manager/core/config/app_theme.dart';
 import 'package:ip_manager/features/country/presentation/country_list_provider.dart';
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
 import 'package:ip_manager/model/country_info_model.dart';

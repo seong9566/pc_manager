@@ -81,58 +81,54 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ///  Title & Button
-          if (Responsive.isDesktop(context))
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '분석중인 매장들',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+          Responsive.isDesktop(context)
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '분석중인 매장들',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    HoverButton(
+                      text: "매장 추가",
+                      icon: Icons.add,
+                      color: AppColors.purpleColor,
+                      onTap: () {
+                        setState(() {
+                          ref.read(tabIndexProvider.notifier).select(3);
+                        });
+                      },
+                    ),
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '분석중인 매장들',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    HoverButton(
+                      text: "매장 추가",
+                      icon: Icons.add,
+                      color: AppColors.purpleColor,
+                      onTap: () {
+                        setState(() {
+                          ref.read(tabIndexProvider.notifier).select(3);
+                        });
+                      },
+                    ),
+                  ],
                 ),
-                HoverButton(
-                  text: "매장 추가",
-                  icon: Icons.add,
-                  color: AppColors.purpleColor,
-                  onTap: () {
-                    setState(() {
-                      ref.read(tabIndexProvider.notifier).select(3);
-                    });
-                  },
-                ),
-              ],
-            ),
-          if (Responsive.isMobile(context))
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '분석중인 매장들',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-                SizedBox(height: 8),
-                SizedBox(
-                  height: 30,
-                  child: HoverButton(
-                    text: "매장 추가",
-                    icon: Icons.add,
-                    color: AppColors.purpleColor,
-                    onTap: () {
-                      setState(() {
-                        ref.read(tabIndexProvider.notifier).select(3);
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
           const SizedBox(height: 16),
 
           /// 가로 스크롤 + 고정 헤더 + 세로 스크롤
