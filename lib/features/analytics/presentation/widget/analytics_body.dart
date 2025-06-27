@@ -72,6 +72,7 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
 
     // 버튼 옆에 표시할 날짜/기간 라벨
     String label;
+    int totalCount;
     switch (widget.currentType) {
       case AnalyticsType.period:
         if (dateState.periodStart != null && dateState.periodEnd != null) {
@@ -96,24 +97,28 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
     switch (widget.currentType) {
       case AnalyticsType.all:
         table = AllTableScreen();
+        totalCount = vmState.thisDayData.length;
         break;
       case AnalyticsType.period:
         table = KeyedSubtree(
           key: ObjectKey(vmState.periodData),
           child: SelectedScrollTable(tableData: vmState.periodData),
         );
+        totalCount = vmState.periodData.length;
         break;
       case AnalyticsType.monthly:
         table = KeyedSubtree(
           key: ObjectKey(vmState.monthData),
           child: SelectedScrollTable(tableData: vmState.monthData),
         );
+        totalCount = vmState.monthData.length;
         break;
       case AnalyticsType.daily:
         table = KeyedSubtree(
           key: ObjectKey(vmState.daysData),
           child: SelectedScrollTable(tableData: vmState.daysData),
         );
+        totalCount = vmState.daysData.length;
         break;
     }
 
@@ -128,7 +133,7 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _rowButtons(label),
+          _rowButtons(label, totalCount),
           const SizedBox(height: 20),
           Expanded(
             child: table,
@@ -139,7 +144,7 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
     );
   }
 
-  Widget _rowButtons(String dateLabel) {
+  Widget _rowButtons(String dateLabel, int totalCount) {
     return LayoutBuilder(builder: (context, constraints) {
       final dateVm = ref.read(dateViewModel.notifier);
       final analyticsVm = ref.read(analyticsViewModelProvider.notifier);
@@ -188,7 +193,7 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: selected
-                  ? AppColors.purpleColor.withOpacity(0.1)
+                  ? AppColors.purpleColor.withValues(alpha: 0.1)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
             ),
@@ -210,7 +215,7 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 1) 탭 바 (이미 가로 스크롤)
+            // 1) 탭 바
             SizedBox(
               height: 40,
               child: SingleChildScrollView(
@@ -224,7 +229,7 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+
             // 2) 날짜/초기화 버튼을 가로 스크롤 가능하게
             SizedBox(
               height: 60, // 버튼 높이에 맞게
@@ -241,17 +246,31 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
                 ),
               ),
             ),
+            const SizedBox(height: 12),
+            Text("총 매장 수 : $totalCount",
+                style: TextStyle(fontSize: 16, color: AppColors.mainTextColor)),
           ],
         );
       } else {
         // 데스크탑일 땐 기존 Row
-        return Row(
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ...tabs.expand((w) => [w, const SizedBox(width: 24)]),
-            const Spacer(),
-            dateBtn,
-            const SizedBox(width: 8),
-            resetBtn,
+            Row(
+              children: [
+                ...tabs.expand((w) => [w, const SizedBox(width: 24)]),
+                const Spacer(),
+                dateBtn,
+                const SizedBox(width: 8),
+                resetBtn,
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 12.0),
+              child: Text("총 매장 수 : $totalCount",
+                  style:
+                      TextStyle(fontSize: 16, color: AppColors.mainTextColor)),
+            ),
           ],
         );
       }

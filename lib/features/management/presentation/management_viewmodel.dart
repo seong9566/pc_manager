@@ -22,15 +22,15 @@ class ManagementViewModel
   }
 
   // 원본을 보관할 내부 변수
-  List<ManagementModel> _allStores = [];
+  List<ManagementModel> originAllStores = [];
 
   Future<void> getStoreList({String? pcName}) async {
     try {
       // result = await managementUseCase.getStoreList(pcName);
       // state = AsyncValue.data(result);
       Future.delayed(Duration(milliseconds: 1000)).then((_) async {
-        _allStores = await managementUseCase.getStoreList(pcName);
-        state = AsyncValue.data(_allStores);
+        originAllStores = await managementUseCase.getStoreList(pcName);
+        state = AsyncValue.data(originAllStores);
       });
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -38,14 +38,14 @@ class ManagementViewModel
   }
 
   /// Local State 에서 검색
-  /// PC 이름으로 검색
+  /// PC 이 름으로 검색
   /// 키 입력마다 바로 호출: 빈 문자열이면 _allStores 전체, 아니면 contains 필터
   void searchStoreName({required String name}) {
     state = AsyncValue.loading();
 
     final filtered = name.isEmpty
-        ? _allStores
-        : _allStores.where((m) => m.name!.contains(name)).toList();
+        ? originAllStores
+        : originAllStores.where((m) => m.name!.contains(name)).toList();
 
     // Future.delayed(Duration(milliseconds: 1000));
     state = AsyncValue.data(filtered);
@@ -119,20 +119,6 @@ class ManagementViewModel
     String? telecom,
     String? memo,
   }) async {
-    print("addStore");
-    print("ip : $ip");
-    print("port : $port");
-    print("name : $name");
-    print("addr : $addr");
-    print("seatNumber : $seatNumber");
-    print("price : $price");
-    print("pricePercent : $pricePercent");
-    print("countryName : $countryName");
-    print("cityName : $cityName");
-    print("townName : $townName");
-    print("pcSpec : $pcSpec");
-    print("telecom : $telecom");
-    print("memo : $memo");
     final result = await managementUseCase.addStore(
         ip: ip,
         port: port,

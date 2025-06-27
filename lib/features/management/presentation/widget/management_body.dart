@@ -83,7 +83,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
           ///  Title & Button
           Responsive.isDesktop(context)
               ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
                       '분석중인 매장들',
@@ -93,6 +93,15 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                         color: Colors.black,
                       ),
                     ),
+                    SizedBox(width: 16),
+                    Text(
+                      '총 매장 수 : ${item.length}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: AppColors.mainTextColor,
+                      ),
+                    ),
+                    Spacer(),
                     HoverButton(
                       text: "매장 추가",
                       icon: Icons.add,

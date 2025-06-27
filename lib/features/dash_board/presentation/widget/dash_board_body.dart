@@ -13,7 +13,8 @@ class DashBoardBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(dashBoardViewModelProvider).dashBoardModel;
-    final storeState = ref.watch(managementViewModelProvider).value;
+    final storeState =
+        ref.watch(managementViewModelProvider.notifier).originAllStores;
 
     /// 분석중인 매장들 세로 스크롤 컨트롤러
     final analysisScrollController = ScrollController();
@@ -27,7 +28,7 @@ class DashBoardBody extends ConsumerWidget {
     /// 최근 분석 결과 가로 스크롤 컨트롤러
     final recentHorizontalScrollController = ScrollController();
 
-    if (state == null || storeState == null) {
+    if (state == null) {
       return Center(
         child: DashBoardBodySkeleton(),
         // child: SizedBox(
@@ -131,11 +132,20 @@ class DashBoardBody extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 제목
-          Text(title,
-              style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.mainTextColor)),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(title,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.mainTextColor)),
+              SizedBox(width: 12),
+              Text("총 매장 수 : ${rows.length}",
+                  style:
+                      TextStyle(fontSize: 16, color: AppColors.mainTextColor)),
+            ],
+          ),
           const SizedBox(height: 12),
 
           // 고정 높이 박스 안에서만 스크롤

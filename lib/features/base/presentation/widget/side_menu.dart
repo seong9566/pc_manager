@@ -138,7 +138,7 @@ class _SideMenuState extends ConsumerState<SideMenu> {
         width: double.infinity,
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.purpleColor.withOpacity(0.1)
+              ? AppColors.purpleColor.withValues(alpha: 0.1)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
