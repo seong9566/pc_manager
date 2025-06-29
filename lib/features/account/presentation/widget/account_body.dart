@@ -33,7 +33,7 @@ class _AccountBodyState extends ConsumerState<AccountBody> {
             title: '계정 수정',
             subTitle: '기존 정보를 수정해주세요',
             initialUserId: acc.uId,
-            initialPassword: '',
+            initialPassword: null,
             // 보안상 비밀번호는 빈 문자열로 두거나 별도 플로우로 처리
             initialAdminYn: acc.adminYn,
             initialCountryName: acc.countryName,
@@ -44,6 +44,15 @@ class _AccountBodyState extends ConsumerState<AccountBody> {
               required useYn,
               required countryName,
             }) async {
+              if (password.isEmpty) {
+                showFailedToast(context, "비밀번호를 입력해주세요!");
+                return;
+              }
+              if (countryName.isEmpty) {
+                showFailedToast(context, "도시를 선택해주세요!");
+                return;
+              }
+
               final ok =
                   await ref.read(accountViewModel.notifier).updateAccount(
                         pId: acc.pId,

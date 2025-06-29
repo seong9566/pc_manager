@@ -7,6 +7,7 @@ import 'package:ip_manager/features/management/presentation/management_viewmodel
 import 'package:ip_manager/features/management/presentation/widget/hover_button.dart';
 import 'package:ip_manager/model/management_model.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
+import 'package:ip_manager/widgets/dot_dialog.dart';
 import 'package:toastification/toastification.dart';
 
 import '../../../../model/ping_model.dart';
@@ -285,30 +286,8 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
               if (context.mounted && Navigator.of(context).canPop()) {
                 Navigator.of(context).pop();
               }
-
-              toastification.show(
-                context: context,
-                showIcon: true,
-                icon: Icon(
-                  Icons.error_outline,
-                  color: Colors.white,
-                  size: 28,
-                ),
-                backgroundColor: Colors.redAccent,
-                autoCloseDuration: const Duration(milliseconds: 2000),
-                title: Text(
-                  "네트워크 상태가 불안정합니다.\n다시 시도하거나 ${item.name}의 연결을 확인해주세요.",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  softWrap: true,
-                  maxLines: 3,
-                  overflow: TextOverflow.visible,
-                ),
-                alignment: Alignment.topCenter,
-              );
+              showFailedToast(context,
+                  "네트워크 상태가 불안정합니다.\n다시 시도하거나 ${item.name}의 연결을 확인해주세요.");
             }
           },
         ),

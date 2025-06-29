@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:toastification/toastification.dart';
 
 import '../core/config/app_colors.dart';
 import '../features/analytics/presentation/analytics_viewmodel.dart';
@@ -154,8 +155,8 @@ Future<void> showEditAccountDialog(
   bool isManager = initialAdminYn == true;
   bool isGuest = initialAdminYn == false && initialAdminYn != null;
   bool isUse = initialUseYn ?? true;
-  String? selectedCity = initialCountryName;
 
+  String? selectedCity = initialCountryName;
   return showGeneralDialog(
     context: context,
     barrierDismissible: true,
@@ -277,6 +278,16 @@ Future<void> showEditAccountDialog(
                             dropdownSearchDecoration:
                                 _buildDecoration('시·도 선택'),
                           ),
+                          dropdownBuilder: (context, selectedItem) {
+                            return Text(
+                              selectedItem! == '' ? '도시를 선택해주세요' : selectedItem,
+                              style: TextStyle(
+                                color: selectedItem == ''
+                                    ? Colors.grey
+                                    : Colors.black,
+                              ),
+                            );
+                          },
                           onChanged: (v) => setState(() => selectedCity = v),
                         ),
                         const SizedBox(height: 24),
@@ -300,7 +311,6 @@ Future<void> showEditAccountDialog(
                                 countryName: selectedCity ?? '',
                                 useYn: isUse,
                               );
-                              Navigator.of(ctx).pop();
                             },
                             child: const Text('입력 완료',
                                 style: TextStyle(fontSize: 16)),
@@ -359,5 +369,31 @@ Widget _buildCheckbox({
       Text(label,
           style: TextStyle(color: value ? AppColors.purpleColor : Colors.grey)),
     ],
+  );
+}
+
+void showFailedToast(BuildContext context, String message) {
+  toastification.show(
+    context: context,
+    showIcon: true,
+    icon: Icon(
+      Icons.error_outline,
+      color: Colors.white,
+      size: 28,
+    ),
+    backgroundColor: Colors.redAccent,
+    autoCloseDuration: const Duration(milliseconds: 2000),
+    title: Text(
+      message,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      softWrap: true,
+      maxLines: 3,
+      overflow: TextOverflow.visible,
+    ),
+    alignment: Alignment.topCenter,
   );
 }

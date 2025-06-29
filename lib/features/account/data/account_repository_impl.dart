@@ -41,19 +41,23 @@ class AccountRepositoryImpl implements IAccountRepository {
   @override
   Future<bool> updateAccount({
     required int pId,
-    required String userId,
-    required String password,
+    required String? userId,
+    required String? password,
     required bool adminYn,
     required bool useYn,
-    required String countryName,
+    required String? countryName,
   }) async {
+    // 지역 변수를 사용하여 값 처리
+    String? finalUserId = userId == '' ? null : userId;
+    String? finalPassword = password == '' ? null : password;
+    String? finalCountryName = countryName == '' ? null : countryName;
     final ok = await _service.updateAccount(
       pId: pId,
-      userId: userId,
-      password: password,
+      userId: finalUserId,
+      password: finalPassword,
       adminYn: adminYn,
       useYn: useYn,
-      countryName: countryName,
+      countryName: finalCountryName,
     );
     return ok;
   }

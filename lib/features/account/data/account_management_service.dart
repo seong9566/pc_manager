@@ -26,7 +26,6 @@ class AccountService {
     final dynamic raw = resp.data;
     final Map<String, dynamic> json = raw as Map<String, dynamic>;
 
-    debugPrint("[Flutter] >> raw : $raw");
     return ResponseModel.fromJson(
       json,
       (dataJson) => (dataJson as List<dynamic>)
@@ -68,11 +67,11 @@ class AccountService {
 
   Future<bool> updateAccount({
     required int pId,
-    required String userId,
-    required String password,
+    required String? userId,
+    required String? password,
     required bool adminYn,
     required bool useYn,
-    required String countryName,
+    required String? countryName,
   }) async {
     final body = {
       'pId': pId,
@@ -84,6 +83,7 @@ class AccountService {
     };
     final resp = await _apiClient.request(DioMethod.post,
         url: ApiEndPoints.accountManagement, data: body);
+    debugPrint("[Flutter] >> raw : $resp");
     final raw = resp.data is String
         ? jsonDecode(resp.data as String)
         : resp.data as Map<String, dynamic>;
