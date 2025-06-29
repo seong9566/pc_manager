@@ -9,25 +9,26 @@ import '../core/config/app_colors.dart';
 import '../features/analytics/presentation/analytics_viewmodel.dart';
 import '../provider/date_provider.dart';
 
-final cityDropDownItems = <String>[
-  '서울특별시',
-  '부산광역시',
-  '대구광역시',
-  '인천광역시',
-  '광주광역시',
-  '대전광역시',
-  '울산광역시',
-  '세종특별자치시',
-  '경기도',
-  '강원도',
-  '충청북도',
-  '충청남도',
-  '전라북도',
-  '전라남도',
-  '경상북도',
-  '경상남도',
-  '제주특별자치도',
-];
+/// TODO : 서버에서 주는 값으로 변경하기
+// final cityDropDownItems = <String>[
+//   '서울특별시',
+//   '부산광역시',
+//   '대구광역시',
+//   '인천광역시',
+//   '광주광역시',
+//   '대전광역시',
+//   '울산광역시',
+//   '세종특별자치시',
+//   '경기도',
+//   '강원도',
+//   '충청북도',
+//   '충청남도',
+//   '전라북도',
+//   '전라남도',
+//   '경상북도',
+//   '경상남도',
+//   '제주특별자치도',
+// ];
 // final cityDropDownItems = [
 
 // DropdownMenuItem(value: '서울특별시', child: Text('서울특별시')),
@@ -134,6 +135,7 @@ Future<void> showEditAccountDialog(
   BuildContext context, {
   required String title,
   required String subTitle,
+  required List<String> cityDropDownItems,
   String? initialUserId,
   String? initialPassword,
   bool? initialAdminYn, // true→Manager, false→Guest

@@ -63,11 +63,11 @@ class AccountViewModel extends StateNotifier<AccountState> {
 
   Future<bool> updateAccount({
     required int pId,
-    required String? userId,
+    required String userId,
     required String? password,
     required bool adminYn,
     required bool useYn,
-    required String? countryName,
+    required String countryName,
   }) async {
     try {
       final success = await _useCase.updateAccount(

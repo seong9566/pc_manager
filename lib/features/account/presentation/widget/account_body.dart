@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/features/account/presentation/account_viewmodel.dart';
+import 'package:ip_manager/features/country/presentation/country_list_provider.dart';
 
 import '../../../../widgets/dot_dialog.dart';
 import 'account_table_widget.dart';
@@ -16,6 +17,7 @@ class _AccountBodyState extends ConsumerState<AccountBody> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(accountViewModel).accountModel;
+    final cityDropDownItems = ref.watch(countryListProvider);
     if (state.isEmpty) {
       return Expanded(
         child: Center(
@@ -32,6 +34,8 @@ class _AccountBodyState extends ConsumerState<AccountBody> {
             context,
             title: '계정 수정',
             subTitle: '기존 정보를 수정해주세요',
+            cityDropDownItems:
+                cityDropDownItems.map((e) => e.countryName).toList(),
             initialUserId: acc.uId,
             initialPassword: null,
             // 보안상 비밀번호는 빈 문자열로 두거나 별도 플로우로 처리
@@ -44,10 +48,10 @@ class _AccountBodyState extends ConsumerState<AccountBody> {
               required useYn,
               required countryName,
             }) async {
-              if (password.isEmpty) {
-                showFailedToast(context, "비밀번호를 입력해주세요!");
-                return;
-              }
+              // if (password.isEmpty) {
+              //   showFailedToast(context, "비밀번호를 입력해주세요!");
+              //   return;
+              // }
               if (countryName.isEmpty) {
                 showFailedToast(context, "도시를 선택해주세요!");
                 return;
@@ -62,6 +66,7 @@ class _AccountBodyState extends ConsumerState<AccountBody> {
                         useYn: useYn,
                         countryName: countryName,
                       );
+              Navigator.pop(context);
               if (!ok) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('계정 수정에 실패했습니다')),
