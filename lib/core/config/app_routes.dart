@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:ip_manager/features/auth/presentation/login_view.dart';
+import 'package:ip_manager/features/auth/presentation/signup_view.dart';
 import 'package:ip_manager/features/base/presentation/base_view.dart';
 import 'package:ip_manager/provider/user_session.dart';
 import 'package:ip_manager/core/utils/cache_manager.dart';
@@ -31,18 +32,16 @@ final appRouter = GoRouter(
     debugPrint("[Flutter] >> 세션 읽기: ${session.role}, ${session.isLogin}");
     final loggedIn = session.role != null && session.role!.isNotEmpty;
 
-    // 로그인 화면(/)으로 가는 중인지 여부
-    final goingToLogin = state.uri.toString() == '/';
+    // 로그인 화면(/) 또는 회원가입 화면(/signup)으로 가는 중인지 여부
+    final goingToAuthPage = state.uri.toString() == '/' || state.uri.toString() == '/signup';
 
-    print("[Flutter] >> 로그인 상태: $loggedIn, 로그인 화면으로 가는 중: $goingToLogin");
-    if (!loggedIn && !goingToLogin) {
-      // 인증 안 된 상태에서 / 이외 경로 접근 시 → 로그인으로
-      print("go Login Page11");
+    print("[Flutter] >> 로그인 상태: $loggedIn, 인증 페이지로 가는 중: $goingToAuthPage");
+    if (!loggedIn && !goingToAuthPage) {
+      // 인증 안 된 상태에서 인증 페이지 이외 경로 접근 시 → 로그인으로
       return '/';
     }
-    if (loggedIn && goingToLogin) {
-      print("go Login Page22");
-      // 인증 된 상태에서 / 접근 시 → /base 로
+    if (loggedIn && state.uri.toString() == '/') {
+      // 인증 된 상태에서 로그인 페이지 접근 시 → /base 로
       return '/base';
     }
     return null; // 그 외에는 원래 요청대로 진행
@@ -54,6 +53,12 @@ final appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       // builder: (_, __) => const LoginView(),
       pageBuilder: (_, __) => NoTransitionPage(child: LoginView()),
+    ),
+    GoRoute(
+      path: '/signup',
+      name: 'signup',
+      parentNavigatorKey: _rootNavigatorKey,
+      pageBuilder: (_, __) => NoTransitionPage(child: SignUpView()),
     ),
     GoRoute(
       path: '/base',
