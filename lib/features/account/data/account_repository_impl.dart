@@ -65,4 +65,10 @@ class AccountRepositoryImpl implements IAccountRepository {
     final ok = await _service.deleteAccount(pId);
     return ok;
   }
+
+  @override
+  Future<void> getRegionInfo() async {
+    final ok = await _service.getRegionInfo();
+    return ok;
+  }
 }

@@ -30,6 +30,9 @@ class ApiEndPoints {
   /// 도시 리스트
   static const getCountryInfo = "Country/sign/v1/GetCountryInfo";
 
+  // 지역 정보
+  static const regionInfo = "Country/sign/v1/GetRegionInfo";
+
   /// Analyze
   static const getThisTimeDataList = "DashBoard/sign/v1/GetThisTimeDataList";
   static const getTopAnalyzeName = "DashBoard/sign/v1/GetTopAnalyzeName";

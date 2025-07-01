@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ip_manager/features/country/presentation/country_list_provider.dart';
 import 'package:ip_manager/features/management/presentation/management_viewmodel.dart';
-import 'package:ip_manager/model/country_info_model.dart';
-import 'package:ip_manager/widgets/custom_drop_down_button.dart';
+import 'package:ip_manager/features/region/presentation/region_info_provider.dart';
+import 'package:ip_manager/widgets/custom_drop_down_button_string.dart';
 import 'package:ip_manager/widgets/search_text_field.dart';
 
 import '../../../../core/config/screen_size.dart';
@@ -20,14 +19,14 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
 
   @override
   Widget build(BuildContext context) {
-    final countryList = ref.watch(countryListProvider);
+    final cityList = ref.watch(cityListProvider);
 
     return Responsive.isDesktop(context)
-        ? _desktop(countryList)
-        : _mobile(countryList);
+        ? _desktop(cityList)
+        : _mobile(cityList);
   }
 
-  Widget _mobile(List<CountryInfoModel> countryList) {
+  Widget _mobile(List<String> cityList) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -50,18 +49,19 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
         ),
         const SizedBox(height: 16),
 
-        CustomDropDownButton(
-            countryList: countryList,
-            onChanged: (newCountry) {
+        CustomDropDownButtonString(
+            cityList: cityList,
+            onChanged: (selectedCity) {
+              // 선택된 도시 이름으로 처리
               ref
                   .read(managementViewModelProvider.notifier)
-                  .getCountryStoreList(countryId: newCountry.pId);
+                  .getCountryStoreList(cityName: selectedCity);
             }),
       ],
     );
   }
 
-  Widget _desktop(List<CountryInfoModel> countryList) {
+  Widget _desktop(List<String> cityList) {
     return Row(
       children: [
         // 1) 검색창
@@ -88,12 +88,12 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
 
         Expanded(
           flex: 1,
-          child: CustomDropDownButton(
-              countryList: countryList,
-              onChanged: (newCountry) {
+          child: CustomDropDownButtonString(
+              cityList: cityList,
+              onChanged: (selectedCity) {
                 ref
                     .read(managementViewModelProvider.notifier)
-                    .getCountryStoreList(countryId: newCountry.pId);
+                    .getCountryStoreList(cityName: selectedCity);
               }),
         ),
       ],

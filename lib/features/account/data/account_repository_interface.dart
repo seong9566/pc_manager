@@ -21,4 +21,6 @@ abstract class IAccountRepository {
   });
 
   Future<bool> deleteAccount(int pId);
+
+  Future<void> getRegionInfo();
 }

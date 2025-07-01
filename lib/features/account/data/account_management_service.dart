@@ -116,4 +116,22 @@ class AccountService {
     }
     return model.data;
   }
+
+  Future<void> getRegionInfo() async {
+    final resp =
+        await _apiClient.request(DioMethod.get, url: ApiEndPoints.regionInfo);
+    final raw = resp.data is String
+        ? jsonDecode(resp.data as String)
+        : resp.data as Map<String, dynamic>;
+
+    debugPrint("[Flutter] >> raw : $raw");
+    // final model = ResponseModel<List<RegionInfoModel>>.fromJson(
+    //   raw,
+    //   (d) => d as List<RegionInfoModel>,
+    // );
+    // if (model.code != 200) {
+    //   throw Exception(model.message);
+    // }
+    // return model.data;
+  }
 }

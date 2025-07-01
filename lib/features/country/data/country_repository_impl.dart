@@ -23,6 +23,28 @@ class CountryRepositoryImpl implements ICountryRepository {
       response.data,
       (json) => (json as List).cast<Map<String, dynamic>>(),
     );
-    return parsed.data.map((e) => CountryInfoModel.fromJson(e)).toList();
+    
+    // countryName만 추출하여 중복 없이 리스트로 만듦
+    final Set<String> uniqueCountryNames = {};
+    final List<CountryInfoModel> result = [];
+    
+    for (var item in parsed.data) {
+      // countryName이 있고 비어있지 않은 경우에만 추가
+      if (item['countryName'] != null && item['countryName'].toString().isNotEmpty) {
+        final countryName = item['countryName'].toString();
+        // 중복 제거
+        if (!uniqueCountryNames.contains(countryName)) {
+          uniqueCountryNames.add(countryName);
+          result.add(CountryInfoModel(
+            pId: item['countryId'] is int
+                ? item['countryId'] as int
+                : int.tryParse(item['countryId'].toString()) ?? 0,
+            countryName: countryName,
+          ));
+        }
+      }
+    }
+    
+    return result;
   }
 }

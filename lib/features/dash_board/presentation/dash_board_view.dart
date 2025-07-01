@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
+import 'package:ip_manager/features/account/presentation/account_viewmodel.dart';
 import 'package:ip_manager/features/dash_board/presentation/widget/dash_board_body.dart';
 import 'package:ip_manager/features/dash_board/presentation/widget/dash_board_header.dart';
 
@@ -32,6 +33,11 @@ class _DashBoardViewState extends ConsumerState<DashBoardView> {
             DashBoardHeader(),
             SizedBox(height: 40),
             DashBoardBody(),
+            ElevatedButton(
+                onPressed: () {
+                  ref.read(accountViewModel.notifier).getRegionInfo();
+                },
+                child: Text("Test")),
             // if (Responsive.isDesktop(context))
           ],
         ),

@@ -14,6 +14,8 @@ void main() async {
   if (savedRole.isNotEmpty) {
     sessionNotifier.updateSession(role: savedRole, isLogin: true);
   }
+  // 지역 정보는 regionInfoProvider에서 자동 초기화
+  
   runApp(
     ProviderScope(
       overrides: [

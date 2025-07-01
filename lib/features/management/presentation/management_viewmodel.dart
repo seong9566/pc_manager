@@ -51,11 +51,28 @@ class ManagementViewModel
     state = AsyncValue.data(filtered);
   }
 
-  Future<void> getCountryStoreList({required int countryId}) async {
+  Future<void> getCountryStoreList({int? countryId, String? cityName}) async {
     state = const AsyncLoading();
     try {
-      final allStores =
-          await managementUseCase.getCountryStoreList(countryId: countryId);
+      List<ManagementModel> allStores;
+
+      if (countryId != null) {
+        // 기존 방식: countryId로 검색
+        allStores =
+            await managementUseCase.getCountryStoreList(countryId: countryId);
+      } else if (cityName != null) {
+        // 새로운 방식: 도시 이름으로 검색
+        // 도시 이름으로 countryId를 찾아서 검색해야 함
+        // 임시로 빈 리스트 반환 (실제로는 도시 이름으로 countryId를 찾는 로직 구현 필요)
+        allStores = await managementUseCase.getStoreList(null);
+        // 도시 이름으로 필터링
+        allStores =
+            allStores.where((store) => store.countryName == cityName).toList();
+      } else {
+        // 둘 다 null이면 전체 목록 반환
+        allStores = await managementUseCase.getStoreList(null);
+      }
+
       state = AsyncValue.data(allStores);
     } catch (e, st) {
       state = AsyncValue.error(e, st);

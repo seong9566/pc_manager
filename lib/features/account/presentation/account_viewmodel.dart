@@ -104,6 +104,14 @@ class AccountViewModel extends StateNotifier<AccountState> {
       debugPrint('AccountViewModel.refresh error: $e\n$st');
     }
   }
+
+  Future<void> getRegionInfo() async {
+    try {
+      await _useCase.getRegionInfo();
+    } catch (e, st) {
+      debugPrint('AccountViewModel.refresh error: $e\n$st');
+    }
+  }
 }
 
 /// ViewModel Provider: AccountState 타입으로 노출

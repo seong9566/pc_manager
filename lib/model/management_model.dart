@@ -32,6 +32,8 @@ class ManagementModel {
   final int? countryTbId;
   final int? cityTbId;
   final int? townTbId;
+  final String? countryName;
+  final String? cityName;
 
   ManagementModel({
     required this.pId,
@@ -48,6 +50,8 @@ class ManagementModel {
     required this.region,
     required this.countryTbId,
     required this.cityTbId,
+    this.countryName,
+    this.cityName,
     required this.townTbId,
   });
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/features/account/presentation/account_viewmodel.dart';
-import 'package:ip_manager/features/country/presentation/country_list_provider.dart';
+import 'package:ip_manager/features/region/presentation/region_info_provider.dart';
 
 import '../../../../widgets/dot_dialog.dart';
 import 'account_table_widget.dart';
@@ -17,7 +17,7 @@ class _AccountBodyState extends ConsumerState<AccountBody> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(accountViewModel).accountModel;
-    final cityDropDownItems = ref.watch(countryListProvider);
+    final cityDropDownItems = ref.watch(cityListProvider);
     if (state.isEmpty) {
       return Expanded(
         child: Center(
@@ -34,8 +34,7 @@ class _AccountBodyState extends ConsumerState<AccountBody> {
             context,
             title: '계정 수정',
             subTitle: '기존 정보를 수정해주세요',
-            cityDropDownItems:
-                cityDropDownItems.map((e) => e.countryName).toList(),
+            cityDropDownItems: cityDropDownItems,
             initialUserId: acc.uId,
             initialPassword: null,
             // 보안상 비밀번호는 빈 문자열로 두거나 별도 플로우로 처리

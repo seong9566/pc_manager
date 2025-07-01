@@ -56,4 +56,8 @@ class AccountUseCase {
   Future<bool> deleteAccount(int pId) {
     return _repo.deleteAccount(pId);
   }
+
+  Future<void> getRegionInfo() {
+    return _repo.getRegionInfo();
+  }
 }

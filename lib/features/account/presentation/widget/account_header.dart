@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/features/account/presentation/account_viewmodel.dart';
-import 'package:ip_manager/features/country/presentation/country_list_provider.dart';
+import 'package:ip_manager/features/region/presentation/region_info_provider.dart';
 
 import '../../../../widgets/dot_dialog.dart';
 import '../../../../widgets/simple_button.dart';
@@ -17,7 +17,7 @@ class AccountHeader extends ConsumerStatefulWidget {
 class _AccountHeaderState extends ConsumerState<AccountHeader> {
   @override
   Widget build(BuildContext context) {
-    final cityDropDownItems = ref.watch(countryListProvider);
+    final cityDropDownItems = ref.watch(cityListProvider);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -35,8 +35,7 @@ class _AccountHeaderState extends ConsumerState<AccountHeader> {
                   context,
                   title: "계정 추가",
                   subTitle: "계정 정보를 추가 해주세요.",
-                  cityDropDownItems:
-                      cityDropDownItems.map((e) => e.countryName).toList(),
+                  cityDropDownItems: cityDropDownItems,
                   onSubmitted: ({
                     required userId,
                     required password,
