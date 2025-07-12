@@ -37,6 +37,15 @@ class _IPAddressFieldState extends State<IPAddressField> {
       });
     }
   }
+  
+  @override
+  void didUpdateWidget(IPAddressField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // 외부 컨트롤러의 값이 변경된 경우 내부 필드에 반영
+    if (oldWidget.controller.text != widget.controller.text) {
+      _parseInitialValue();
+    }
+  }
 
   @override
   void dispose() {
@@ -55,7 +64,14 @@ class _IPAddressFieldState extends State<IPAddressField> {
       for (var i = 0; i < 4; i++) {
         if (i < parts.length) {
           _controllers[i].text = parts[i];
+        } else {
+          _controllers[i].text = ''; // 비어있는 부분은 빈 문자열로 설정
         }
+      }
+    } else {
+      // 초기값이 없는 경우 모든 필드를 빈 문자열로 설정
+      for (var i = 0; i < 4; i++) {
+        _controllers[i].text = '';
       }
     }
   }
@@ -102,6 +118,10 @@ class _IPAddressFieldState extends State<IPAddressField> {
                 hintText: '000',
                 hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
                 border: InputBorder.none,
+              ),
+              style: TextStyle(
+                color: widget.isReadOnly ? Colors.grey : Colors.black,
+                fontSize: 14,
               ),
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,

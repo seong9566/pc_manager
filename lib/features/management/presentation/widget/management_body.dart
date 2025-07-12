@@ -233,7 +233,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
         HoverButton(
           icon: Icons.edit,
           text: '수정',
-          color: AppColors.yellowColor,
+          color: AppColors.greenColor,
           onTap: () {
             ref.read(selectedStoreProvider.notifier).state = item;
             ref.read(tabIndexProvider.notifier).select(3);

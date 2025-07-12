@@ -91,6 +91,10 @@ class _AnalyticsViewState extends ConsumerState<AnalyticsView> {
                     periodEnd: dateState.periodEnd,
                   );
             },
+            onReset: () {
+              // ViewModel의 초기화 메서드 호출
+              ref.read(analyticsViewModelProvider.notifier).resetFilters();
+            },
           ),
 
           // 2) 탭 버튼들 + 날짜 선택

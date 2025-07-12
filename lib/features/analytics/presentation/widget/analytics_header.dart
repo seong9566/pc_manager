@@ -12,11 +12,13 @@ class AnalyticsHeader extends ConsumerStatefulWidget {
   final void Function(String pcName) onSearch;
   final void Function({String? countryName, String? cityName, String? townName})
       onLocationChanged;
+  final VoidCallback onReset; // 초기화 버튼 클릭시 호출될 콜백
 
   const AnalyticsHeader({
     super.key,
     required this.onSearch,
     required this.onLocationChanged,
+    required this.onReset,
   });
 
   @override
@@ -45,12 +47,37 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // 검색창
-        SearchTextField(
-          hintText: 'PC방 이름으로 검색',
-          controller: _controller,
-          onChanged: (text) => widget.onSearch(text.trim()),
-          onComplete: () => widget.onSearch(_controller.text.trim()),
+        // 검색창과 초기화 버튼을 한 줄에 배치
+        Row(
+          children: [
+            Expanded(
+              child: SearchTextField(
+                hintText: 'PC방 이름으로 검색',
+                controller: _controller,
+                onChanged: (text) => widget.onSearch(text.trim()),
+                onComplete: () => widget.onSearch(_controller.text.trim()),
+              ),
+            ),
+            const SizedBox(width: 8),
+            // 모바일용 간소화된 초기화 버튼
+            ElevatedButton(
+              onPressed: _resetFilters,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.redAccent,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                side:
+                    BorderSide(color: Colors.redAccent.withValues(alpha: 0.5)),
+                minimumSize: const Size(60, 50), // 검색창과 동일한 높이
+                maximumSize: const Size(60, 50),
+              ),
+              child: const Icon(Icons.refresh, size: 16),
+            ),
+          ],
         ),
         const SizedBox(height: 16),
 
@@ -64,6 +91,7 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
                 cityList: countryList,
                 hintText: '지역',
                 key: ValueKey('country_${countryList.length}'),
+                selectedValue: ref.watch(analyticsSelectedCountryProvider),
                 onChanged: (selectedCountry) {
                   // 선택된 국가 이름 저장 (분석 탭 전용 Provider 사용)
                   ref.read(analyticsSelectedCountryProvider.notifier).state =
@@ -87,6 +115,7 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
                 hintText: '도시',
                 key: ValueKey(
                     'city_${ref.read(analyticsSelectedCountryProvider) ?? ""}_${cityList.length}'),
+                selectedValue: ref.watch(analyticsSelectedCityProvider),
                 onChanged: (selectedCity) {
                   // 선택된 도시 이름 저장 (분석 탭 전용 Provider 사용)
                   ref.read(analyticsSelectedCityProvider.notifier).state =
@@ -106,7 +135,9 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
               child: CustomDropDownButtonString(
                 cityList: townList,
                 hintText: '동네',
-                key: ValueKey('town_${ref.read(analyticsSelectedCountryProvider) ?? ""}_${ref.read(analyticsSelectedCityProvider) ?? ""}_${townList.length}'),
+                key: ValueKey(
+                    'town_${ref.read(analyticsSelectedCountryProvider) ?? ""}_${ref.read(analyticsSelectedCityProvider) ?? ""}_${townList.length}'),
+                selectedValue: ref.watch(analyticsSelectedTownProvider),
                 onChanged: (selectedTown) {
                   // 선택된 동네 이름 저장 (분석 탭 전용 Provider 사용)
                   ref.read(analyticsSelectedTownProvider.notifier).state =
@@ -132,11 +163,43 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
           children: [
             Expanded(
               flex: 3,
-              child: SearchTextField(
-                hintText: 'PC방 이름으로 검색',
-                controller: _controller,
-                onChanged: (text) => widget.onSearch(text.trim()),
-                onComplete: () => widget.onSearch(_controller.text.trim()),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SearchTextField(
+                      hintText: 'PC방 이름으로 검색',
+                      controller: _controller,
+                      onChanged: (text) => widget.onSearch(text.trim()),
+                      onComplete: () =>
+                          widget.onSearch(_controller.text.trim()),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // 반응형 버튼 - 데스크탑 레이아웃에서는 더 여유롭게 표시
+                  ElevatedButton.icon(
+                    onPressed: _resetFilters,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.redAccent,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      side: BorderSide(
+                          color: Colors.redAccent.withValues(alpha: 0.5)),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 0),
+                      minimumSize: const Size(120, 48), // 검색창과 동일한 높이 설정
+                      maximumSize: const Size(180, 48),
+                    ),
+                    icon: const Icon(Icons.refresh, size: 18),
+                    label: const Text(
+                      '필터 초기화',
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -153,6 +216,7 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
                 cityList: countryList,
                 hintText: '지역을 선택해 주세요.',
                 key: ValueKey('country_${countryList.length}'),
+                selectedValue: ref.watch(analyticsSelectedCountryProvider),
                 onChanged: (selectedCountry) {
                   // 선택된 국가 이름 저장 (분석 탭 전용 Provider 사용)
                   ref.read(analyticsSelectedCountryProvider.notifier).state =
@@ -176,6 +240,7 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
                 hintText: '도시를 선택해 주세요.',
                 key: ValueKey(
                     'city_${ref.read(analyticsSelectedCountryProvider) ?? ""}_${cityList.length}'),
+                selectedValue: ref.watch(analyticsSelectedCityProvider),
                 onChanged: (selectedCity) {
                   // 선택된 도시 이름 저장 (분석 탭 전용 Provider 사용)
                   ref.read(analyticsSelectedCityProvider.notifier).state =
@@ -195,7 +260,9 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
               child: CustomDropDownButtonString(
                 cityList: townList,
                 hintText: '동네를 선택해 주세요.',
-                key: ValueKey('town_${ref.read(analyticsSelectedCountryProvider) ?? ""}_${ref.read(analyticsSelectedCityProvider) ?? ""}_${townList.length}'),
+                key: ValueKey(
+                    'town_${ref.read(analyticsSelectedCountryProvider) ?? ""}_${ref.read(analyticsSelectedCityProvider) ?? ""}_${townList.length}'),
+                selectedValue: ref.watch(analyticsSelectedTownProvider),
                 onChanged: (selectedTown) {
                   // 선택된 동네 이름 저장 (분석 탭 전용 Provider 사용)
                   ref.read(analyticsSelectedTownProvider.notifier).state =
@@ -225,6 +292,28 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
       cityName: selectedCity,
       townName: selectedTown,
     );
+  }
+
+  // 모든 필터 초기화
+  void _resetFilters() {
+    // 검색어 초기화
+    _controller.clear();
+
+    // 드롭다운 선택 초기화
+    ref.read(analyticsSelectedCountryProvider.notifier).state = null;
+    ref.read(analyticsSelectedCityProvider.notifier).state = null;
+    ref.read(analyticsSelectedTownProvider.notifier).state = null;
+
+    // 콜백 호출
+    widget.onSearch('');
+    widget.onLocationChanged(
+      countryName: null,
+      cityName: null,
+      townName: null,
+    );
+
+    // 상위 콜백 호출
+    widget.onReset();
   }
 
   // 이름 기반 필터링을 사용하므로 ID 조회 메서드는 더 이상 필요하지 않음

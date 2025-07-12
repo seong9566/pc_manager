@@ -83,8 +83,14 @@ class PcStatModel {
       double.tryParse(pcPrice.replaceAll(RegExp(r'[^0-9\.-]'), ''))?.toInt() ??
       0;
 
-  /// pcPriceValue에 "원" 단위 붙인 문자열
-  String get pcPriceFormatted => '$pcPriceValue원';
+  /// pcPriceValue에 천 단위 구분자와 "원" 단위 붙인 문자열
+  String get pcPriceFormatted => '${_formatNumber(pcPriceValue)}원';
+  
+  /// 숫자에 천 단위 구분자(,) 추가
+  String _formatNumber(int number) {
+    return number.toString().replaceAllMapped(
+        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
+  }
 
   /// foodPrice에서 숫자 파싱 후 정수 반환
   int get foodPriceValue =>
@@ -92,8 +98,8 @@ class PcStatModel {
           ?.toInt() ??
       0;
 
-  /// foodPriceFormatted: "원" 단위 붙이기
-  String get foodPriceFormatted => '$foodPriceValue원';
+  /// foodPriceFormatted: 천 단위 구분자와 "원" 단위 붙이기
+  String get foodPriceFormatted => '${_formatNumber(foodPriceValue)}원';
 
   /// totalPrice에서 숫자 파싱 후 정수 반환
   int get totalPriceValue =>
@@ -101,8 +107,8 @@ class PcStatModel {
           ?.toInt() ??
       0;
 
-  /// totalPriceFormatted: "원" 단위 붙이기
-  String get totalPriceFormatted => '$totalPriceValue원';
+  /// totalPriceFormatted: 천 단위 구분자와 "원" 단위 붙이기
+  String get totalPriceFormatted => '${_formatNumber(totalPriceValue)}원';
 
   /// pricePercent에서 숫자 파싱 후 정수 반환
   int get pricePercentValue =>

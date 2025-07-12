@@ -157,19 +157,25 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
           dateVm.initDate();
           analyticsVm.searchPcName('');
           analyticsVm.init();
-          
+
           // 분석 탭 전용 드롭다운 초기화 (국가/도시/동네)
           ref.read(analyticsSelectedCountryProvider.notifier).state = null;
           ref.read(analyticsSelectedCityProvider.notifier).state = null;
           ref.read(analyticsSelectedTownProvider.notifier).state = null;
         },
-        icon: const Icon(Icons.refresh, size: 20, color: AppColors.purpleColor),
-        label: const Text(
-          '초기화',
-          style: TextStyle(fontSize: 16, color: AppColors.purpleColor),
+        icon: const Icon(Icons.refresh, size: 20, color: Colors.redAccent),
+        label: Text(
+          '날짜 초기화',
+          style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
+              color: Colors.redAccent),
         ),
         style: OutlinedButton.styleFrom(
-          side: BorderSide(color: AppColors.purpleColor, width: 1),
+          minimumSize: const Size(120, 48), // 검색창과 동일한 높이 설정
+          maximumSize: const Size(180, 48),
+          side: BorderSide(
+              color: Colors.redAccent.withValues(alpha: 0.5), width: 1),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           backgroundColor: Colors.white,
@@ -181,14 +187,15 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
         icon: const Icon(
           Icons.calendar_today,
           size: 20,
-          color: AppColors.purpleColor,
+          color: Colors.black,
         ),
         label: Text(dateLabel,
-            style: const TextStyle(fontSize: 16, color: AppColors.purpleColor)),
+            style: const TextStyle(fontSize: 16, color: Colors.black)),
         style: ElevatedButton.styleFrom(
+          minimumSize: const Size(120, 48), // 검색창과 동일한 높이 설정
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           backgroundColor: Colors.white,
-          side: BorderSide(color: AppColors.purpleColor, width: 1),
+          side: BorderSide(color: Colors.grey, width: 1),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       );

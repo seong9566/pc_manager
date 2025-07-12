@@ -7,7 +7,6 @@ import 'package:ip_manager/provider/base_view_index_provider.dart';
 import 'package:kpostal_web/kpostal_web.dart';
 import 'package:toastification/toastification.dart';
 
-import '../../../core/config/app_colors.dart';
 import '../../../core/config/screen_size.dart';
 import '../../../model/management_model.dart';
 import '../../../widgets/custom_text_field.dart';
@@ -249,6 +248,7 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
               ref.read(selectedStoreProvider.notifier).state =
                   ManagementModel.empty();
               ref.read(tabIndexProvider.notifier).select(1);
+              _initializeControllers(null);
             },
             child: const Text('네'),
           ),
@@ -286,8 +286,21 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            const Text('PC방 추가',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            Row(
+              children: [
+                // 뒤로가기
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    cancelDialog(isEdit);
+                  },
+                ),
+                const SizedBox(width: 16),
+                Text(isEdit ? 'PC방 수정' : 'PC방 추가',
+                    style:
+                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              ],
+            ),
             const SizedBox(height: 20),
 
             // 이 Expanded가 반드시 Column의 직계 자식이어야 합니다.
@@ -296,9 +309,11 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 children: [
                   CustomTextField(
-                    hintText: 'PC방 이름',
+                    labelText: 'PC방 이름',
+                    hintText: 'PC방 이름을 입력하세요',
                     controller: _nameController,
                     useExpanded: false,
+                    isRequired: true,
                   ),
                   const SizedBox(height: 20),
                   _addressRow(isEdit),
@@ -306,72 +321,122 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
                   Row(
                     children: [
                       CustomTextField(
+                        labelText: '시',
                         hintText: 'AA시',
                         controller: _cityController,
                         isEdit: true,
                         useExpanded: true,
+                        isRequired: true,
                       ),
                       const SizedBox(width: 8),
                       CustomTextField(
+                        labelText: '구',
                         hintText: 'BB구',
                         controller: _townController,
                         isEdit: true,
                         useExpanded: true,
+                        isRequired: true,
                       ),
                       const SizedBox(width: 8),
                       CustomTextField(
+                        labelText: '동',
                         hintText: 'CC동',
                         controller: _countryController,
                         isEdit: true,
                         useExpanded: true,
+                        isRequired: true,
                       ),
                     ],
                   ),
                   const SizedBox(height: 20),
-                  IPAddressField(
-                    controller: _ipController,
-                    isReadOnly: isEdit,
-                    hintText: 'IP',
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          children: [
+                            Text(
+                              'IP 주소',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            Text(
+                              ' *',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              '잘못 입력시 분석이 정상적으로 되지 않습니다.',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IPAddressField(
+                        controller: _ipController,
+                        isReadOnly: false, // 항상 수정 가능하도록 설정
+                        hintText: 'IP',
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 20),
                   CustomTextField(
-                    hintText: '포트',
+                    labelText: '포트',
+                    hintText: '포트를 입력하세요',
                     controller: _portController,
                     useExpanded: false,
                   ),
                   const SizedBox(height: 20),
                   CustomTextField(
-                    hintText: '좌석 수',
+                    labelText: '좌석 수',
+                    hintText: '좌석 수를 입력하세요',
                     controller: _seatController,
                     useExpanded: false,
                   ),
                   const SizedBox(height: 20),
                   CustomTextField(
-                    hintText: '요금제 가격',
+                    labelText: '요금제 가격',
+                    hintText: '요금제 가격을 입력하세요',
                     controller: _priceController,
                     useExpanded: false,
                   ),
                   const SizedBox(height: 20),
                   CustomTextField(
-                    hintText: 'PC 요금제 비율',
+                    labelText: 'PC 요금제 비율',
+                    hintText: 'PC 요금제 비율을 입력하세요',
                     controller: _pricePercentController,
                     useExpanded: false,
                   ),
                   const SizedBox(height: 20),
                   CustomTextField(
-                    hintText: 'PC 사양',
+                    labelText: 'PC 사양',
+                    hintText: 'PC 사양을 입력하세요',
                     controller: _specController,
                     useExpanded: false,
                   ),
                   const SizedBox(height: 20),
                   CustomTextField(
-                    hintText: '통신사',
+                    labelText: '통신사',
+                    hintText: '통신사를 입력하세요',
                     controller: _agencyController,
                     useExpanded: false,
                   ),
                   const SizedBox(height: 20),
                   CustomTextField(
-                    hintText: '메모',
+                    labelText: '메모',
+                    hintText: '메모를 입력하세요',
                     controller: _memoController,
                     useExpanded: false,
                   ),
@@ -384,7 +449,7 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
                           child: ElevatedButton(
                             onPressed: addStore,
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.purpleColor),
+                                backgroundColor: Color(0xff673AB7)),
                             child: const Text('완료',
                                 style: TextStyle(color: Colors.white)),
                           ),
@@ -417,35 +482,64 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
   }
 
   Widget _addressRow(bool isEdit) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Container(
-            height: 48,
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Text(
-              address.isEmpty ? '주소를 입력해 주세요.' : address,
-              style: TextStyle(color: Colors.grey.shade600),
-            ),
+        const Padding(
+          padding: EdgeInsets.only(bottom: 8.0),
+          child: Row(
+            children: [
+              Text(
+                '주소',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
+              Text(
+                ' *',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
+            ],
           ),
         ),
-        if (!isEdit) ...[
-          const SizedBox(width: 12),
-          SizedBox(
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () => openAddressDialog(context),
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.purpleColor),
-              child: const Text('주소 검색', style: TextStyle(color: Colors.white)),
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                height: 48,
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Text(
+                  address.isEmpty ? '주소를 입력해 주세요.' : address,
+                  style: TextStyle(color: Colors.grey.shade600),
+                ),
+              ),
             ),
-          ),
-        ],
+            if (!isEdit) ...[
+              const SizedBox(width: 12),
+              SizedBox(
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () => openAddressDialog(context),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xff673AB7)),
+                  child: const Text('주소 검색',
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ],
+          ],
+        ),
       ],
     );
   }

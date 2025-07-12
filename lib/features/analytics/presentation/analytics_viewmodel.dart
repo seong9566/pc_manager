@@ -67,13 +67,6 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     try {
       final now = DateTime.now().toDateOnlyForDateTime();
       await getThisDayDataList(targetDate: now);
-      // final dayDate = DateTime(now.year, now.month, now.day);
-      // final startDate = now;
-      // final endDate = now.add(const Duration(days: 1));
-      // await getPeriodDataList(startDate: startDate, endDate: endDate);
-      // final monthDate = DateTime(now.year, now.month);
-      // await getMonthDataList(targetDate: monthDate);
-      // await getDaysDataList(targetDate: dayDate);
     } finally {
       state = state.copyWith(isLoading: false);
     }
@@ -187,44 +180,51 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
   String? _countryName;
   String? _cityName;
   String? _townName;
-  
+
   /// 필터 적용 함수(검색어와 지역 필터 모두 적용)
   void _applyFilters() {
     final searchText = _searchPcName;
-    
+
     // 검색어와 지역 필터 모두 적용
     var fThisDay = _allThisDayData;
     var fDays = _allDaysData;
     var fMonth = _allMonthData;
     var fPeriod = _allPeriodData;
-    
+
     // 1. 검색어 필터링
     if (searchText.isNotEmpty) {
-      fThisDay = fThisDay.where((e) => e.pcRoomName.contains(searchText)).toList();
+      fThisDay =
+          fThisDay.where((e) => e.pcRoomName.contains(searchText)).toList();
       fDays = fDays.where((e) => e.pcName.contains(searchText)).toList();
       fMonth = fMonth.where((e) => e.pcName.contains(searchText)).toList();
       fPeriod = fPeriod.where((e) => e.pcName.contains(searchText)).toList();
     }
-    
+
     // 2. 지역명 필터링 (이름 부분 일치 사용)
     if (_countryName != null && _countryName!.isNotEmpty) {
-      fThisDay = fThisDay.where((e) => e.countryName.contains(_countryName!)).toList();
-      fDays = fDays.where((e) => e.countryName.contains(_countryName!)).toList();
-      fMonth = fMonth.where((e) => e.countryName.contains(_countryName!)).toList();
-      fPeriod = fPeriod.where((e) => e.countryName.contains(_countryName!)).toList();
+      fThisDay =
+          fThisDay.where((e) => e.countryName.contains(_countryName!)).toList();
+      fDays =
+          fDays.where((e) => e.countryName.contains(_countryName!)).toList();
+      fMonth =
+          fMonth.where((e) => e.countryName.contains(_countryName!)).toList();
+      fPeriod =
+          fPeriod.where((e) => e.countryName.contains(_countryName!)).toList();
     }
-    
+
     // 3. 도시명 필터링
     if (_cityName != null && _cityName!.isNotEmpty) {
-      fThisDay = fThisDay.where((e) => e.cityName.contains(_cityName!)).toList();
+      fThisDay =
+          fThisDay.where((e) => e.cityName.contains(_cityName!)).toList();
       fDays = fDays.where((e) => e.cityName.contains(_cityName!)).toList();
       fMonth = fMonth.where((e) => e.cityName.contains(_cityName!)).toList();
       fPeriod = fPeriod.where((e) => e.cityName.contains(_cityName!)).toList();
     }
-    
+
     // 4. 동네명 필터링
     if (_townName != null && _townName!.isNotEmpty) {
-      fThisDay = fThisDay.where((e) => e.townName.contains(_townName!)).toList();
+      fThisDay =
+          fThisDay.where((e) => e.townName.contains(_townName!)).toList();
       fDays = fDays.where((e) => e.townName.contains(_townName!)).toList();
       fMonth = fMonth.where((e) => e.townName.contains(_townName!)).toList();
       fPeriod = fPeriod.where((e) => e.townName.contains(_townName!)).toList();
@@ -253,13 +253,27 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     _countryName = countryName;
     _cityName = cityName;
     _townName = townName;
-    
+
     // 기존 데이터에 필터 적용
     _applyFilters();
-    
+
     // 새로운 데이터 로드는 필요 없음 - 이미 로드된 데이터에 클라이언트 측 필터링만 적용
   }
-  
+
+  /// 모든 필터 초기화
+  Future<void> resetFilters() async {
+    // 검색어 초기화
+    _searchPcName = '';
+
+    // 지역 필터 초기화
+    _countryName = null;
+    _cityName = null;
+    _townName = null;
+
+    // 필터 적용 (원본 데이터로 복원)
+    _applyFilters();
+  }
+
   /// 기존 API 호출을 위한 메서드 (하위 호환성 유지)
   @Deprecated('ID 대신 이름 기반 필터링을 사용하세요')
   Future<void> changeCountry(

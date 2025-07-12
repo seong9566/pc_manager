@@ -7,12 +7,14 @@ class CustomDropDownButtonString extends StatefulWidget {
   final List<String> cityList;
   final Function(String selectedCity) onChanged;
   final String? hintText;
+  final String? selectedValue; // 추가: 외부에서 선택값을 제어할 수 있는 속성
 
   const CustomDropDownButtonString({
     super.key,
     required this.cityList,
     required this.onChanged,
     this.hintText,
+    this.selectedValue, // 추가: 초기화 기능을 위한 선택값
   });
 
   @override
@@ -23,6 +25,23 @@ class CustomDropDownButtonString extends StatefulWidget {
 class _CustomDropDownButtonStringState
     extends State<CustomDropDownButtonString> {
   String? _selectedCity;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedCity = widget.selectedValue;
+  }
+
+  @override
+  void didUpdateWidget(CustomDropDownButtonString oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // 외부에서 선택값이 변경되면 업데이트 (초기화 기능 지원)
+    if (widget.selectedValue != oldWidget.selectedValue) {
+      setState(() {
+        _selectedCity = widget.selectedValue;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,11 +84,11 @@ class _CustomDropDownButtonStringState
           }
         },
         buttonStyleData: ButtonStyleData(
-          height: isSmallScreen ? 36 : (isTablet ? 38 : 40), // 태블릿에서는 중간 크기
+          height: isSmallScreen ? 48 : (isTablet ? 48 : 48), // 태블릿에서는 중간 크기
           padding: EdgeInsets.symmetric(
               horizontal: isSmallScreen ? 5 : (isTablet ? 6 : 8)),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(8),
             border: Border.all(color: Colors.grey.shade400),
             color: Colors.white,
           ),

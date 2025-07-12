@@ -146,6 +146,12 @@ class _SideMenuState extends ConsumerState<SideMenu> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Icon(
+              icon,
+              size: Responsive.isDesktop(context) ? 18 : 16,
+              color: isSelected ? AppColors.purpleColor : Colors.black,
+            ),
+            SizedBox(width: Responsive.isDesktop(context) ? 12 : 8),
             Flexible(
               child: Text(
                 title,
@@ -156,12 +162,6 @@ class _SideMenuState extends ConsumerState<SideMenu> {
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
-            ),
-            SizedBox(width: Responsive.isDesktop(context) ? 12 : 8),
-            Icon(
-              icon,
-              size: Responsive.isDesktop(context) ? 18 : 16,
-              color: isSelected ? AppColors.purpleColor : Colors.black,
             ),
           ],
         ),
