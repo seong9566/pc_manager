@@ -76,9 +76,10 @@ class _AnalyticsViewState extends ConsumerState<AnalyticsView> {
                   .read(analyticsViewModelProvider.notifier)
                   .searchPcName(pcName);
             },
-            onCountryChanged: (countryId) {
+            onLocationChanged: (
+                {int? countryTbId, int? cityTbId, int? townTbId}) {
               ref.read(analyticsViewModelProvider.notifier).changeCountry(
-                    countryId,
+                    countryTbId!,
                     dateState.allDate,
                     dateState.dailyDate,
                     dateState.monthlyDate,

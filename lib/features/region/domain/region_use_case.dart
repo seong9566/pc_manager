@@ -26,19 +26,19 @@ class RegionUseCase {
   }
 
   /// 도시 이름 목록 추출
+  /// 모든 국가(country)의 모든 도시(city) 이름을 추출하여 리스트로 반환
   List<String> extractCityNames(RegionInfoModel regionInfo) {
-    final List<String> countryName = [];
+    final List<String> cityNames = [];
 
     for (final country in regionInfo.countries) {
-      countryName.add(country.countryName);
+      for (final city in country.cityDatas) {
+        if (city.cityName.isNotEmpty) {
+          cityNames.add(city.cityName);
+        }
+      }
     }
-    // for (final city in regionInfo.cityDatas) {
-    //   if (city.cityName.isNotEmpty) {
-    //     cityNames.add(city.cityName);
-    //   }
-    // }
 
-    return countryName;
+    return cityNames;
   }
 
   /// 국가(지역) 이름 목록 추출

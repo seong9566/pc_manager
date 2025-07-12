@@ -26,14 +26,21 @@ class _ManagementViewState extends ConsumerState<ManagementView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(height: Responsive.isDesktop(context) ? 40 : 20),
-        Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ManagementHeader()),
-        ManagementBody()
-      ],
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(height: Responsive.isDesktop(context) ? 40 : 20),
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ManagementHeader()),
+            const SizedBox(height: 8),
+            Expanded(
+              child: ManagementBody(),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

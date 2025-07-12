@@ -34,6 +34,7 @@ class ManagementModel {
   final int? townTbId;
   final String? countryName;
   final String? cityName;
+  final String? townName;
 
   ManagementModel({
     required this.pId,
@@ -52,6 +53,7 @@ class ManagementModel {
     required this.cityTbId,
     this.countryName,
     this.cityName,
+    this.townName,
     required this.townTbId,
   });
 
@@ -72,6 +74,9 @@ class ManagementModel {
       countryTbId: json['countryTbId'] ?? 0,
       cityTbId: json['cityTbId'] ?? 0,
       townTbId: json['townTbId'] ?? 0,
+      countryName: json['countryName'],
+      cityName: json['cityName'],
+      townName: json['townName'],
     );
   }
 
@@ -92,6 +97,9 @@ class ManagementModel {
       'countryTbId': countryTbId,
       'cityTbId': cityTbId,
       'townTbId': townTbId,
+      'countryName': countryName,
+      'cityName': cityName,
+      'townName': townName,
     };
   }
 
@@ -112,6 +120,9 @@ class ManagementModel {
       countryTbId: 0,
       cityTbId: 0,
       townTbId: 0,
+      countryName: '',
+      cityName: '',
+      townName: '',
     );
   }
 

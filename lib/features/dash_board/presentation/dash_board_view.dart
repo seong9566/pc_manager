@@ -22,23 +22,11 @@ class _DashBoardViewState extends ConsumerState<DashBoardView> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(height: Responsive.isDesktop(context) ? 40 : 20),
-            // TextButton(
-            //   onPressed: () {
-            //     ref.read(dashBoardViewModelProvider.notifier).getDashBoardData();
-            //   },
-            //   child: Text("Api TestButton "),
-            // ),
 
             /// Header
             DashBoardHeader(),
             SizedBox(height: 40),
             DashBoardBody(),
-            ElevatedButton(
-                onPressed: () {
-                  ref.read(accountViewModel.notifier).getRegionInfo();
-                },
-                child: Text("Test")),
-            // if (Responsive.isDesktop(context))
           ],
         ),
       ),

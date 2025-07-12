@@ -1,40 +1,61 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-
-import '../core/config/app_theme.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:ip_manager/core/config/screen_size.dart';
 
 /// 문자열 리스트를 사용하는 드롭다운 버튼 위젯
 class CustomDropDownButtonString extends StatefulWidget {
   final List<String> cityList;
   final Function(String selectedCity) onChanged;
+  final String? hintText;
 
   const CustomDropDownButtonString({
-    super.key, 
-    required this.cityList, 
-    required this.onChanged
+    super.key,
+    required this.cityList,
+    required this.onChanged,
+    this.hintText,
   });
 
   @override
-  State<CustomDropDownButtonString> createState() => _CustomDropDownButtonStringState();
+  State<CustomDropDownButtonString> createState() =>
+      _CustomDropDownButtonStringState();
 }
 
-class _CustomDropDownButtonStringState extends State<CustomDropDownButtonString> {
+class _CustomDropDownButtonStringState
+    extends State<CustomDropDownButtonString> {
   String? _selectedCity;
 
   @override
   Widget build(BuildContext context) {
+    // 디바이스 크기 분류
+    final isSmallScreen = Responsive.isMobile(context); // 모바일 폰
+    final isTablet = Responsive.isTablet(context); // 태블릿
+
     return DropdownButtonHideUnderline(
       child: DropdownButton2<String>(
-        isExpanded: true,
+        isExpanded: false,
         hint: Text(
-          '도시',
-          style: TextStyle(color: Colors.grey.shade600),
+          widget.hintText ?? '도시',
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+          style: TextStyle(
+            fontSize:
+                isSmallScreen ? 12 : (isTablet ? 13 : 14), // 태블릿에 적합한 글자 크기
+            color: Colors.grey.shade600,
+          ),
         ),
         value: _selectedCity,
         items: widget.cityList.map((city) {
           return DropdownMenuItem<String>(
             value: city,
-            child: Text(city),
+            child: Text(
+              city,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: TextStyle(
+                  fontSize: isSmallScreen
+                      ? 12
+                      : (isTablet ? 13 : 14)), // 태블릿에 적합한 글자 크기
+            ),
           );
         }).toList(),
         onChanged: (selectedCity) {
@@ -44,23 +65,39 @@ class _CustomDropDownButtonStringState extends State<CustomDropDownButtonString>
           }
         },
         buttonStyleData: ButtonStyleData(
-          height: 46,
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          height: isSmallScreen ? 36 : (isTablet ? 38 : 40), // 태블릿에서는 중간 크기
+          padding: EdgeInsets.symmetric(
+              horizontal: isSmallScreen ? 5 : (isTablet ? 6 : 8)),
           decoration: BoxDecoration(
-            borderRadius: AppTheme.mainBorder,
+            borderRadius: BorderRadius.circular(6),
             border: Border.all(color: Colors.grey.shade400),
             color: Colors.white,
           ),
         ),
         dropdownStyleData: DropdownStyleData(
-          maxHeight: 300,
+          maxHeight: MediaQuery.of(context).size.height * 0.2,
+          padding: EdgeInsets.zero,
+          offset: const Offset(0, -3), // 태블릿에 더 적합한 오프셋
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: Colors.grey.shade300),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
         ),
-        menuItemStyleData: const MenuItemStyleData(
-          height: 40,
+        menuItemStyleData: MenuItemStyleData(
+          padding: EdgeInsets.symmetric(
+              horizontal: isSmallScreen ? 4.0 : (isTablet ? 8.0 : 6.0)),
+          overlayColor: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.focused)
+                ? Colors.grey.shade100
+                : null,
+          ),
         ),
       ),
     );

@@ -13,17 +13,50 @@ final regionInfoProvider =
   return notifier;
 });
 
-/// 도시 이름 목록 Provider
-final cityListProvider = Provider<List<String>>((ref) {
-  final regionInfo = ref.watch(regionInfoProvider);
-  return ref.read(regionUseCaseProvider).extractCityNames(regionInfo);
-});
-
 /// 국가(지역) 이름 목록 Provider
 final countryNameListProvider = Provider<List<String>>((ref) {
   final regionInfo = ref.watch(regionInfoProvider);
   return ref.read(regionUseCaseProvider).extractCountryNames(regionInfo);
 });
+
+final cityListProvider = Provider<List<String>>((ref) {
+  final regionInfo = ref.watch(regionInfoProvider);
+  return ref.read(regionUseCaseProvider).extractCityNames(regionInfo);
+});
+
+final selectedCountryProvider = StateProvider<String?>((ref) => null);
+
+final cityNamesByCountryProvider = Provider<List<String>>((ref) {
+  final selectedCountry = ref.watch(selectedCountryProvider);
+
+  if (selectedCountry == null) return [];
+
+  return ref
+      .read(regionInfoProvider.notifier)
+      .getCitiesByCountryName(selectedCountry)
+      .map((city) => city.cityName)
+      .toList();
+});
+
+/// 선택된 도시 Provider
+final selectedCityProvider = StateProvider<String?>((ref) => null);
+
+/// 선택된 국가와 도시에 따른 동네 목록 Provider
+final townNamesByCountryCityProvider = Provider<List<String>>((ref) {
+  final selectedCountry = ref.watch(selectedCountryProvider);
+  final selectedCity = ref.watch(selectedCityProvider);
+
+  if (selectedCountry == null || selectedCity == null) return [];
+
+  return ref
+      .read(regionInfoProvider.notifier)
+      .getTownsByCityName(selectedCountry, selectedCity)
+      .map((town) => town.townName)
+      .toList();
+});
+
+/// 선택된 동네 Provider
+final selectedTownProvider = StateProvider<String?>((ref) => null);
 
 class RegionInfoNotifier extends StateNotifier<RegionInfoModel> {
   final RegionUseCase _useCase;
@@ -35,10 +68,7 @@ class RegionInfoNotifier extends StateNotifier<RegionInfoModel> {
     try {
       final regionInfo = await _useCase.getRegionInfo();
       state = regionInfo;
-      for (final a in regionInfo.countries) {
-        debugPrint("[Flutter] >> RegionInfoNotifier init: ${a.countryName}");
-      }
-      debugPrint("[Flutter] >> RegionInfoNotifier init: $regionInfo");
+      for (final a in regionInfo.countries) {}
     } catch (e) {
       debugPrint("[Flutter] >> RegionInfoNotifier init error: $e");
       // 에러 발생 시 빈 모델 유지

@@ -9,6 +9,7 @@ import 'package:ip_manager/core/extension/date_time_extension.dart';
 import 'package:ip_manager/features/analytics/presentation/analytics_viewmodel.dart';
 import 'package:ip_manager/features/analytics/presentation/widget/all_scroll_table.dart';
 import 'package:ip_manager/features/analytics/presentation/widget/selected_scroll_table.dart';
+import 'package:ip_manager/features/region/presentation/region_info_provider.dart';
 import 'package:ip_manager/provider/date_provider.dart';
 import 'package:ip_manager/widgets/dot_dialog.dart';
 

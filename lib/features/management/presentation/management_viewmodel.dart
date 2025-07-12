@@ -79,6 +79,49 @@ class ManagementViewModel
     }
   }
 
+  /// 지역 필터링: 국가(지역), 도시, 동네 선택에 따른 필터링
+  /// 각 매개변수는 옵셔널이며, 제공된 값에 따라 필터링을 수행합니다.
+  /// 예: countryName만 제공 → 해당 국가의 모든 PC방
+  /// countryName + cityName 제공 → 해당 국가의 해당 도시에 있는 모든 PC방
+  /// countryName + cityName + townName 제공 → 해당 국가의 해당 도시의 해당 동네에 있는 모든 PC방
+  /// 지역 필터링: 국가(지역), 도시, 동네 선택에 따른 필터링
+  /// 이미 캐싱된 데이터를 사용하여 API 호출 없이 필터링합니다.
+  void filterStoresByLocation({
+    String? countryName,
+    String? cityName,
+    String? townName,
+  }) {
+    state = const AsyncLoading();
+    try {
+      final filteredStores = originAllStores.where((store) {
+        // countryName만 들어온 경우
+        if (countryName != null && cityName == null && townName == null) {
+          return store.addr?.contains(countryName) ?? false;
+        }
+
+        // countryName, cityName만 들어온 경우
+        if (countryName != null && cityName != null && townName == null) {
+          return (store.addr?.contains(countryName) ?? false) &&
+              (store.addr?.contains(cityName) ?? false);
+        }
+
+        // countryName, cityName, townName 모두 들어온 경우
+        if (countryName != null && cityName != null && townName != null) {
+          return (store.addr?.contains(countryName) ?? false) &&
+              (store.addr?.contains(cityName) ?? false) &&
+              (store.addr?.contains(townName) ?? false);
+        }
+
+        // 아무 조건도 없을 때는 전체 반환
+        return true;
+      }).toList();
+
+      state = AsyncValue.data(filteredStores);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
   /// API 요청
   // Future<void> getStoreSearchName(String name) async {
   //   state = const AsyncLoading();

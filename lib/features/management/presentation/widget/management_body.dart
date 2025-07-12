@@ -8,7 +8,6 @@ import 'package:ip_manager/features/management/presentation/widget/hover_button.
 import 'package:ip_manager/model/management_model.dart';
 import 'package:ip_manager/provider/base_view_index_provider.dart';
 import 'package:ip_manager/widgets/dot_dialog.dart';
-import 'package:toastification/toastification.dart';
 
 import '../../../../model/ping_model.dart';
 import 'management_skeleton.dart';
@@ -53,7 +52,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
     // return Center(child: ManagementSkeleton());
     return state.when(
         data: (management) {
-          return Expanded(child: _body(management));
+          return _body(management);
         },
         error: (error, stack) => Center(child: Text('새로 고침 해주세요.')),
         loading: () {
@@ -142,7 +141,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
           const SizedBox(height: 16),
 
           /// 가로 스크롤 + 고정 헤더 + 세로 스크롤
-          Expanded(
+          Flexible(
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return Scrollbar(
@@ -160,7 +159,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // ─── 테이블 헤더 (고정) ─────────────────────
+                          // ─── 테이블 헤더 (고정) ─────────────────
                           Row(
                             children: [
                               _bodyTitleText('이름', nameWidth),
@@ -181,7 +180,7 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                               height: 1, color: AppColors.dividerColor),
 
                           // ─── 데이터 리스트 (스크롤 가능) ─────────────────────
-                          Expanded(
+                          Flexible(
                             child: ListView.separated(
                               itemCount: item.length,
                               separatorBuilder: (_, __) => const Divider(
