@@ -2,16 +2,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ip_manager/core/config/screen_size.dart';
+import 'package:ip_manager/features/analytics/presentation/providers/analytics_filter_providers.dart';
+import 'package:ip_manager/features/region/presentation/region_info_provider.dart';
 import 'package:ip_manager/widgets/custom_drop_down_button_string.dart';
-
-import '../../../../core/config/screen_size.dart';
-import '../../../../model/region_info_model.dart';
-import '../../../../widgets/search_text_field.dart';
-import '../../../region/presentation/region_info_provider.dart';
+import 'package:ip_manager/widgets/search_text_field.dart';
 
 class AnalyticsHeader extends ConsumerStatefulWidget {
   final void Function(String pcName) onSearch;
-  final void Function({int? countryTbId, int? cityTbId, int? townTbId})
+  final void Function({String? countryName, String? cityName, String? townName})
       onLocationChanged;
 
   const AnalyticsHeader({
@@ -29,12 +28,12 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
 
   @override
   Widget build(BuildContext context) {
-    // 국가 목록 가져오기
+    // 국가 목록은 공통으로 사용 (모든 국가 목록)
     final countryList = ref.watch(countryNameListProvider);
-    // 선택된 국가에 따른 도시 목록 가져오기
-    final cityList = ref.watch(cityNamesByCountryProvider);
-    // 선택된 국가와 도시에 따른 동네 목록 가져오기
-    final townList = ref.watch(townNamesByCountryCityProvider);
+    // 분석 화면 전용 도시 목록 (선택된 국가에 따라 필터링)
+    final cityList = ref.watch(analyticsCityNamesByCountryProvider);
+    // 분석 화면 전용 동네 목록 (선택된 도시에 따라 필터링)
+    final townList = ref.watch(analyticsTownNamesByCountryCityProvider);
 
     return Responsive.isDesktop(context)
         ? _desktop(countryList, cityList, townList)
@@ -66,13 +65,13 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
                 hintText: '지역',
                 key: ValueKey('country_${countryList.length}'),
                 onChanged: (selectedCountry) {
-                  // 선택된 국가 이름 저장
-                  ref.read(selectedCountryProvider.notifier).state =
+                  // 선택된 국가 이름 저장 (분석 탭 전용 Provider 사용)
+                  ref.read(analyticsSelectedCountryProvider.notifier).state =
                       selectedCountry;
-                  // 선택된 도시 초기화
-                  ref.read(selectedCityProvider.notifier).state = null;
-                  // 선택된 동네 초기화
-                  ref.read(selectedTownProvider.notifier).state = null;
+                  // 선택된 도시 초기화 (분석 탭 전용 Provider 사용)
+                  ref.read(analyticsSelectedCityProvider.notifier).state = null;
+                  // 선택된 동네 초기화 (분석 탭 전용 Provider 사용)
+                  ref.read(analyticsSelectedTownProvider.notifier).state = null;
 
                   // 필터링 정보 전달
                   _updateFilters();
@@ -87,12 +86,13 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
                 cityList: cityList,
                 hintText: '도시',
                 key: ValueKey(
-                    'city_${ref.read(selectedCountryProvider) ?? ""}_${cityList.length}'),
+                    'city_${ref.read(analyticsSelectedCountryProvider) ?? ""}_${cityList.length}'),
                 onChanged: (selectedCity) {
-                  // 선택된 도시 이름 저장
-                  ref.read(selectedCityProvider.notifier).state = selectedCity;
-                  // 선택된 동네 초기화
-                  ref.read(selectedTownProvider.notifier).state = null;
+                  // 선택된 도시 이름 저장 (분석 탭 전용 Provider 사용)
+                  ref.read(analyticsSelectedCityProvider.notifier).state =
+                      selectedCity;
+                  // 선택된 동네 초기화 (분석 탭 전용 Provider 사용)
+                  ref.read(analyticsSelectedTownProvider.notifier).state = null;
 
                   // 필터링 정보 전달
                   _updateFilters();
@@ -106,11 +106,11 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
               child: CustomDropDownButtonString(
                 cityList: townList,
                 hintText: '동네',
-                key: ValueKey(
-                    'town_${ref.read(selectedCountryProvider) ?? ""}_${ref.read(selectedCityProvider) ?? ""}_${townList.length}'),
+                key: ValueKey('town_${ref.read(analyticsSelectedCountryProvider) ?? ""}_${ref.read(analyticsSelectedCityProvider) ?? ""}_${townList.length}'),
                 onChanged: (selectedTown) {
-                  // 선택된 동네 이름 저장
-                  ref.read(selectedTownProvider.notifier).state = selectedTown;
+                  // 선택된 동네 이름 저장 (분석 탭 전용 Provider 사용)
+                  ref.read(analyticsSelectedTownProvider.notifier).state =
+                      selectedTown;
 
                   // 필터링 정보 전달
                   _updateFilters();
@@ -154,13 +154,13 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
                 hintText: '지역을 선택해 주세요.',
                 key: ValueKey('country_${countryList.length}'),
                 onChanged: (selectedCountry) {
-                  // 선택된 국가 이름 저장
-                  ref.read(selectedCountryProvider.notifier).state =
+                  // 선택된 국가 이름 저장 (분석 탭 전용 Provider 사용)
+                  ref.read(analyticsSelectedCountryProvider.notifier).state =
                       selectedCountry;
-                  // 선택된 도시 초기화
-                  ref.read(selectedCityProvider.notifier).state = null;
-                  // 선택된 동네 초기화
-                  ref.read(selectedTownProvider.notifier).state = null;
+                  // 선택된 도시 초기화 (분석 탭 전용 Provider 사용)
+                  ref.read(analyticsSelectedCityProvider.notifier).state = null;
+                  // 선택된 동네 초기화 (분석 탭 전용 Provider 사용)
+                  ref.read(analyticsSelectedTownProvider.notifier).state = null;
 
                   // 필터링 정보 전달
                   _updateFilters();
@@ -175,12 +175,13 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
                 cityList: cityList,
                 hintText: '도시를 선택해 주세요.',
                 key: ValueKey(
-                    'city_${ref.read(selectedCountryProvider) ?? ""}_${cityList.length}'),
+                    'city_${ref.read(analyticsSelectedCountryProvider) ?? ""}_${cityList.length}'),
                 onChanged: (selectedCity) {
-                  // 선택된 도시 이름 저장
-                  ref.read(selectedCityProvider.notifier).state = selectedCity;
-                  // 선택된 동네 초기화
-                  ref.read(selectedTownProvider.notifier).state = null;
+                  // 선택된 도시 이름 저장 (분석 탭 전용 Provider 사용)
+                  ref.read(analyticsSelectedCityProvider.notifier).state =
+                      selectedCity;
+                  // 선택된 동네 초기화 (분석 탭 전용 Provider 사용)
+                  ref.read(analyticsSelectedTownProvider.notifier).state = null;
 
                   // 필터링 정보 전달
                   _updateFilters();
@@ -194,11 +195,11 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
               child: CustomDropDownButtonString(
                 cityList: townList,
                 hintText: '동네를 선택해 주세요.',
-                key: ValueKey(
-                    'town_${ref.read(selectedCountryProvider) ?? ""}_${ref.read(selectedCityProvider) ?? ""}_${townList.length}'),
+                key: ValueKey('town_${ref.read(analyticsSelectedCountryProvider) ?? ""}_${ref.read(analyticsSelectedCityProvider) ?? ""}_${townList.length}'),
                 onChanged: (selectedTown) {
-                  // 선택된 동네 이름 저장
-                  ref.read(selectedTownProvider.notifier).state = selectedTown;
+                  // 선택된 동네 이름 저장 (분석 탭 전용 Provider 사용)
+                  ref.read(analyticsSelectedTownProvider.notifier).state =
+                      selectedTown;
 
                   // 필터링 정보 전달
                   _updateFilters();
@@ -213,47 +214,18 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
 
   // 선택된 필터 정보를 상위 위젯에 전달
   void _updateFilters() {
-    final regionInfo = ref.read(regionInfoProvider);
-    final selectedCountry = ref.read(selectedCountryProvider);
-    final selectedCity = ref.read(selectedCityProvider);
-    final selectedTown = ref.read(selectedTownProvider);
+    // 드롭다운에서 선택된 값 (이름으로 직접 필터링하기 위해 이름만 전달)
+    final selectedCountry = ref.read(analyticsSelectedCountryProvider);
+    final selectedCity = ref.read(analyticsSelectedCityProvider);
+    final selectedTown = ref.read(analyticsSelectedTownProvider);
 
-    int? countryTbId;
-    int? cityTbId;
-    int? townTbId;
-
-    if (selectedCountry != null) {
-      // 국가 ID 찾기
-      final countryModel = regionInfo.countries.firstWhere(
-        (country) => country.countryName == selectedCountry,
-        orElse: () => CountryModel(countryId: 0, countryName: ''),
-      );
-      countryTbId = countryModel.countryId;
-
-      if (selectedCity != null && countryModel.countryId != 0) {
-        // 도시 ID 찾기
-        final cityModel = countryModel.cityDatas.firstWhere(
-          (city) => city.cityName == selectedCity,
-          orElse: () => CityModel(cityId: 0, cityName: ''),
-        );
-        cityTbId = cityModel.cityId;
-
-        if (selectedTown != null && cityModel.cityId != 0) {
-          // 동네 ID 찾기
-          final townModel = cityModel.townDatas.firstWhere(
-            (town) => town.townName == selectedTown,
-            orElse: () => TownModel(townId: 0, townName: ''),
-          );
-          townTbId = townModel.townId;
-        }
-      }
-    }
-
-    // 필터링 정보 전달
+    // 필터링 정보 전달 (선택되지 않은 경우 null 전달)
     widget.onLocationChanged(
-      countryTbId: countryTbId,
-      cityTbId: cityTbId,
-      townTbId: townTbId,
+      countryName: selectedCountry,
+      cityName: selectedCity,
+      townName: selectedTown,
     );
   }
+
+  // 이름 기반 필터링을 사용하므로 ID 조회 메서드는 더 이상 필요하지 않음
 }

@@ -7,6 +7,7 @@ import 'package:ip_manager/core/config/app_theme.dart';
 import 'package:ip_manager/core/config/screen_size.dart';
 import 'package:ip_manager/core/extension/date_time_extension.dart';
 import 'package:ip_manager/features/analytics/presentation/analytics_viewmodel.dart';
+import 'package:ip_manager/features/analytics/presentation/providers/analytics_filter_providers.dart';
 import 'package:ip_manager/features/analytics/presentation/widget/all_scroll_table.dart';
 import 'package:ip_manager/features/analytics/presentation/widget/selected_scroll_table.dart';
 import 'package:ip_manager/features/region/presentation/region_info_provider.dart';
@@ -152,9 +153,15 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
 
       final resetBtn = OutlinedButton.icon(
         onPressed: () {
+          // 기존 초기화 코드
           dateVm.initDate();
           analyticsVm.searchPcName('');
           analyticsVm.init();
+          
+          // 분석 탭 전용 드롭다운 초기화 (국가/도시/동네)
+          ref.read(analyticsSelectedCountryProvider.notifier).state = null;
+          ref.read(analyticsSelectedCityProvider.notifier).state = null;
+          ref.read(analyticsSelectedTownProvider.notifier).state = null;
         },
         icon: const Icon(Icons.refresh, size: 20, color: AppColors.purpleColor),
         label: const Text(

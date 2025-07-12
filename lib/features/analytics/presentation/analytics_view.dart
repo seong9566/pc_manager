@@ -77,14 +77,18 @@ class _AnalyticsViewState extends ConsumerState<AnalyticsView> {
                   .searchPcName(pcName);
             },
             onLocationChanged: (
-                {int? countryTbId, int? cityTbId, int? townTbId}) {
-              ref.read(analyticsViewModelProvider.notifier).changeCountry(
-                    countryTbId!,
-                    dateState.allDate,
-                    dateState.dailyDate,
-                    dateState.monthlyDate,
-                    dateState.periodStart,
-                    dateState.periodEnd,
+                {String? countryName, String? cityName, String? townName}) {
+              ref
+                  .read(analyticsViewModelProvider.notifier)
+                  .changeLocationFilter(
+                    countryName: countryName,
+                    cityName: cityName,
+                    townName: townName,
+                    allDate: dateState.allDate,
+                    dailyDate: dateState.dailyDate,
+                    monthlyDate: dateState.monthlyDate,
+                    periodStart: dateState.periodStart,
+                    periodEnd: dateState.periodEnd,
                   );
             },
           ),

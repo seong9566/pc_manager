@@ -2,11 +2,17 @@
 class PcRoomAnalytics {
   final int pcRoomId;
   final String pcRoomName;
+  final String countryName;
+  final String cityName;
+  final String townName;
   final List<TimeUsage> analyList;
 
   PcRoomAnalytics({
     required this.pcRoomId,
     required this.pcRoomName,
+    required this.countryName,
+    required this.cityName,
+    required this.townName,
     required this.analyList,
   });
 
@@ -14,6 +20,9 @@ class PcRoomAnalytics {
     return PcRoomAnalytics(
       pcRoomId: json['pcRoomId'],
       pcRoomName: json['pcRoomName'],
+      countryName: json['countryName'],
+      cityName: json['cityName'],
+      townName: json['townName'],
       analyList: List<TimeUsage>.from(
         json['analyList'].map((x) => TimeUsage.fromJson(x)),
       ),
@@ -39,6 +48,9 @@ class TimeUsage {
 /// 기간별, 월별, 일별 데이터
 class PcStatModel {
   final String pcName;
+  final String countryName;
+  final String cityName;
+  final String townName;
   final String usedPc;
   final String averageRate;
   final String pcPrice;
@@ -48,6 +60,9 @@ class PcStatModel {
 
   PcStatModel({
     required this.pcName,
+    required this.countryName,
+    required this.cityName,
+    required this.townName,
     required this.usedPc,
     required this.averageRate,
     required this.pcPrice,
@@ -101,6 +116,9 @@ class PcStatModel {
   factory PcStatModel.fromJson(Map<String, dynamic> json) {
     return PcStatModel(
       pcName: json['pcName'],
+      countryName: json['countryName'],
+      cityName: json['cityName'],
+      townName: json['townName'],
       usedPc: json['usedPc'],
       averageRate: json['averageRate'],
       pcPrice: json['pcPrice'],

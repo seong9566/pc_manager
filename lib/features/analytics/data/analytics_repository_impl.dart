@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/features/analytics/data/analytics_repository_interface.dart';
 import 'package:ip_manager/features/analytics/data/analytics_service.dart';
@@ -58,6 +59,7 @@ class AnalyticsRepositoryImpl implements IAnalyticsRepository {
     };
 
     final response = await analyticsService.getDaysDataList(data: data);
+    debugPrint(response.data.toString());
     return ResponseModel<List<PcStatModel>>.fromJson(
       response.data,
       (json) => List<PcStatModel>.from(
