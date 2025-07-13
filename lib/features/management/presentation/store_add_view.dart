@@ -153,14 +153,27 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
   void addStore() {
     final percentText = _pricePercentController.text.trim();
     if (percentText.isEmpty) {
-      // 비어 있으면 에러 메시지 출력 후 리턴
-
       showToast("PC 요금제 비율을 입력해주세요.");
+      return;
+    }
+    if (_nameController.text.isEmpty) {
+      showToast("PC 이름을 입력해주세요.");
+      return;
+    }
+    if (address.isEmpty) {
+      showToast("주소를 입력해주세요.");
+      return;
+    }
+    if (_ipController.text.isEmpty) {
+      showToast("IP를 입력해주세요.");
+      return;
+    }
+    if (_portController.text.isEmpty) {
+      showToast("포트를 입력해주세요.");
       return;
     }
     final pricePercent = double.tryParse(percentText);
     if (pricePercent == null) {
-      // 숫자로 파싱되지 않으면 에러
       showToast("올바른 숫자 형식으로 입력해주세요.");
       return;
     }
@@ -228,6 +241,8 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
             ],
           ),
         );
+      } else {
+        showToast("필수 항목을 올바르게 입력해 주세요.");
       }
     });
   }
@@ -397,6 +412,7 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
                     hintText: '포트를 입력하세요',
                     controller: _portController,
                     useExpanded: false,
+                    isRequired: true,
                   ),
                   const SizedBox(height: 20),
                   CustomTextField(
@@ -418,6 +434,7 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
                     hintText: 'PC 요금제 비율을 입력하세요',
                     controller: _pricePercentController,
                     useExpanded: false,
+                    isRequired: true,
                   ),
                   const SizedBox(height: 20),
                   CustomTextField(
