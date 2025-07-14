@@ -174,7 +174,7 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
                           widget.onSearch(_controller.text.trim()),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 16),
                   // 반응형 버튼 - 데스크탑 레이아웃에서는 더 여유롭게 표시
                   ElevatedButton.icon(
                     onPressed: _resetFilters,
@@ -189,8 +189,8 @@ class _AnalyticsHeaderState extends ConsumerState<AnalyticsHeader> {
                           color: Colors.redAccent.withValues(alpha: 0.5)),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 0),
-                      minimumSize: const Size(120, 48), // 검색창과 동일한 높이 설정
-                      maximumSize: const Size(180, 48),
+                      minimumSize: const Size(120, 56), // 검색창과 동일한 높이 설정
+                      maximumSize: const Size(180, 56),
                     ),
                     icon: const Icon(Icons.refresh, size: 18),
                     label: const Text(

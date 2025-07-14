@@ -159,6 +159,35 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
                 },
               ),
             ),
+            SizedBox(width: 16),
+            ElevatedButton.icon(
+              onPressed: () {
+                // 필터 초기화 기능 - 원본 데이터로 상태 재설정
+                final viewModel =
+                    ref.read(managementViewModelProvider.notifier);
+                viewModel.resetFilters();
+                _controller.clear();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.redAccent,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                side:
+                    BorderSide(color: Colors.redAccent.withValues(alpha: 0.5)),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                minimumSize: const Size(120, 56), // 검색창과 동일한 높이 설정
+                maximumSize: const Size(180, 56),
+              ),
+              icon: const Icon(Icons.refresh, size: 18),
+              label: const Text(
+                '필터 초기화',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              ),
+            )
           ],
         ),
         const SizedBox(height: 16),

@@ -121,6 +121,16 @@ class ManagementViewModel
       state = AsyncValue.error(e, st);
     }
   }
+  
+  /// 필터링 초기화 기능
+  /// 원본 데이터(originAllStores)를 현재 상태로 설정하여 모든 필터를 초기화합니다.
+  /// 필터링에 사용되는 외부 상태는 반드시 호출자가 초기화해야 합니다.
+  void resetFilters() {
+    // 경고창 없이 직접 상태를 업데이트하기 위해 임시로 loading 상태로 설정
+    state = const AsyncLoading();
+    // 원본 데이터로 상태 재설정
+    state = AsyncValue.data(List<ManagementModel>.from(originAllStores));
+  }
 
   /// API 요청
   // Future<void> getStoreSearchName(String name) async {

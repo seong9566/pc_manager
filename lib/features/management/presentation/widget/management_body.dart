@@ -125,16 +125,28 @@ class _ManagementBodyState extends ConsumerState<ManagementBody> {
                         color: Colors.black,
                       ),
                     ),
+                    SizedBox(width: 8),
+                    Text(
+                      '총 매장 수 : ${item.length}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: AppColors.mainTextColor,
+                      ),
+                    ),
                     SizedBox(height: 8),
-                    HoverButton(
-                      text: "매장 추가",
-                      icon: Icons.add,
-                      color: AppColors.purpleColor,
-                      onTap: () {
-                        setState(() {
-                          ref.read(tabIndexProvider.notifier).select(3);
-                        });
-                      },
+                    Column(
+                      children: [
+                        HoverButton(
+                          text: "매장 추가",
+                          icon: Icons.add,
+                          color: AppColors.purpleColor,
+                          onTap: () {
+                            setState(() {
+                              ref.read(tabIndexProvider.notifier).select(3);
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
