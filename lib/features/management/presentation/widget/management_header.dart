@@ -65,6 +65,7 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
               child: CustomDropDownButtonString(
                 cityList: countryList,
                 hintText: '지역',
+                selectedValue: ref.watch(selectedCountryProvider),
                 onChanged: (selectedCountry) {
                   // 선택된 국가 이름 저장
                   ref.read(selectedCountryProvider.notifier).state =
@@ -87,6 +88,7 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
               child: CustomDropDownButtonString(
                 cityList: cityList,
                 hintText: '도시',
+                selectedValue: ref.watch(selectedCityProvider),
                 onChanged: (selectedCity) {
                   // 선택된 도시 이름 저장
                   ref.read(selectedCityProvider.notifier).state = selectedCity;
@@ -110,6 +112,7 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
               child: CustomDropDownButtonString(
                 cityList: townList,
                 hintText: '동네',
+                selectedValue: ref.watch(selectedTownProvider),
                 onChanged: (selectedTown) {
                   // 선택된 동네 이름 저장
                   ref.read(selectedTownProvider.notifier).state = selectedTown;
@@ -162,11 +165,13 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
             SizedBox(width: 16),
             ElevatedButton.icon(
               onPressed: () {
-                // 필터 초기화 기능 - 원본 데이터로 상태 재설정
                 final viewModel =
                     ref.read(managementViewModelProvider.notifier);
                 viewModel.resetFilters();
                 _controller.clear();
+                ref.read(selectedCountryProvider.notifier).state = null;
+                ref.read(selectedCityProvider.notifier).state = null;
+                ref.read(selectedTownProvider.notifier).state = null;
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
@@ -201,6 +206,7 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
               child: CustomDropDownButtonString(
                 cityList: countryList,
                 hintText: '지역을 선택해 주세요.',
+                selectedValue: ref.watch(selectedCountryProvider),
                 onChanged: (selectedCountry) {
                   // 선택된 국가 이름 저장
                   ref.read(selectedCountryProvider.notifier).state =
@@ -224,6 +230,7 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
               child: CustomDropDownButtonString(
                 cityList: cityList,
                 hintText: '도시를 선택해 주세요.',
+                selectedValue: ref.watch(selectedCityProvider),
                 onChanged: (selectedCity) {
                   // 선택된 도시 이름 저장
                   ref.read(selectedCityProvider.notifier).state = selectedCity;
@@ -248,6 +255,7 @@ class _ManagementHeaderState extends ConsumerState<ManagementHeader> {
               child: CustomDropDownButtonString(
                 cityList: townList,
                 hintText: '동네를 선택해 주세요.',
+                selectedValue: ref.watch(selectedTownProvider),
                 onChanged: (selectedTown) {
                   // 선택된 동네 이름 저장
                   ref.read(selectedTownProvider.notifier).state = selectedTown;
