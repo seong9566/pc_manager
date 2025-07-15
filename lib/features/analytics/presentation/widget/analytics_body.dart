@@ -211,31 +211,11 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
                 );
 
                 // 데이터 가져오고 CSV 생성
-                analyticsViewModel
-                    .getExcelData(
+                analyticsViewModel.getExcelData(
                   startDate: startDate,
                   endDate: endDate,
                   pcId: selectedPcRoomIds,
-                )
-                    .then((result) {
-                  if (result.success) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('파일이 성공적으로 저장되었습니다'),
-                        backgroundColor: Colors.green[700],
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('오류 발생: ${result.message}'),
-                        backgroundColor: Colors.red[700],
-                        duration: const Duration(seconds: 3),
-                      ),
-                    );
-                  }
-                });
+                );
               },
             ),
           );
