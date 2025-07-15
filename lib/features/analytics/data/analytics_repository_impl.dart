@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ip_manager/features/analytics/data/analytics_repository_interface.dart';
-import 'package:ip_manager/features/analytics/data/analytics_service.dart';
 import 'package:ip_manager/model/response_model.dart';
 import 'package:ip_manager/model/time_count_model.dart';
+
+import 'analytics_repository_interface.dart';
+import 'analytics_service.dart';
+import 'models/excel_data_model.dart';
 
 final analyticsRepositoryProvider = Provider<IAnalyticsRepository>((ref) {
   return AnalyticsRepositoryImpl(ref.read(analyticsServiceProvider));
@@ -15,20 +17,23 @@ class AnalyticsRepositoryImpl implements IAnalyticsRepository {
   AnalyticsRepositoryImpl(this.analyticsService);
 
   @override
-  Future<void> getExcelData({
+  Future<ExcelDataResponse> getExcelData({
     required DateTime startDate,
     required DateTime endDate,
     required List<int> pcId,
   }) async {
-    final data = {
-      "startDate": startDate.toIso8601String(),
-      "endDate": endDate.toIso8601String(),
-      "pcId": pcId,
-    };
+    try {
+      final data = {
+        "startDate": startDate.toIso8601String(),
+        "endDate": endDate.toIso8601String(),
+        "pcId": pcId,
+      };
 
-    final response = await analyticsService.getExcelData(data: data);
-
-    // return response.data;
+      final response = await analyticsService.getExcelData(data: data);
+      return ExcelDataResponse.fromJson(response);
+    } catch (e) {
+      throw Exception('엑셀 데이터 변환 중 오류 발생: $e');
+    }
   }
 
   /// 전체 분석 기록 (시간별 사용량)

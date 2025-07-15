@@ -14,15 +14,25 @@ class AnalyticsService {
 
   AnalyticsService(this.apiClient);
 
-  Future<void> getExcelData({required Map<String, Object?> data}) async {
-    final response = await apiClient.request(
-      DioMethod.get,
-      url: ApiEndPoints.getExcelList,
-      data: data,
-    );
-    debugPrint(response.data.toString());
-    debugPrint(response.statusCode.toString());
-    return response.data;
+  Future<Map<String, dynamic>> getExcelData(
+      {required Map<String, Object?> data}) async {
+    try {
+      final response = await apiClient.request(
+        DioMethod.get,
+        url: ApiEndPoints.getExcelList,
+        data: data,
+      );
+
+      if (response.statusCode == 200) {
+        return response.data as Map<String, dynamic>;
+      } else {
+        debugPrint('엑셀 데이터 응답 실패: ${response.statusCode}');
+        throw Exception('서버 응답 오류: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('엑셀 데이터 요청 오류: $e');
+      throw Exception('엑셀 데이터 요청 중 오류 발생: $e');
+    }
   }
 
   Future<Response> getThisDayData({required Map<String, Object?> data}) async {

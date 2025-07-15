@@ -1,13 +1,15 @@
 // lib/features/analytics/presentation/analytics_viewmodel.dart
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:ip_manager/core/extension/date_time_extension.dart';
 import 'package:ip_manager/core/utils/csv_export_helper.dart';
 import 'package:ip_manager/core/utils/csv_export_result.dart';
-import 'package:ip_manager/features/analytics/domain/analytics_use_case.dart';
 import 'package:ip_manager/model/time_count_model.dart';
-import 'package:intl/intl.dart';
+
+import '../domain/analytics_use_case.dart';
 
 // 분석 데이터 유형 정의
 enum AnalyticsType {
@@ -84,17 +86,86 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     }
   }
 
-  /// 엑셀 데이터 가져오기
-  Future<void> getExcelData({
+  /// 엑셀 데이터 가져와서 CSV로 내보내기
+  Future<CsvExportResult> getExcelData({
     required DateTime startDate,
     required DateTime endDate,
     required List<int> pcId,
   }) async {
+    state = state.copyWith(isLoading: true);
+
     try {
+      // 데이터 가져오기
       final data = await analyticsUseCase.getExcelData(
         startDate: startDate,
         endDate: endDate,
         pcId: pcId,
+      );
+      debugPrint('data: $data');
+
+      // 데이터를 CSV로 변환하고 파일로 저장
+      final fileName =
+          'pc_analytics_${DateFormat('yyyyMMdd').format(startDate)}_to_${DateFormat('yyyyMMdd').format(endDate)}';
+
+      // 헤더 준비
+      final headers = [
+        'analyzeDT',
+        'pcName',
+        'countryName',
+        'cityName',
+        'townName',
+        'usedPc',
+        'averageRate',
+        'pcPrice',
+        'foodPrice',
+        'totalPrice',
+        'seatNumber',
+        'pricePercent'
+      ];
+
+      // CSV 데이터 준비
+      final List<List<dynamic>> csvData = [];
+
+      // 헤더 추가
+      csvData.add(headers);
+
+      // PC방 데이터 행 추가
+      for (var pcRoom in data.data) {
+        for (var dailyData in pcRoom.datas) {
+          csvData.add([
+            dailyData.analyzeDT,
+            pcRoom.pcName,
+            dailyData.countryName,
+            dailyData.cityName,
+            dailyData.townName,
+            dailyData.usedPc,
+            dailyData.averageRate,
+            dailyData.pcPrice,
+            dailyData.foodPrice,
+            dailyData.totalPrice,
+            dailyData.seatNumber,
+            dailyData.pricePercent,
+          ]);
+        }
+      }
+
+      // CsvExportHelper를 사용하여 파일 저장
+      final filePath = await CsvExportHelper.exportToCsv(
+        data: csvData,
+        fileName: fileName,
+        headers: headers,
+      );
+
+      return CsvExportResult(
+        success: true,
+        message: '파일이 성공적으로 저장되었습니다.',
+        filePath: filePath,
+      );
+    } catch (e) {
+      debugPrint('CSV 내보내기 오류: $e');
+      return CsvExportResult(
+        success: false,
+        message: '데이터 내보내기 중 오류가 발생했습니다: $e',
       );
     } finally {
       state = state.copyWith(isLoading: false);

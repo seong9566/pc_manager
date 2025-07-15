@@ -193,12 +193,7 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
             builder: (context) => CsvExportDialog(
               pcRooms: pcRoomsList,
               onExport: (selectedPcRoomIds, startDate, endDate) {
-                analyticsViewModel.getExcelData(
-                  startDate: startDate,
-                  endDate: endDate,
-                  pcId: selectedPcRoomIds,
-                );
-
+                // 로딩 상태 표시
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Row(
@@ -211,28 +206,36 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
                         Text('CSV 파일 생성 중...'),
                       ],
                     ),
-                    duration: Duration(seconds: 1),
+                    duration: Duration(seconds: 2),
                   ),
                 );
 
-                // analyticsViewModel
-                //     .exportPcRoomDataToCsv(
-                //   selectedPcRoomIds: selectedPcRoomIds,
-                //   startDate: startDate,
-                //   endDate: endDate,
-                // )
-                //     .then((result) {
-                //   if (result.success) {
-                //     ScaffoldMessenger.of(context).showSnackBar(
-                //       SnackBar(
-                //           content: Text('파일이 저장되었습니다: ${result.filePath}')),
-                //     );
-                //   } else {
-                //     ScaffoldMessenger.of(context).showSnackBar(
-                //       SnackBar(content: Text('오류: ${result.message}')),
-                //     );
-                //   }
-                // });
+                // 데이터 가져오고 CSV 생성
+                analyticsViewModel
+                    .getExcelData(
+                  startDate: startDate,
+                  endDate: endDate,
+                  pcId: selectedPcRoomIds,
+                )
+                    .then((result) {
+                  if (result.success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('파일이 성공적으로 저장되었습니다'),
+                        backgroundColor: Colors.green[700],
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('오류 발생: ${result.message}'),
+                        backgroundColor: Colors.red[700],
+                        duration: const Duration(seconds: 3),
+                      ),
+                    );
+                  }
+                });
               },
             ),
           );

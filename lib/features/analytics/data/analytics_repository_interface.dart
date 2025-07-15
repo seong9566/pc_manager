@@ -1,9 +1,10 @@
 import 'package:ip_manager/model/time_count_model.dart';
+import 'models/excel_data_model.dart';
 
 import '../../../model/response_model.dart';
 
 abstract class IAnalyticsRepository {
-  Future<void> getExcelData({
+  Future<ExcelDataResponse> getExcelData({
     required DateTime startDate,
     required DateTime endDate,
     required List<int> pcId,

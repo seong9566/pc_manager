@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/features/analytics/data/analytics_repository_impl.dart';
 import '../../../model/time_count_model.dart';
 import '../data/analytics_repository_interface.dart';
+import '../data/models/excel_data_model.dart';
 
 /// 데이터 필터링, 유효성 검사, 조건 분기 등
 
@@ -15,16 +16,23 @@ class AnalyticsUseCase {
 
   AnalyticsUseCase(this.analyticsRepository);
 
-  Future<void> getExcelData({
+  Future<ExcelDataResponse> getExcelData({
     required DateTime startDate,
     required DateTime endDate,
     required List<int> pcId,
   }) async {
-    final result = await analyticsRepository.getExcelData(
-      startDate: startDate,
-      endDate: endDate,
-      pcId: pcId,
-    );
+    try {
+      final result = await analyticsRepository.getExcelData(
+        startDate: startDate,
+        endDate: endDate,
+        pcId: pcId,
+      );
+      
+      return result;
+    } catch (e) {
+      debugPrint('UseCase에서 엑셀 데이터 처리 중 오류: $e');
+      throw Exception('엑셀 데이터 처리 중 오류가 발생했습니다');
+    }
   }
 
   Future<List<PcRoomAnalytics>?> getThisDayData({
