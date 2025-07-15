@@ -1,9 +1,21 @@
 // lib/features/analytics/presentation/analytics_viewmodel.dart
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/extension/date_time_extension.dart';
+import 'package:ip_manager/core/utils/csv_export_helper.dart';
+import 'package:ip_manager/core/utils/csv_export_result.dart';
 import 'package:ip_manager/features/analytics/domain/analytics_use_case.dart';
 import 'package:ip_manager/model/time_count_model.dart';
+import 'package:intl/intl.dart';
+
+// 분석 데이터 유형 정의
+enum AnalyticsType {
+  all, // 전체 분석기록
+  daily, // 일별 분석
+  monthly, // 월별 분석
+  period, // 기간별 분석
+}
 
 class AnalyticsState {
   final bool isLoading; // 로딩 상태
@@ -66,14 +78,31 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     state = state.copyWith(isLoading: true);
     try {
       final now = DateTime.now().toDateOnlyForDateTime();
-      await getThisDayDataList(targetDate: now);
+      await getThisDayData(targetDate: now);
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
+  }
+
+  /// 엑셀 데이터 가져오기
+  Future<void> getExcelData({
+    required DateTime startDate,
+    required DateTime endDate,
+    required List<int> pcId,
+  }) async {
+    try {
+      final data = await analyticsUseCase.getExcelData(
+        startDate: startDate,
+        endDate: endDate,
+        pcId: pcId,
+      );
     } finally {
       state = state.copyWith(isLoading: false);
     }
   }
 
   /// 전체 분석 기록
-  Future<void> getThisDayDataList({
+  Future<void> getThisDayData({
     required DateTime targetDate,
     String? pcName,
     int? countryTbId,
@@ -97,7 +126,7 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
   }
 
   /// 일별 분석 기록
-  Future<void> getDaysDataList({
+  Future<void> getDaysData({
     required DateTime targetDate,
     String? pcName,
     int? countryTbId,
@@ -121,7 +150,7 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
   }
 
   /// 월별 분석 기록
-  Future<void> getMonthDataList({
+  Future<void> getMonthData({
     required DateTime targetDate,
     String? pcName,
     int? countryTbId,
@@ -145,7 +174,7 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
   }
 
   /// 기간별 분석 기록
-  Future<void> getPeriodDataList({
+  Future<void> getPeriodData({
     required DateTime startDate,
     required DateTime endDate,
     String? pcName,
@@ -274,6 +303,223 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     _applyFilters();
   }
 
+  /// 기간별 데이터를 CSV로 내보내기
+  /// [type] - 어떤 탭의 데이터를 내보낼 것인지 지정
+  /// [startDate] - 기간별 데이터일 경우 시작일
+  /// [endDate] - 기간별 데이터일 경우 종료일
+  Future<CsvExportResult> exportToCsv({
+    required AnalyticsType type,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    try {
+      // 1. 데이터 준비
+      List<List<dynamic>> csvData = [];
+      String fileName = '';
+      List<String> headers = [
+        '날짜',
+        '매장 이름',
+        '가동률',
+        'PC매출',
+        '식품매출',
+        '총매출',
+      ];
+
+      switch (type) {
+        case AnalyticsType.all:
+          // 현재 날짜 데이터 변환
+          final formattedData = state.thisDayData
+              .map((item) => [
+                    DateFormat('yyyy.MM.dd').format(DateTime.now()),
+                    item.pcRoomName,
+                    '${item.analyList.isNotEmpty ? ((item.analyList.length / 24) * 100).toStringAsFixed(2) : '0.00'}%',
+                    '0원', // PC매출 데이터가 없으므로 기본값으로 설정
+                    '0원', // 식품매출 데이터가 없으므로 기본값으로 설정
+                    '0원', // 총매출 데이터가 없으므로 기본값으로 설정
+                  ])
+              .toList();
+          csvData.addAll(formattedData);
+          fileName = '전체분석_${DateFormat('yyyyMMdd').format(DateTime.now())}';
+          break;
+
+        case AnalyticsType.daily:
+          // 일별 데이터 변환
+          final formattedData = state.daysData
+              .map((item) => [
+                    DateFormat('yyyy.MM.dd').format(DateTime.now()),
+                    item.pcName,
+                    item.averageRate,
+                    item.pcPrice,
+                    item.foodPrice,
+                    item.totalPrice,
+                  ])
+              .toList();
+          csvData.addAll(formattedData);
+          fileName = '일별분석_${DateFormat('yyyyMMdd').format(DateTime.now())}';
+          break;
+
+        case AnalyticsType.monthly:
+          // 월별 데이터 변환
+          final formattedData = state.monthData
+              .map((item) => [
+                    DateFormat('yyyy.MM.dd').format(DateTime.now()),
+                    item.pcName,
+                    item.averageRate,
+                    item.pcPrice,
+                    item.foodPrice,
+                    item.totalPrice,
+                  ])
+              .toList();
+          csvData.addAll(formattedData);
+          fileName = '월별분석_${DateFormat('yyyyMMdd').format(DateTime.now())}';
+          break;
+
+        case AnalyticsType.period:
+          // 기간별 데이터 변환
+          if (startDate != null && endDate != null) {
+            final formattedData = state.periodData
+                .map((item) => [
+                      '${DateFormat('yyyy.MM.dd').format(startDate)} ~ ${DateFormat('yyyy.MM.dd').format(endDate)}',
+                      item.pcName,
+                      item.averageRate,
+                      item.pcPrice,
+                      item.foodPrice,
+                      item.totalPrice,
+                    ])
+                .toList();
+            csvData.addAll(formattedData);
+            fileName =
+                '기간분석_${DateFormat('yyyyMMdd').format(startDate)}_${DateFormat('yyyyMMdd').format(endDate)}';
+          } else {
+            return CsvExportResult(
+              success: false,
+              message: '기간 설정이 잘못되었습니다.',
+            );
+          }
+          break;
+      }
+
+      // CSV 파일로 내보내기
+      if (csvData.isEmpty) {
+        return CsvExportResult(
+          success: false,
+          message: '내보낼 데이터가 없습니다.',
+        );
+      }
+
+      // 2. CSV 파일 생성 및 저장
+      final result = await CsvExportHelper.exportToCsv(
+        data: csvData,
+        headers: headers,
+        fileName: fileName,
+      );
+
+      return CsvExportResult(
+        success: true,
+        message: 'CSV 파일이 성공적으로 저장되었습니다.',
+        filePath: result,
+      );
+    } catch (e) {
+      debugPrint('CSV 내보내기 오류: $e');
+      return CsvExportResult(
+        success: false,
+        message: '오류가 발생했습니다: $e',
+      );
+    }
+  }
+
+  /// 선택한 PC방과 날짜 범위에 따라 데이터를 필터링하고 CSV로 내보내기
+  /// [selectedPcRoomIds] - 선택한 PC방 ID 목록
+  /// [startDate] - 시작일
+  /// [endDate] - 종료일
+  Future<CsvExportResult> exportPcRoomDataToCsv({
+    required List<int> selectedPcRoomIds,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    try {
+      // 로딩 상태로 변경
+      state = state.copyWith(isLoading: true);
+
+      // 1. 선택한 기간에 대한 데이터 가져오기
+      // 이미 저장된 데이터가 있거나, 필요하다면 API를 호출하여 데이터 가져오기
+
+      // 선택한 PC방만 필터링
+      final filteredData = state.thisDayData.where((pcRoom) {
+        return selectedPcRoomIds.contains(pcRoom.pcRoomId);
+      }).toList();
+
+      // 2. 헤더 및 데이터 준비
+      List<String> headers = [
+        'PC방 ID',
+        'PC방 이름',
+        '지역',
+        '도시',
+        '동네',
+        '시간대',
+        '이용자 수',
+        '날짜'
+      ];
+
+      // 3. CSV 데이터 형식으로 변환
+      List<List<dynamic>> csvData = [];
+
+      // 필터링된 각 PC방에 대해
+      for (var pcRoom in filteredData) {
+        // 각 분석 데이터 항목에 대해
+        for (var usage in pcRoom.analyList) {
+          csvData.add([
+            pcRoom.pcRoomId.toString(),
+            pcRoom.pcRoomName,
+            pcRoom.countryName,
+            pcRoom.cityName,
+            pcRoom.townName,
+            usage.time, // 시간대
+            usage.count.toString(), // 이용자 수
+            DateFormat('yyyy-MM-dd').format(startDate), // 날짜
+          ]);
+        }
+      }
+
+      if (csvData.isEmpty) {
+        state = state.copyWith(isLoading: false);
+        return CsvExportResult(
+          success: false,
+          message: '내보낼 데이터가 없습니다.',
+        );
+      }
+
+      // 파일 이름 생성 (검색 기간 포함)
+      String fileName =
+          'PC방분석_${DateFormat('yyyyMMdd').format(startDate)}_${DateFormat('yyyyMMdd').format(endDate)}';
+
+      // 4. CSV 파일 생성 및 저장
+      final result = await CsvExportHelper.exportToCsv(
+        data: csvData,
+        headers: headers,
+        fileName: fileName,
+      );
+
+      // 로딩 상태 해제
+      state = state.copyWith(isLoading: false);
+
+      return CsvExportResult(
+        success: true,
+        message: 'CSV 파일이 성공적으로 저장되었습니다.',
+        filePath: result,
+      );
+    } catch (e) {
+      // 로딩 상태 해제
+      state = state.copyWith(isLoading: false);
+
+      debugPrint('CSV 내보내기 오류: $e');
+      return CsvExportResult(
+        success: false,
+        message: '오류가 발생했습니다: $e',
+      );
+    }
+  }
+
   /// 기존 API 호출을 위한 메서드 (하위 호환성 유지)
   @Deprecated('ID 대신 이름 기반 필터링을 사용하세요')
   Future<void> changeCountry(
@@ -285,20 +531,21 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
     DateTime? periodEnd,
   ) async {
     // 전체 탭부터 순차 호출
-    await getThisDayDataList(
+    await getThisDayData(
       targetDate: allDate,
       countryTbId: countryTbId,
     );
-    await getDaysDataList(
+    await getDaysData(
       targetDate: dailyDate,
       countryTbId: countryTbId,
     );
-    await getMonthDataList(
+    await getMonthData(
       targetDate: monthlyDate,
       countryTbId: countryTbId,
     );
+
     if (periodStart != null && periodEnd != null) {
-      await getPeriodDataList(
+      await getPeriodData(
         startDate: periodStart,
         endDate: periodEnd,
         countryTbId: countryTbId,
@@ -311,10 +558,3 @@ final analyticsViewModelProvider =
     StateNotifierProvider<AnalyticsViewModel, AnalyticsState>((ref) {
   return AnalyticsViewModel(ref.read(analyticsUseCaseProvider));
 });
-
-enum AnalyticsType {
-  all, // 전체 분석기록
-  period, // 기간별 분석
-  monthly, // 월별 분석
-  daily, // 일별 분석
-}

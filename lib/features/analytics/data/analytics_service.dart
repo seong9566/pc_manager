@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ip_manager/core/network/api_endpoints.dart';
 
@@ -12,6 +13,17 @@ class AnalyticsService {
   final ApiClient apiClient;
 
   AnalyticsService(this.apiClient);
+
+  Future<void> getExcelData({required Map<String, Object?> data}) async {
+    final response = await apiClient.request(
+      DioMethod.get,
+      url: ApiEndPoints.getExcelList,
+      data: data,
+    );
+    debugPrint(response.data.toString());
+    debugPrint(response.statusCode.toString());
+    return response.data;
+  }
 
   Future<Response> getThisDayData({required Map<String, Object?> data}) async {
     return await apiClient.request(

@@ -4,9 +4,7 @@ import 'package:ip_manager/features/analytics/data/analytics_repository_impl.dar
 import '../../../model/time_count_model.dart';
 import '../data/analytics_repository_interface.dart';
 
-/**
- * 데이터 필터링, 유효성 검사, 조건 분기 등
- */
+/// 데이터 필터링, 유효성 검사, 조건 분기 등
 
 final analyticsUseCaseProvider = Provider<AnalyticsUseCase>((ref) {
   return AnalyticsUseCase(ref.read(analyticsRepositoryProvider));
@@ -16,6 +14,18 @@ class AnalyticsUseCase {
   final IAnalyticsRepository analyticsRepository;
 
   AnalyticsUseCase(this.analyticsRepository);
+
+  Future<void> getExcelData({
+    required DateTime startDate,
+    required DateTime endDate,
+    required List<int> pcId,
+  }) async {
+    final result = await analyticsRepository.getExcelData(
+      startDate: startDate,
+      endDate: endDate,
+      pcId: pcId,
+    );
+  }
 
   Future<List<PcRoomAnalytics>?> getThisDayData({
     required DateTime targetDate,

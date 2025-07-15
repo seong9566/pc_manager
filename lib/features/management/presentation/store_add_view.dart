@@ -232,8 +232,8 @@ class _StoreAddViewState extends ConsumerState<StoreAddView> {
                   Navigator.pop(context);
                   ref.read(managementViewModelProvider.notifier).getStoreList();
                   ref
-                      .read(analyticsViewModelProvider.notifier)
-                      .getThisDayDataList(targetDate: DateTime.now());
+                    .read(analyticsViewModelProvider.notifier)
+                    .getThisDayData(targetDate: DateTime.now());
                   ref.read(tabIndexProvider.notifier).select(1);
                 },
                 child: const Text('확인'),

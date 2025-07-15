@@ -9,8 +9,8 @@ import 'package:ip_manager/core/extension/date_time_extension.dart';
 import 'package:ip_manager/features/analytics/presentation/analytics_viewmodel.dart';
 import 'package:ip_manager/features/analytics/presentation/providers/analytics_filter_providers.dart';
 import 'package:ip_manager/features/analytics/presentation/widget/all_scroll_table.dart';
+import 'package:ip_manager/features/analytics/presentation/widget/csv_export_dialog.dart';
 import 'package:ip_manager/features/analytics/presentation/widget/selected_scroll_table.dart';
-import 'package:ip_manager/features/region/presentation/region_info_provider.dart';
 import 'package:ip_manager/provider/date_provider.dart';
 import 'package:ip_manager/widgets/dot_dialog.dart';
 
@@ -44,25 +44,25 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
           dateVm.updateDailyDate(date);
           ref
               .read(analyticsViewModelProvider.notifier)
-              .getDaysDataList(targetDate: date);
+              .getDaysData(targetDate: date);
         } else {
           dateVm.updateAllDate(date);
           ref
               .read(analyticsViewModelProvider.notifier)
-              .getThisDayDataList(targetDate: date);
+              .getThisDayData(targetDate: date);
         }
       },
       onRangeSelected: (start, end) {
         dateVm.selectRange(start, end);
         ref
             .read(analyticsViewModelProvider.notifier)
-            .getPeriodDataList(startDate: start, endDate: end);
+            .getPeriodData(startDate: start, endDate: end);
       },
       onMonthSelected: (monthDate) {
         dateVm.updateMonthlyDate(monthDate);
         ref
             .read(analyticsViewModelProvider.notifier)
-            .getMonthDataList(targetDate: monthDate);
+            .getMonthData(targetDate: monthDate);
       },
     );
   }
@@ -182,6 +182,77 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
         ),
       );
 
+      // CSV 내보내기 버튼
+      final exportCsvBtn = OutlinedButton.icon(
+        onPressed: () {
+          final analyticsViewModel =
+              ref.read(analyticsViewModelProvider.notifier);
+          final pcRoomsList = ref.read(analyticsViewModelProvider).thisDayData;
+          showDialog(
+            context: context,
+            builder: (context) => CsvExportDialog(
+              pcRooms: pcRoomsList,
+              onExport: (selectedPcRoomIds, startDate, endDate) {
+                analyticsViewModel.getExcelData(
+                  startDate: startDate,
+                  endDate: endDate,
+                  pcId: selectedPcRoomIds,
+                );
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Row(
+                      children: [
+                        SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2)),
+                        SizedBox(width: 16),
+                        Text('CSV 파일 생성 중...'),
+                      ],
+                    ),
+                    duration: Duration(seconds: 1),
+                  ),
+                );
+
+                // analyticsViewModel
+                //     .exportPcRoomDataToCsv(
+                //   selectedPcRoomIds: selectedPcRoomIds,
+                //   startDate: startDate,
+                //   endDate: endDate,
+                // )
+                //     .then((result) {
+                //   if (result.success) {
+                //     ScaffoldMessenger.of(context).showSnackBar(
+                //       SnackBar(
+                //           content: Text('파일이 저장되었습니다: ${result.filePath}')),
+                //     );
+                //   } else {
+                //     ScaffoldMessenger.of(context).showSnackBar(
+                //       SnackBar(content: Text('오류: ${result.message}')),
+                //     );
+                //   }
+                // });
+              },
+            ),
+          );
+        },
+        icon: const Icon(Icons.download, size: 20, color: Colors.blue),
+        label: Text(
+          'CSV 내보내기',
+          style: TextStyle(
+              fontSize: 16, fontWeight: FontWeight.normal, color: Colors.blue),
+        ),
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size(120, 48),
+          maximumSize: const Size(180, 48),
+          side: BorderSide(color: Colors.blue.withValues(alpha: 0.5), width: 1),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          backgroundColor: Colors.white,
+        ),
+      );
+
       final dateBtn = ElevatedButton.icon(
         onPressed: _showDatePicker,
         icon: const Icon(
@@ -256,6 +327,8 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
                     dateBtn,
                     const SizedBox(width: 8),
                     resetBtn,
+                    const SizedBox(width: 8),
+                    exportCsvBtn,
                     const SizedBox(width: 8), // 오른쪽 여유
                   ],
                 ),
@@ -278,6 +351,8 @@ class _AnalyticsBodyState extends ConsumerState<AnalyticsBody> {
                 dateBtn,
                 const SizedBox(width: 8),
                 resetBtn,
+                const SizedBox(width: 8),
+                exportCsvBtn,
               ],
             ),
             Padding(

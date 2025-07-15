@@ -40,6 +40,7 @@ class ApiEndPoints {
   static const getPeriodList = "DashBoard/sign/v1/GetPeriodList";
   static const getMonthDataList = "DashBoard/sign/v1/GetMonthDataList";
   static const getDaysDataList = "DashBoard/sign/v1/GetDaysDataList";
+  static const getExcelList = "DashBoard/sign/v1/xlsxList";
 
   ///Management
   static const getStoreList = "Store/sign/v1/GetStoreList";

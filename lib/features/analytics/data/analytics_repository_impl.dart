@@ -14,6 +14,23 @@ class AnalyticsRepositoryImpl implements IAnalyticsRepository {
 
   AnalyticsRepositoryImpl(this.analyticsService);
 
+  @override
+  Future<void> getExcelData({
+    required DateTime startDate,
+    required DateTime endDate,
+    required List<int> pcId,
+  }) async {
+    final data = {
+      "startDate": startDate.toIso8601String(),
+      "endDate": endDate.toIso8601String(),
+      "pcId": pcId,
+    };
+
+    final response = await analyticsService.getExcelData(data: data);
+
+    // return response.data;
+  }
+
   /// 전체 분석 기록 (시간별 사용량)
   @override
   Future<ResponseModel<List<PcRoomAnalytics>>> getThisDayData({

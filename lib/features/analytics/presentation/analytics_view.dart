@@ -34,23 +34,23 @@ class _AnalyticsViewState extends ConsumerState<AnalyticsView> {
     final dateState = ref.read(dateViewModel);
     switch (newType) {
       case AnalyticsType.all:
-        vm.getThisDayDataList(
+        vm.getThisDayData(
           targetDate: dateState.allDate,
         );
         break;
       case AnalyticsType.daily:
-        vm.getDaysDataList(
+        vm.getDaysData(
           targetDate: dateState.dailyDate,
         );
         break;
       case AnalyticsType.monthly:
-        vm.getMonthDataList(
+        vm.getMonthData(
           targetDate: dateState.monthlyDate,
         );
         break;
       case AnalyticsType.period:
         if (dateState.periodStart != null && dateState.periodEnd != null) {
-          vm.getPeriodDataList(
+          vm.getPeriodData(
             startDate: dateState.periodStart!,
             endDate: dateState.periodEnd!,
           );
