@@ -18,8 +18,8 @@ class CsvExportHelper {
     required List<String> headers,
   }) async {
     try {
-      // 헤더를 데이터의 첫 번째 행으로 추가
-      final csvData = [headers, ...data];
+      // 이미 데이터에 헤더가 포함되어 있으므로 그대로 사용
+      final csvData = data;
 
       // CSV 형식으로 변환
       final csv = const ListToCsvConverter().convert(csvData);

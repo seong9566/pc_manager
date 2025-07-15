@@ -105,22 +105,22 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
 
       // 데이터를 CSV로 변환하고 파일로 저장
       final fileName =
-          'pc_analytics_${DateFormat('yyyyMMdd').format(startDate)}_to_${DateFormat('yyyyMMdd').format(endDate)}';
+          'PcManager_${DateFormat('yyyyMMdd').format(startDate)}_to_${DateFormat('yyyyMMdd').format(endDate)}';
 
-      // 헤더 준비
+      // 헤더 준비 (한글로 변경)
       final headers = [
-        'analyzeDT',
-        'pcName',
-        'countryName',
-        'cityName',
-        'townName',
-        'usedPc',
-        'averageRate',
-        'pcPrice',
-        'foodPrice',
-        'totalPrice',
-        'seatNumber',
-        'pricePercent'
+        '분석일자',
+        'PC이름',
+        '지역명',
+        '도시명',
+        '동네명',
+        '가동 PC 수',
+        '평균 가동률',
+        'PC 이용 매출',
+        '식품 기타 매출',
+        '총 매출',
+        '좌석 수',
+        '가격 비율'
       ];
 
       // CSV 데이터 준비
@@ -129,7 +129,11 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
       // 헤더 추가
       csvData.add(headers);
 
-      // PC방 데이터 행 추가
+      // 숫자 포맷 설정
+      final percentFormat = NumberFormat('0.00'); // 소수점 둘째 자리까지
+      final currencyFormat = NumberFormat('#,###'); // 천 단위 구분자
+
+      // PC방 데이터 행 추가 (포맷 적용)
       for (var pcRoom in data.data) {
         for (var dailyData in pcRoom.datas) {
           csvData.add([
@@ -138,13 +142,13 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
             dailyData.countryName,
             dailyData.cityName,
             dailyData.townName,
-            dailyData.usedPc,
-            dailyData.averageRate,
-            dailyData.pcPrice,
-            dailyData.foodPrice,
-            dailyData.totalPrice,
+            dailyData.usedPc.toInt(), // 정수형으로 변환
+            '${percentFormat.format(dailyData.averageRate)}%', // 소수점 둘째 자리까지 표시하고 % 추가
+            '${currencyFormat.format(dailyData.pcPrice)}원', // 천 단위 구분자와 '원' 단위 표시
+            '${currencyFormat.format(dailyData.foodPrice)}원',
+            '${currencyFormat.format(dailyData.totalPrice)}원',
             dailyData.seatNumber,
-            dailyData.pricePercent,
+            (dailyData.pricePercent),
           ]);
         }
       }
