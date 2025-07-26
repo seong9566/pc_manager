@@ -52,9 +52,9 @@ class PcRoomDailyData {
   final String townName;
   final double usedPc;
   final double averageRate;
-  final int pcPrice;
-  final int foodPrice;
-  final int totalPrice;
+  final double pcPrice;
+  final double foodPrice;
+  final double totalPrice;
   final int seatNumber;
   final String pricePercent;
 
@@ -78,18 +78,18 @@ class PcRoomDailyData {
   factory PcRoomDailyData.fromJson(Map<String, dynamic> json) {
     return PcRoomDailyData(
       analyzeDT: json['analyzeDT'] as String,
-      countryId: json['countryId'] as int,
+      countryId: (json['countryId'] as num).toInt(),
       countryName: json['countryName'] as String,
-      cityId: json['cityId'] as int,
+      cityId: (json['cityId'] as num).toInt(),
       cityName: json['cityName'] as String,
-      townId: json['townId'] as int,
+      townId: (json['townId'] as num).toInt(),
       townName: json['townName'] as String,
-      usedPc: json['usedPc'] as double,
-      averageRate: json['averageRate'] as double,
-      pcPrice: json['pcPrice'] as int,
-      foodPrice: json['foodPrice'] as int,
-      totalPrice: json['totalPrice'] as int,
-      seatNumber: json['seatNumber'] as int,
+      usedPc: (json['usedPc'] as num).toDouble(),
+      averageRate: (json['averageRate'] as num).toDouble(),
+      pcPrice: (json['pcPrice'] as num).toDouble(),
+      foodPrice: (json['foodPrice'] as num).toDouble(),
+      totalPrice: (json['totalPrice'] as num).toDouble(),
+      seatNumber: (json['seatNumber'] as num).toInt(),
       pricePercent: json['pricePercent'] as String,
     );
   }
